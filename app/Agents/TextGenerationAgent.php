@@ -21,11 +21,11 @@ class TextGenerationAgent extends BaseLlmAgent
     ";
 
 
-    protected string $model = 'gemini-1.5-flash';
+    protected string $model = 'gemini-2.0-flash-exp';
 
     protected array $tools = [
         GeminiTools::class,
     ];
 
-    
+
 }

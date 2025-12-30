@@ -2,14 +2,13 @@
 
 namespace App\Jobs;
 
-use App\Usecase\GeminiUsecase;
+use App\Agents\TextGenerationAgent;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Throwable; // ✅ Import Throwable
+use Throwable;
 
 class RunTextGeneration implements ShouldQueue
 {
@@ -26,66 +25,56 @@ class RunTextGeneration implements ShouldQueue
         public string $level
     ) {}
 
-    public function handle(GeminiUsecase $geminiUsecase): void
+    public function handle(): void
     {
         try {
-            $generatedText = $geminiUsecase->generateText(
-                $this->topic,
-                $this->level
-            );
+            $agent = new TextGenerationAgent();
+            $result = $agent->run($this->message);
 
-            // Simpan hasil ke storage
+            $generatedText = $this->extractContent($result);
+
             Storage::disk('local')->put(
                 "generated-texts/{$this->referenceId}.txt",
                 $generatedText
             );
-
-            Log::info('AI Generation Succeeded', [
-                'reference_id' => $this->referenceId,
-                'topic' => $this->topic,
-                'level' => $this->level,
-                'text_length' => strlen($generatedText),
-                'preview' => substr($generatedText, 0, 100) . '...',
-                'attempt' => $this->attempts(),
-            ]);
-
-        } catch (Throwable $e) { // ✅ Gunakan Throwable, bukan Exception
-            Log::error('AI Generation Failed', [
-                'reference_id' => $this->referenceId,
-                'topic' => $this->topic,
-                'level' => $this->level,
-                'attempt' => $this->attempts(),
-                'error' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-
+        } catch (Throwable $e) {
             throw $e;
         }
     }
 
     /**
+     * Extract clean content from nested JSON response
+     */
+    private function extractContent(string $response): string
+    {
+        try {
+            // Decode first level
+            $decoded = json_decode($response, true);
+
+            // Extract from generate_educational_text_response
+            if (isset($decoded['generate_educational_text_response']['content'])) {
+                $content = $decoded['generate_educational_text_response']['content'];
+
+                // Decode nested JSON string
+                $nestedDecoded = json_decode($content, true);
+
+                // Extract actual content from data
+                if (isset($nestedDecoded['data']['content'])) {
+                    return $nestedDecoded['data']['content'];
+                }
+            }
+
+            return $response;
+        } catch (\Exception $e) {
+            return $response;
+        }
+    }
+
+    /**
      * Handle a job failure.
-     *
-     * ✅ PENTING: Gunakan Throwable, bukan Exception
      */
     public function failed(Throwable $exception): void
     {
-        Log::critical('AI Generation Permanently Failed', [
-            'reference_id' => $this->referenceId,
-            'topic' => $this->topic,
-            'level' => $this->level,
-            'message' => $this->message,
-            'error' => $exception->getMessage(),
-            'error_type' => get_class($exception), // ✅ Log tipe error
-            'file' => $exception->getFile(),
-            'line' => $exception->getLine(),
-            'total_attempts' => $this->attempts(),
-            'trace' => $exception->getTraceAsString(),
-        ]);
-
-        // ✅ Opsional: Simpan error log ke file terpisah
         Storage::disk('local')->put(
             "failed-generations/{$this->referenceId}.json",
             json_encode([
@@ -96,8 +85,5 @@ class RunTextGeneration implements ShouldQueue
                 'timestamp' => now()->toDateTimeString(),
             ], JSON_PRETTY_PRINT)
         );
-
-        // ✅ Opsional: Kirim notifikasi
-        // Mail::to('admin@example.com')->send(new JobFailedMail($this, $exception));
     }
 }

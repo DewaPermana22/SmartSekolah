@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Presenter\Response;
 use App\Jobs\RunTextGeneration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -19,7 +20,7 @@ class GenerateTextController extends Controller
         $referenceId = Str::uuid()->toString();
 
         $message = 'Buatkan materi "' . htmlspecialchars($request->topic, ENT_QUOTES)
-                   . '" untuk tingkat ' . htmlspecialchars($request->level, ENT_QUOTES);
+            . '" untuk tingkat ' . htmlspecialchars($request->level, ENT_QUOTES);
 
         RunTextGeneration::dispatch(
             message: $message,
@@ -28,12 +29,16 @@ class GenerateTextController extends Controller
             referenceId: $referenceId
         );
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Text generation job queued successfully',
-            'reference_id' => $referenceId,
-            'status_url' => route('generate_text_status', ['referenceId' => $referenceId]),
-        ], 202);
+        return response()->json(
+            Response::buildSuccess(
+                data: [
+                    'reference_id' => $referenceId,
+                    'status_url' => route('generate_text_status', ['referenceId' => $referenceId]),
+                ],
+                message: 'Text generation job queued successfully'
+            ),
+            202
+        );
     }
 
     public function status(string $referenceId)
@@ -43,19 +48,27 @@ class GenerateTextController extends Controller
         if (Storage::disk('local')->exists($filePath)) {
             $content = Storage::disk('local')->get($filePath);
 
-            return response()->json([
-                'success' => true,
-                'status' => 'completed',
-                'reference_id' => $referenceId,
-                'content' => $content,
-            ]);
+            return response()->json(
+                Response::buildSuccess(
+                    data: [
+                        'reference_id' => $referenceId,
+                        'status' => 'completed',
+                        'content' => $content,
+                    ],
+                    message: 'Text generation completed'
+                )
+            );
         }
 
-        return response()->json([
-            'success' => true,
-            'status' => 'processing',
-            'reference_id' => $referenceId,
-            'message' => 'Text generation is still in progress',
-        ], 202);
+        return response()->json(
+            Response::buildSuccess(
+                data: [
+                    'reference_id' => $referenceId,
+                    'status' => 'processing',
+                ],
+                message: 'Text generation is still in progress'
+            ),
+            202
+        );
     }
 }
