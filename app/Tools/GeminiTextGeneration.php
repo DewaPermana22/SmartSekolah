@@ -2,16 +2,18 @@
 
 namespace App\Tools;
 
-use App\Usecase\GeminiUsecase as UsecaseGeminiUsecase;
 use App\Http\Presenter\Response;
+use App\Usecase\GenerateTextUsecase;
+use App\Usecase\TextGenerationtUsecase;
 use Vizra\VizraADK\Contracts\ToolInterface;
 use Vizra\VizraADK\Memory\AgentMemory;
 use Vizra\VizraADK\System\AgentContext;
 use Illuminate\Support\Facades\Log;
 use Exception;
 
-class GeminiTools implements ToolInterface
+class GeminiTextGeneration implements ToolInterface
 {
+
     /**
      * Get the tool's definition for the LLM.
      * This structure should be JSON schema compatible.
@@ -19,7 +21,7 @@ class GeminiTools implements ToolInterface
     public function definition(): array
     {
         return [
-            'name' => 'generate_educational_text',
+            'name' => 'gemini_text_generation',
             'description' => 'Generate educational text content using Gemini AI. Use this tool when you need to create structured learning materials for various education levels.',
             'parameters' => [
                 'type' => 'object',
@@ -33,7 +35,6 @@ class GeminiTools implements ToolInterface
                     'level' => [
                         'type' => 'string',
                         'description' => 'Target education level for the content',
-                        'enum' => ['SD', 'SMP', 'SMA'],
                     ],
                 ],
                 'required' => ['topic', 'level'],
@@ -68,18 +69,9 @@ class GeminiTools implements ToolInterface
                 );
             }
 
-            $validLevels = ['SD', 'SMP', 'SMA'];
-            if (!in_array($level, $validLevels)) {
-                return $this->jsonResponse(
-                    Response::buildError(
-                        400,
-                        "Invalid level. Must be one of: " . implode(', ', $validLevels)
-                    )
-                );
-            }
 
             $startTime = microtime(true);
-            $text = app(UsecaseGeminiUsecase::class)->generateText($topic, $level);
+            $text = app(TextGenerationtUsecase::class)->generateTextGemini($topic, $level);
             $executionTime = round((microtime(true) - $startTime) * 1000, 2);
 
             if (empty($text)) {

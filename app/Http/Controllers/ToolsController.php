@@ -8,13 +8,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class GenerateTextController extends Controller
+class ToolsController extends Controller
 {
     public function generate(Request $request)
     {
         $request->validate([
             'topic' => 'required|string|max:255',
-            'level' => 'required|string|in:SD,SMP,SMA',
+            'level' => 'required|string|max:100',
         ]);
 
         $referenceId = Str::uuid()->toString();
@@ -38,6 +38,26 @@ class GenerateTextController extends Controller
                 message: 'Text generation job queued successfully'
             ),
             202
+        );
+    }
+
+    public function testingGptUsecase(Request $request)
+    {
+        $request->validate([
+            'topic' => 'required|string|max:255',
+            'level' => 'required|string|max:100',
+        ]);
+
+        $text = app(\App\Usecase\TextGenerationtUsecase::class)
+            ->generateTextOpenAi($request->topic, $request->level);
+
+        return response()->json(
+            Response::buildSuccess(
+                data: [
+                    'generated_text' => $text,
+                ],
+                message: 'Text generated successfully'
+            )
         );
     }
 
@@ -71,4 +91,5 @@ class GenerateTextController extends Controller
             202
         );
     }
+
 }
