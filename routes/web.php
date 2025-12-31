@@ -9,8 +9,6 @@ use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\SchoolController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\AIToolsController;
-use App\Http\Controllers\Admin\SchoolController;
-use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -69,6 +67,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::post('/create', [ClassroomController::class, 'doCreate'])->name('create');
         Route::get('/update/{id}', [ClassroomController::class, 'update'])->name('update');
         Route::post('/update/{id}', [ClassroomController::class, 'doUpdate'])->name('do_update');
+        Route::get('/detail/{id}', [ClassroomController::class, 'detail'])->name('detail');
         Route::delete('/delete/{id}', [ClassroomController::class, 'delete'])->name('delete');
     });
 
