@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ClassroomController;
 use App\Http\Controllers\Admin\TaskCategoryController;
 use App\Http\Controllers\Admin\TaskController;
+use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\SchoolController;
@@ -76,6 +77,15 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::post('/update/{id}', [StudentController::class, 'doUpdate'])->name('do_update');
         Route::delete('/delete/{id}', [StudentController::class, 'delete'])->name('delete');
     });
+
+    Route::prefix('teachers')->name('teachers.')->group(function () {
+        Route::get('/', [TeacherController::class, 'index'])->name('index');
+        Route::get('/add', [TeacherController::class, 'add'])->name('add');
+        Route::post('/create', [TeacherController::class, 'doCreate'])->name('create');
+        Route::get('/update/{id}', [TeacherController::class, 'update'])->name('update');
+        Route::post('/update/{id}', [TeacherController::class, 'doUpdate'])->name('do_update');
+        Route::delete('/delete/{id}', [TeacherController::class, 'delete'])->name('delete');
+    }); 
 
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/change-password', [UserController::class, 'changePassword'])->name('change_password');

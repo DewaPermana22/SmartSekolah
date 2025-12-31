@@ -17,4 +17,6 @@ class DatabaseConst
     const CLASSROOM = 'classrooms';
 
     const STUDENT = 'students';
+
+    const TEACHER = 'teachers'; 
 }
