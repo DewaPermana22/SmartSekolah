@@ -9,6 +9,8 @@ use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\SchoolController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\AIToolsController;
+use App\Http\Controllers\Admin\SchoolController;
+use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 

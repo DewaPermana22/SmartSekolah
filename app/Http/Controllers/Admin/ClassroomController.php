@@ -34,6 +34,7 @@ class ClassroomController extends Controller
         ]);
         $data = $data['data']['list'] ?? [];
 
+
         return view('_admin.classrooms.index', [
             'data' => $data,
             'page' => $this->page,

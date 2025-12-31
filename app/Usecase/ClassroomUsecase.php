@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Validator;
 
 class ClassroomUsecase extends Usecase
 {
-    public function getAll(array $filterData = []): array
+   public function getAll(array $filterData = []): array
 {
     try {
         $userSchoolId = Auth::user()?->school_id;
@@ -74,6 +74,7 @@ class ClassroomUsecase extends Usecase
         return Response::buildErrorService($e->getMessage());
     }
 }
+
 
     public function getByID(int $id): array
     {
