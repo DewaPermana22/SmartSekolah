@@ -26,8 +26,8 @@ class UserUsecase extends Usecase
                 ->whereNull('deleted_at')
                 ->when($filterData['keywords'] ?? false, function ($query, $keywords) {
                     return $query->where(function ($q) use ($keywords) {
-                        $q->where('name', 'like', '%'.$keywords.'%')
-                            ->orWhere('email', 'like', '%'.$keywords.'%');
+                        $q->where('name', 'like', '%' . $keywords . '%')
+                            ->orWhere('email', 'like', '%' . $keywords . '%');
                     });
                 })
                 ->when($filterData['access_type'] ?? false, function ($query, $accessType) {
@@ -73,6 +73,50 @@ class UserUsecase extends Usecase
                 data: collect($data)->toArray()
             );
         } catch (Exception $e) {
+            Log::error(
+                message: $e->getMessage(),
+                context: [
+                    'method' => __METHOD__,
+                ]
+            );
+
+            return Response::buildErrorService($e->getMessage());
+        }
+    }
+    public function register(Request $request): array
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'unique:users,email'],
+            'password' => ['required', 'confirmed', 'min:6'],
+        ]);
+
+        $validator->validate();
+
+        DB::beginTransaction();
+
+        try {
+            $userID = DB::table(DatabaseConst::USER)->insertGetId([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'access_type' => 2, 
+                'school_id' => null,
+                'is_active' => 1,
+                'created_at' => now(),
+            ]);
+
+            DB::commit();
+
+            return Response::buildSuccess(
+                data: [
+                    'user_id' => $userID,
+                ],
+                message: 'Registrasi akun berhasil'
+            );
+        } catch (Exception $e) {
+            DB::rollBack();
+
             Log::error(
                 message: $e->getMessage(),
                 context: [
