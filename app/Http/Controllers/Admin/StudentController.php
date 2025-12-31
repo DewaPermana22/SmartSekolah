@@ -32,12 +32,15 @@ class StudentController extends Controller
     {
         $data = $this->usecase->getAll([
             'keywords' => $request->get('keywords'),
+            'classroom_id' => $request->get('classroom_id'),
         ]);
 
         return view('_admin.students.index', [
             'data' => $data['data']['list'] ?? [],
             'page' => $this->page,
             'keywords' => $request->get('keywords'),
+            'classroom_id' => $request->get('classroom_id'),
+            'classrooms' => $this->classroomUsecase->getAll(['no_pagination' => true])['data']['list'] ?? [],
         ]);
     }
 

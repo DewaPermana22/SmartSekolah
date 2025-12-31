@@ -14,26 +14,16 @@
                 @csrf
 
                 <div class="mb-3">
-    <label class="block text-sm font-medium">Nama</label>
-    <input
-        type="text"
-        name="name"
-        value="{{ old('name', $data->name) }}"
-        class="w-full rounded-lg border px-3 py-2"
-        required
-    >
-</div>
+                    <label class="block text-sm font-medium">Nama</label>
+                    <input type="text" name="name" value="{{ old('name', $data->name) }}"
+                        class="w-full rounded-lg border px-3 py-2" required>
+                </div>
 
-<div class="mb-3">
-    <label class="block text-sm font-medium">Email</label>
-    <input
-        type="email"
-        name="email"
-        value="{{ old('email', $data->email) }}"
-        class="w-full rounded-lg border px-3 py-2"
-        required
-    >
-</div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium">Email</label>
+                    <input type="email" name="email" value="{{ old('email', $data->email) }}"
+                        class="w-full rounded-lg border px-3 py-2" required>
+                </div>
 
                 <div class="mb-3">
                     <label class="block text-sm font-medium">Kelas *</label>
