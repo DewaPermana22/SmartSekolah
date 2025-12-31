@@ -1,9 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\ClassroomController;
 use App\Http\Controllers\Admin\TaskCategoryController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\SchoolController;
+use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,7 +17,13 @@ Route::get('/', function () {
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'doLogin'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/register', [AuthController::class, 'register'])->name('register');
+Route::post('/register', [AuthController::class, 'doRegister'])->name('register.post');
 
+Route::middleware('auth')->group(function () {
+    Route::get('/register-school', [SchoolController::class, 'add'])->name('school.register');
+    Route::post('/register-school', [SchoolController::class, 'doCreate'])->name('school.register.post');
+});
 // Admin Users Routes
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function () {
@@ -48,6 +57,24 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/update/{id}', [TaskController::class, 'update'])->name('update');
         Route::post('/update/{id}', [TaskController::class, 'doUpdate'])->name('do_update');
         Route::delete('/delete/{id}', [TaskController::class, 'delete'])->name('delete');
+    });
+
+    Route::prefix('classrooms')->name('classrooms.')->group(function () {
+        Route::get('/', [ClassroomController::class, 'index'])->name('index');
+        Route::get('/add', [ClassroomController::class, 'add'])->name('add');
+        Route::post('/create', [ClassroomController::class, 'doCreate'])->name('create');
+        Route::get('/update/{id}', [ClassroomController::class, 'update'])->name('update');
+        Route::post('/update/{id}', [ClassroomController::class, 'doUpdate'])->name('do_update');
+        Route::delete('/delete/{id}', [ClassroomController::class, 'delete'])->name('delete');
+    });
+
+    Route::prefix('students')->name('students.')->group(function () {
+        Route::get('/', [StudentController::class, 'index'])->name('index');
+        Route::get('/add', [StudentController::class, 'add'])->name('add');
+        Route::post('/create', [StudentController::class, 'doCreate'])->name('create');
+        Route::get('/update/{id}', [StudentController::class, 'update'])->name('update');
+        Route::post('/update/{id}', [StudentController::class, 'doUpdate'])->name('do_update');
+        Route::delete('/delete/{id}', [StudentController::class, 'delete'])->name('delete');
     });
 
     Route::prefix('profile')->name('profile.')->group(function () {
