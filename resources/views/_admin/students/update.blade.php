@@ -10,24 +10,31 @@
                 Edit {{ $page['title'] }}
             </h2>
 
-            <form navigate-form action="{{ route('admin.students.doUpdate', $data->id) }}" method="POST">
+            <form navigate-form action="{{ route('admin.students.do_update', $data->id) }}" method="POST">
                 @csrf
 
-                {{-- Nama (readonly) --}}
                 <div class="mb-3">
-                    <label class="block text-sm font-medium">Nama</label>
-                    <input type="text" value="{{ $data->name }}" class="w-full rounded-lg border px-3 py-2 bg-gray-100"
-                        readonly>
-                </div>
+    <label class="block text-sm font-medium">Nama</label>
+    <input
+        type="text"
+        name="name"
+        value="{{ old('name', $data->name) }}"
+        class="w-full rounded-lg border px-3 py-2"
+        required
+    >
+</div>
 
-                {{-- Email (readonly) --}}
-                <div class="mb-3">
-                    <label class="block text-sm font-medium">Email</label>
-                    <input type="email" value="{{ $data->email }}" class="w-full rounded-lg border px-3 py-2 bg-gray-100"
-                        readonly>
-                </div>
+<div class="mb-3">
+    <label class="block text-sm font-medium">Email</label>
+    <input
+        type="email"
+        name="email"
+        value="{{ old('email', $data->email) }}"
+        class="w-full rounded-lg border px-3 py-2"
+        required
+    >
+</div>
 
-                {{-- Kelas --}}
                 <div class="mb-3">
                     <label class="block text-sm font-medium">Kelas *</label>
                     <select name="classroom_id" class="w-full rounded-lg border px-3 py-2">

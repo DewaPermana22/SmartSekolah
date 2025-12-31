@@ -35,17 +35,16 @@
                     </div>
 
                     {{-- Kelas --}}
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Kelas *</label>
-                        <select name="classroom_id" class="w-full rounded-lg border px-3 py-2" required>
-                            <option value="">-- Pilih Kelas --</option>
-                            @foreach ($classrooms as $class)
-                                <option value="{{ $class->id }}">
-                                    {{ $class->class_name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                     <div class="mb-3">
+                    <label class="block text-sm font-medium">Kelas *</label>
+                    <select name="classroom_id" class="w-full rounded-lg border px-3 py-2">
+                        @foreach ($classrooms as $class)
+                            <option value="{{ $class->id }}" {{ $class->id == $data->classroom_id ? 'selected' : '' }}>
+                                {{ $class->display_name ?? $class->class_name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
                 </div>
 

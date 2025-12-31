@@ -73,13 +73,12 @@ class StudentController extends Controller
         if (empty($student['data'])) {
             return redirect()->intended($this->baseRedirect)->with('error', ResponseConst::DEFAULT_ERROR_MESSAGE);
         }
-        $data = $student['data'] ?? [];
 
         $classrooms = $this->classroomUsecase->getAll(['no_pagination' => true]);
 
         return view('_admin.students.update', [
             'page' => $this->page,
-            'data' => $student['data'],
+            'data' => $student['data']['data'],
             'classrooms' => $classrooms['data']['list'] ?? [],
         ]);
     }

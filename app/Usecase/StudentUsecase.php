@@ -153,35 +153,58 @@ class StudentUsecase extends Usecase
         }
     }
 
-    public function update(Request $data, int $id): array
-    {
-        $validator = Validator::make($data->all(), [
-            'classroom_id' => 'required|exists:classrooms,id',
-        ]);
+   public function update(Request $data, int $id): array
+{
+    $validator = Validator::make($data->all(), [
+        'name' => 'required|string|max:255',
+        'email' => 'required|email',
+        'classroom_id' => 'required|exists:classrooms,id',
+    ]);
 
-        $validator->validate();
+    $validator->validate();
 
-        DB::beginTransaction();
-        try {
-            DB::table(DatabaseConst::STUDENT)
-                ->where('id', $id)
-                ->update([
-                    'classroom_id' => $data->classroom_id,
-                    'updated_by' => Auth::user()?->id,
-                    'updated_at' => now(),
-                ]);
+    DB::beginTransaction();
+    try {
+        // ambil student dulu
+        $student = DB::table(DatabaseConst::STUDENT)
+            ->where('id', $id)
+            ->whereNull('deleted_at')
+            ->first();
 
-            DB::commit();
-
-            return Response::buildSuccess(
-                message: ResponseConst::SUCCESS_MESSAGE_UPDATED
-            );
-        } catch (Exception $e) {
-            DB::rollback();
-            Log::error($e->getMessage(), ['method' => __METHOD__]);
-            return Response::buildErrorService($e->getMessage());
+        if (! $student) {
+            throw new Exception('Data siswa tidak ditemukan');
         }
+
+        // 1. UPDATE USER
+        DB::table(DatabaseConst::USER)
+            ->where('id', $student->user_id)
+            ->update([
+                'name' => $data->name,
+                'email' => $data->email,
+                'updated_at' => now(),
+            ]);
+
+        // 2. UPDATE STUDENT (PINDAH KELAS)
+        DB::table(DatabaseConst::STUDENT)
+            ->where('id', $id)
+            ->update([
+                'classroom_id' => $data->classroom_id,
+                'updated_by' => Auth::user()?->id,
+                'updated_at' => now(),
+            ]);
+
+        DB::commit();
+
+        return Response::buildSuccess(
+            message: ResponseConst::SUCCESS_MESSAGE_UPDATED
+        );
+    } catch (Exception $e) {
+        DB::rollback();
+
+        Log::error($e->getMessage(), ['method' => __METHOD__]);
+        return Response::buildErrorService($e->getMessage());
     }
+}
 
     public function delete(int $id): array
     {
