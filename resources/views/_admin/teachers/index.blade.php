@@ -19,22 +19,21 @@
     {{-- Filter --}}
     <div class="mb-4 bg-white dark:bg-neutral-800 p-4 rounded-lg shadow">
         <form navigate method="GET" action="{{ route('admin.teachers.index') }}" class="flex gap-4 flex-wrap">
-           <div class="flex-1 min-w-64">
-        <input
-            type="text"
-            name="keywords"
-            value="{{ $keywords }}"
-            placeholder="Cari nama Guru..."
-            class="py-2 px-3 block w-full border-gray-200 rounded-lg text-sm"
-        >
-    </div>
+            <div class="flex-1 min-w-64">
+                <input type="text" name="keywords" value="{{ $keywords }}" placeholder="Cari nama Guru..."
+                    class="py-2 px-3 block w-full border-gray-200 rounded-lg text-sm">
+            </div>
 
-    <button
-        type="submit"
-        class="py-2 px-4 bg-gray-600 text-white rounded-lg"
-    >
-        Cari
-    </button>
+            <button type="submit" class="py-2 px-4 bg-gray-600 text-white rounded-lg">
+                Cari
+            </button>
+            @if (!empty($keywords) )
+                <a class="py-1 px-3 inline-flex items-center gap-x-1 text-sm font-semibold rounded-lg border border-blue-600 text-blue-600 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 disabled:opacity-50 disabled:pointer-events-none dark:border-blue-500 dark:text-blue-500 dark:hover:bg-blue-500/10 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 cursor-pointer"
+                    href="{{ route('admin.teachers.index') }}">
+                    @include('_admin._layout.icons.reset')
+                    Reset
+                </a>
+            @endif
 
         </form>
     </div>
@@ -67,7 +66,7 @@
                         <th
                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider">
                             Email</th>
-                        
+
                         <th
                             class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider">
                             Aksi</th>
@@ -85,13 +84,13 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-neutral-300">
                                 {{ $item->email }}
                             </td>
-                          
+
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <a navigate href="{{ route('admin.teachers.update', $item->id) }}"
                                     class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-3 inline-flex items-center gap-1">
-                                    <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round">
+                                    <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
+                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                                     </svg>
@@ -104,9 +103,9 @@
                                     @method('DELETE')
                                     <button type="submit"
                                         class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 inline-flex items-center gap-1">
-                                        <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round">
+                                        <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
+                                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <polyline points="3 6 5 6 21 6" />
                                             <path
                                                 d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
@@ -122,7 +121,8 @@
                         <tr>
                             <td colspan="5" class="px-6 py-8 text-center text-sm text-gray-500 dark:text-neutral-400">
                                 <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-neutral-600 mb-2"
-                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                                 </svg>
@@ -136,10 +136,10 @@
     </div>
 
     {{-- Pagination --}}
-   @if ($data instanceof \Illuminate\Pagination\AbstractPaginator)
-    <div class="mt-4">
-        {{ $data->links() }}
-    </div>
-@endif
+    @if ($data instanceof \Illuminate\Pagination\AbstractPaginator)
+        <div class="mt-4">
+            {{ $data->links() }}
+        </div>
+    @endif
 
 @endsection
