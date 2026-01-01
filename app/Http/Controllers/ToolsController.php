@@ -61,6 +61,46 @@ class ToolsController extends Controller
         );
     }
 
+    public function testingGeminiUsecase(Request $request)
+    {
+        $request->validate([
+            'topic' => 'required|string|max:255',
+            'level' => 'required|string|max:100',
+        ]);
+
+        $text = app(\App\Usecase\TextGenerationtUsecase::class)
+            ->generateTextGemini($request->topic, $request->level);
+
+        return response()->json(
+            Response::buildSuccess(
+                data: [
+                    'generated_text' => $text,
+                ],
+                message: 'Text generated successfully'
+            )
+        );
+    }
+
+    public function testingDeepsekUsecase(Request $request)
+    {
+        $request->validate([
+            'topic' => 'required|string|max:255',
+            'level' => 'required|string|max:100',
+        ]);
+
+        $text = app(\App\Usecase\TextGenerationtUsecase::class)
+            ->generateTextDeepseek($request->topic, $request->level);
+
+        return response()->json(
+            Response::buildSuccess(
+                data: [
+                    'generated_text' => $text,
+                ],
+                message: 'Text generated successfully'
+            )
+        );
+    }
+
     public function status(string $referenceId)
     {
         $filePath = "generated-texts/{$referenceId}.txt";

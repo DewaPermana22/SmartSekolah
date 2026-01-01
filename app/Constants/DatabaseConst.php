@@ -11,4 +11,6 @@ class DatabaseConst
     const TASK_CATEGORY = 'task_categories';
 
     const TASK = 'tasks';
+
+    const PROMPT_TEXT_GENERATION = 'prompt_text_generations';
 }

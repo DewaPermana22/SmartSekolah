@@ -3,7 +3,6 @@
 namespace App\Tools;
 
 use App\Http\Presenter\Response;
-use App\Usecase\GenerateTextUsecase;
 use App\Usecase\TextGenerationtUsecase;
 use Vizra\VizraADK\Contracts\ToolInterface;
 use Vizra\VizraADK\Memory\AgentMemory;
@@ -11,28 +10,28 @@ use Vizra\VizraADK\System\AgentContext;
 use Illuminate\Support\Facades\Log;
 use Exception;
 
-class GeminiTextGeneration implements ToolInterface
+class DeepseekTextGeneration implements ToolInterface
 {
-
     /**
      * Get the tool's definition for the LLM.
-     * This structure should be JSON schema compatible.
      */
     public function definition(): array
     {
         return [
-            'name' => 'gemini_text_generation',
-            'description' => 'Generate educational text content using Gemini AI. Use this tool when you need to create structured learning materials for various education levels.',
+            'name' => 'deepseek_text_generation',
+            'description' => 'Generate educational text content using DeepSeek AI. Suitable for structured learning materials.',
             'parameters' => [
                 'type' => 'object',
                 'properties' => [
                     'topic' => [
                         'type' => 'string',
+                        'description' => 'The educational topic to explain',
                         'minLength' => 3,
                         'maxLength' => 500,
                     ],
                     'level' => [
                         'type' => 'string',
+                        'description' => 'Target education level (e.g., SD, SMP, SMA)',
                     ],
                 ],
                 'required' => ['topic', 'level'],
@@ -42,11 +41,6 @@ class GeminiTextGeneration implements ToolInterface
 
     /**
      * Execute the tool's logic.
-     *
-     * @param array $arguments
-     * @param AgentContext $context
-     * @param AgentMemory $memory
-     * @return string JSON string result
      */
     public function execute(array $arguments, AgentContext $context, AgentMemory $memory): string
     {
@@ -55,26 +49,31 @@ class GeminiTextGeneration implements ToolInterface
             $level = strtoupper(trim($arguments['level'] ?? ''));
 
             // Validation
-            if (empty($topic)) {
+            if ($topic === '') {
                 return $this->jsonResponse(
                     Response::buildError(400, 'Topic cannot be empty')
                 );
             }
 
-            if (empty($level)) {
+            if ($level === '') {
                 return $this->jsonResponse(
                     Response::buildError(400, 'Level cannot be empty')
                 );
             }
 
-
             $startTime = microtime(true);
-            $text = app(TextGenerationtUsecase::class)->generateTextGemini($topic, $level);
+
+            // Call DeepSeek usecase
+            $text = app(TextGenerationtUsecase::class)
+                ->generateTextDeepseek($topic, $level);
+
             $executionTime = round((microtime(true) - $startTime) * 1000, 2);
 
             if (empty($text)) {
                 return $this->jsonResponse(
-                    Response::buildErrorService('Failed to generate content. Empty response from AI.')
+                    Response::buildErrorService(
+                        'Failed to generate content. Empty response from DeepSeek AI.'
+                    )
                 );
             }
 
@@ -86,24 +85,22 @@ class GeminiTextGeneration implements ToolInterface
                     'word_count' => str_word_count($text),
                     'generated_at' => now()->toISOString(),
                     'execution_time_ms' => $executionTime,
-                    'tool_name' => 'generate_educational_text'
+                    'tool_name' => 'deepseek_text_generation',
                 ],
-                message: 'Educational content generated successfully'
+                message: 'Educational content generated successfully using DeepSeek'
             );
 
             return $this->jsonResponse($result);
-
         } catch (Exception $e) {
             return $this->jsonResponse(
                 Response::buildErrorService(
                     'An error occurred while generating content: ' . $e->getMessage()
                 )
             );
-
         } finally {
-            Log::debug('GeminiTools executed completed', [
-                'peak_memory' => memory_get_peak_usage() / 1024 / 1024 . ' MB',
-                'total_time' => round((microtime(true) - LARAVEL_START) * 1000, 2) . 'ms'
+            Log::debug('DeepseekTextGeneration executed', [
+                'peak_memory' => round(memory_get_peak_usage() / 1024 / 1024, 2) . ' MB',
+                'total_time' => round((microtime(true) - LARAVEL_START) * 1000, 2) . ' ms',
             ]);
         }
     }
