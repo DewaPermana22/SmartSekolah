@@ -11,6 +11,6 @@ Route::get('/user', function (Request $request) {
 //AI Tools
 Route::prefix('tools')->group(function () {
     Route::post('/generate-text', [ToolsController::class, 'generate'])->name('generate_text');
-    Route::post('/testing-gpt-usecase', [ToolsController::class, 'testingGptUsecase'])->name('testing_gpt_usecase');
+    Route::post('/gemini', [ToolsController::class, 'testingGeminiUsecase'])->name('generate_text_gemini');
     Route::get('/status/{referenceId}', [ToolsController::class, 'status'])->name('generate_text_status');
 });
