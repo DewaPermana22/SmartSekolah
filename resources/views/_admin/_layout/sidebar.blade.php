@@ -17,7 +17,7 @@
         <div class="px-6 pt-4 flex items-center">
             <!-- Logo -->
             <a class="flex-none rounded-xl text-xl inline-block font-semibold focus:outline-hidden focus:opacity-80"
-                href="#" aria-label="Preline">
+                href="#" aria-label="SmartSekolah">
                 @include('_admin._layout.icons.sidebar.logo')
             </a>
             <!-- End Logo -->
