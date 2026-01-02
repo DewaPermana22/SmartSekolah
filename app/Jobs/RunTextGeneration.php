@@ -37,7 +37,6 @@ class RunTextGeneration implements ShouldQueue
                 "generated-texts/{$this->referenceId}.txt",
                 $generatedText
             );
-            
         } catch (Throwable $e) {
             throw $e;
         }

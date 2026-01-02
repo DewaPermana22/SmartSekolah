@@ -12,10 +12,6 @@ use Exception;
 
 class InfographicsGeneration implements ToolInterface
 {
-    /**
-     * Get the tool's definition for the LLM.
-     * This structure should be JSON schema compatible.
-     */
     public function definition(): array
     {
         return [
@@ -26,78 +22,70 @@ class InfographicsGeneration implements ToolInterface
                 'properties' => [
                     'description' => [
                         'type' => 'string',
+                        'description' => 'Topic or description for the infographic',
                         'minLength' => 3,
                         'maxLength' => 500,
                     ],
+                    'reference_id' => [
+                        'type' => 'string',
+                        'description' => 'Unique reference ID for the image file',
+                    ],
                 ],
-                'required' => ['description'],
+                'required' => ['description', 'reference_id'],
             ],
         ];
     }
 
-    /**
-     * Execute the tool's logic.
-     *
-     * @param array $arguments
-     * @param AgentContext $context
-     * @param AgentMemory $memory
-     * @return string JSON string result
-     */
     public function execute(array $arguments, AgentContext $context, AgentMemory $memory): string
     {
         $startTime = microtime(true);
 
         try {
             $description = trim($arguments['description'] ?? '');
+            $referenceId = trim($arguments['reference_id'] ?? '');
 
-            if (empty($description)) {
+            // Validasi input
+            if ($description === '') {
                 return $this->jsonResponse(
                     Response::buildError(400, 'Description cannot be empty')
                 );
             }
 
-            $resultImage = app(ImageGenerationUsecase::class)
-                ->generateInfographic($description);
-
-            if (empty($resultImage)) {
+            if ($referenceId === '') {
                 return $this->jsonResponse(
-                    Response::buildErrorService('Failed to generate infographic. Empty response from AI.')
+                    Response::buildError(400, 'Reference ID cannot be empty')
                 );
             }
 
-            // Check if usecase already returned error
-            if (isset($resultImage['success']) && !$resultImage['success']) {
-                return $this->jsonResponse($resultImage);
+            $result = app(ImageGenerationUsecase::class)
+                ->generateInfographic($description, $referenceId);
+
+            if (empty($result) || empty($result['success'])) {
+                return $this->jsonResponse(
+                    $result ?: Response::buildErrorService('Failed to generate infographic')
+                );
             }
 
             $executionTime = round((microtime(true) - $startTime) * 1000, 2);
 
-            // Extract image data from usecase result
-            // Usecase returns: {success: true, data: {image_base64: "...", mime_type: "..."}}
-            $imageData = $resultImage['data'] ?? [];
-
-            // Build flat response structure
-            $result = Response::buildSuccess(
-                data: [
-                    'image_base64' => $imageData['image_base64'] ?? null,
-                    'mime_type' => $imageData['mime_type'] ?? 'image/png',
-                    'description' => $description,
-                    'generated_at' => now()->toISOString(),
-                    'execution_time_ms' => $executionTime,
-                    'tool_name' => 'infographics_generation'
-                ],
-                message: 'Infographic generated successfully'
+            return $this->jsonResponse(
+                Response::buildSuccess(
+                    data: [
+                        'image_path' => "generated-images/{$referenceId}.png",
+                        'reference_id' => $referenceId,
+                        'description' => $description,
+                        'url' => $result['data']['url'] ?? null,
+                        'generated_at' => now()->toISOString(),
+                        'execution_time_ms' => $executionTime,
+                        'tool_name' => 'infographics_generation',
+                    ],
+                    message: 'Infographic generated successfully'
+                )
             );
-
-            Log::info('Infographic generated successfully', [
-                'description' => $description,
-                'has_image' => !empty($imageData['image_base64']),
-                'execution_time_ms' => $executionTime
-            ]);
-
-            return $this->jsonResponse($result);
         } catch (Exception $e) {
-            Log::error('InfographicsGeneration tool failed', [
+            Log::error('InfographicsGeneration failed', [
+                'reference_id' => $arguments['reference_id'] ?? 'unknown',
+                'description' => $arguments['description'] ?? '',
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
@@ -107,17 +95,9 @@ class InfographicsGeneration implements ToolInterface
                     'An error occurred while generating infographic: ' . $e->getMessage()
                 )
             );
-        } finally {
-            Log::debug('InfographicsGeneration tool execution completed', [
-                'peak_memory' => memory_get_peak_usage() / 1024 / 1024 . ' MB',
-                'total_time' => round((microtime(true) - LARAVEL_START) * 1000, 2) . 'ms'
-            ]);
         }
     }
 
-    /**
-     * Helper: Convert array to JSON string
-     */
     private function jsonResponse(array $data): string
     {
         return json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
