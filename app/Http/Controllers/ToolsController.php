@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Presenter\Response;
 use App\Jobs\RunTextGeneration;
+use App\Jobs\RunImageGeneration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ToolsController extends Controller
 {
-    public function generate(Request $request)
+    public function generateText(Request $request)
     {
         $request->validate([
             'topic' => 'required|string|max:255',
@@ -33,7 +34,7 @@ class ToolsController extends Controller
             Response::buildSuccess(
                 data: [
                     'reference_id' => $referenceId,
-                    'status_url' => route('generate_text_status', ['referenceId' => $referenceId]),
+                    'status_url' => route('job_status_text', ['referenceId' => $referenceId]),
                 ],
                 message: 'Text generation job queued successfully'
             ),
@@ -41,23 +42,31 @@ class ToolsController extends Controller
         );
     }
 
-    public function testingGptUsecase(Request $request)
+    public function generateInfographics(Request $request)
     {
         $request->validate([
-            'topic' => 'required|string|max:255',
-            'level' => 'required|string|max:100',
+            'description' => 'required|string|max:255',
         ]);
 
-        $text = app(\App\Usecase\TextGenerationtUsecase::class)
-            ->generateTextOpenAi($request->topic, $request->level);
+        $referenceId = Str::uuid()->toString();
+        $message = 'Buatkan gambar dengan deskripsi: ' . htmlspecialchars($request->description, ENT_QUOTES);
+
+        RunImageGeneration::dispatch(
+            message: $message,
+            description: $request->description,
+            referenceId: $referenceId,
+            type: 'infographic'
+        );
 
         return response()->json(
             Response::buildSuccess(
                 data: [
-                    'generated_text' => $text,
+                    'reference_id' => $referenceId,
+                    'status_url' => route('job_status_image', ['referenceId' => $referenceId]),
                 ],
-                message: 'Text generated successfully'
-            )
+                message: 'Image generation job queued successfully'
+            ),
+            202
         );
     }
 
@@ -81,27 +90,7 @@ class ToolsController extends Controller
         );
     }
 
-    public function testingDeepsekUsecase(Request $request)
-    {
-        $request->validate([
-            'topic' => 'required|string|max:255',
-            'level' => 'required|string|max:100',
-        ]);
-
-        $text = app(\App\Usecase\TextGenerationtUsecase::class)
-            ->generateTextDeepseek($request->topic, $request->level);
-
-        return response()->json(
-            Response::buildSuccess(
-                data: [
-                    'generated_text' => $text,
-                ],
-                message: 'Text generated successfully'
-            )
-        );
-    }
-
-    public function status(string $referenceId)
+    public function JobTextstatus(string $referenceId)
     {
         $filePath = "generated-texts/{$referenceId}.txt";
 
@@ -132,4 +121,32 @@ class ToolsController extends Controller
         );
     }
 
+    public function JobImageStatus(string $referenceId)
+    {
+        $filePath = "generated-images/{$referenceId}.png";
+
+        if (Storage::disk('local')->exists($filePath)) {
+            return response()->json(
+                Response::buildSuccess(
+                    data: [
+                        'reference_id' => $referenceId,
+                        'status' => 'completed',
+                        'image_url' => Storage::url($filePath),
+                    ],
+                    message: 'Image generation completed'
+                )
+            );
+        }
+
+        return response()->json(
+            Response::buildSuccess(
+                data: [
+                    'reference_id' => $referenceId,
+                    'status' => 'processing',
+                ],
+                message: 'Image generation is still in progress'
+            ),
+            202
+        );
+    }
 }
