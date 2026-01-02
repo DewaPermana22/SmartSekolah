@@ -98,7 +98,7 @@ class StudentUsecase extends Usecase
                 'name' => $data->name,
                 'email' => $data->email,
                 'password' => Hash::make('password'),
-                'access_type' => 2,
+                'access_type' => 4,
                 'school_id' => $schoolId,
                 'is_active' => 1,
                 'created_at' => now(),
@@ -204,6 +204,37 @@ class StudentUsecase extends Usecase
         } catch (Exception $e) {
             DB::rollback();
 
+            Log::error($e->getMessage(), ['method' => __METHOD__]);
+            return Response::buildErrorService($e->getMessage());
+        }
+    }
+
+    public function resetPassword(int $id, string $password): array
+    {
+        DB::beginTransaction();
+        try {
+            $student = DB::table(DatabaseConst::STUDENT)
+                ->where('id', $id)
+                ->whereNull('deleted_at')
+                ->first();
+
+            if (!$student) {
+                throw new Exception('Data siswa tidak ditemukan');
+            }
+
+            DB::table(DatabaseConst::USER)
+                ->where('id', $student->user_id)
+                ->update([
+                    'password' => Hash::make($password),
+                    'updated_at' => now(),
+                ]);
+
+            DB::commit();
+            return Response::buildSuccess(
+                message: 'Password berhasil diperbarui'
+            );
+        } catch (Exception $e) {
+            DB::rollback();
             Log::error($e->getMessage(), ['method' => __METHOD__]);
             return Response::buildErrorService($e->getMessage());
         }

@@ -79,6 +79,8 @@ Route::middleware(['auth', 'check.school'])->prefix('admin')->name('admin.')->gr
         Route::post('/create', [StudentController::class, 'doCreate'])->name('create');
         Route::get('/update/{id}', [StudentController::class, 'update'])->name('update');
         Route::post('/update/{id}', [StudentController::class, 'doUpdate'])->name('do_update');
+        Route::get('/reset-password/{id}', [StudentController::class, 'resetPassword'])->name('resetPassword');
+        Route::post('/reset-password/{id}', [StudentController::class, 'doResetPassword'])->name('doResetPassword');
         Route::delete('/delete/{id}', [StudentController::class, 'delete'])->name('delete');
     });
 
@@ -88,6 +90,8 @@ Route::middleware(['auth', 'check.school'])->prefix('admin')->name('admin.')->gr
         Route::post('/create', [TeacherController::class, 'doCreate'])->name('create');
         Route::get('/update/{id}', [TeacherController::class, 'update'])->name('update');
         Route::post('/update/{id}', [TeacherController::class, 'doUpdate'])->name('do_update');
+        Route::get('/reset-password/{id}', [TeacherController::class, 'resetPassword'])->name('resetPassword');
+        Route::post('/reset-password/{id}', [TeacherController::class, 'doResetPassword'])->name('doResetPassword');
         Route::delete('/delete/{id}', [TeacherController::class, 'delete'])->name('delete');
     });
 

@@ -128,7 +128,6 @@
                         class="mb-4 inline-flex justify-center items-center size-14 rounded-full border-4 border-red-50 bg-red-100 text-red-500 dark:bg-red-700 dark:border-red-600 dark:text-red-100">
                         @include('_admin._layout.icons.warning_modal')
                     </span>
-                    <!-- End Icon -->
 
                     <h3 id="delete-modal-label" class="mb-2 text-xl font-bold text-gray-800 dark:text-neutral-200">
                         Hapus Kategori
