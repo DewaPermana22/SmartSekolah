@@ -35,7 +35,7 @@ class TeacherUsecase extends Usecase
                 ->orderBy('t.created_at', 'desc');
 
             if (!empty($filterData['keywords'])) {
-                $query->where('u.name', 'like', '%' . $filterData['keywords'] . '%');
+                $query->where('u.name', 'like', '%' . $filterData['keywords'] . '%')->orWhere('u.email', 'like', '%' . $filterData['keywords'] . '%');
             }
 
             $data = $query->paginate(20);
