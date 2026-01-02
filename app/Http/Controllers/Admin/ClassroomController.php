@@ -6,6 +6,7 @@ use App\Constants\ResponseConst;
 use App\Http\Controllers\Controller;
 use App\Usecase\ClassroomUsecase;
 use App\Usecase\SchoolUsecase;
+use App\Usecase\StudentUsecase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -24,7 +25,7 @@ class ClassroomController extends Controller
         protected ClassroomUsecase $usecase,
         protected SchoolUsecase $schoolUsecase
     ) {
-        $this->baseRedirect = 'admin/'.$this->page['route'];
+        $this->baseRedirect = 'admin/' . $this->page['route'];
     }
 
     public function index(Request $request): View|Response
@@ -101,6 +102,30 @@ class ClassroomController extends Controller
             ->back()
             ->withInput()
             ->with('error', ResponseConst::DEFAULT_ERROR_MESSAGE);
+    }
+    public function detail(int $id): View|RedirectResponse|Response
+    {
+        $classroom = $this->usecase->getByID($id);
+
+        if (empty($classroom['data'])) {
+            return redirect()
+                ->intended($this->baseRedirect)
+                ->with('error', ResponseConst::DEFAULT_ERROR_MESSAGE);
+        }
+
+        $studentUsecase = new StudentUsecase();
+        $studentsData = $studentUsecase->getAll([
+            'classroom_id' => $id,
+            'no_pagination' => true,
+        ]);
+
+        $students = $studentsData['data']['list'] ?? collect([]);
+
+        return view('_admin.classrooms.detail', [
+            'data' => (object) $classroom['data'],
+            'students' => $students,
+            'page' => $this->page,
+        ]);
     }
 
     public function delete(int $id): RedirectResponse

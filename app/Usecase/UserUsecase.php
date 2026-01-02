@@ -5,6 +5,7 @@ namespace App\Usecase;
 use App\Constants\DatabaseConst;
 use App\Constants\ResponseConst;
 use App\Http\Presenter\Response;
+use App\Constants\UserConst;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,13 +18,20 @@ class UserUsecase extends Usecase
 {
     private const DEFAULT_PASSWORD = 'default';
 
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
     public function getAll(array $filterData = []): array
     {
         try {
             $data = DB::table(DatabaseConst::USER)
                 ->whereNull('deleted_at')
+                ->when(Auth::user()->school_id, function ($query, $schoolId) {
+                    return $query->where('school_id', $schoolId)->where('access_type', UserConst::USER);
+                }, function ($query) {
+                    return $query->whereIn('access_type', [UserConst::ADMIN, UserConst::USER]);
+                })
                 ->when($filterData['keywords'] ?? false, function ($query, $keywords) {
                     return $query->where(function ($q) use ($keywords) {
                         $q->where('name', 'like', '%' . $keywords . '%')
@@ -39,7 +47,7 @@ class UserUsecase extends Usecase
                 ->paginate(20);
 
             // Append filter parameters to pagination links
-            if (! empty($filterData)) {
+            if (!empty($filterData)) {
                 $data->appends($filterData);
             }
 
@@ -67,6 +75,11 @@ class UserUsecase extends Usecase
             $data = DB::table(DatabaseConst::USER)
                 ->whereNull('deleted_at')
                 ->where('id', $id)
+                ->when(Auth::user()->school_id, function ($query, $schoolId) {
+                    return $query->where('school_id', $schoolId)->where('access_type', UserConst::USER);
+                }, function ($query) {
+                    return $query->whereIn('access_type', [UserConst::ADMIN, UserConst::USER]);
+                })
                 ->first();
 
             return Response::buildSuccess(
@@ -86,9 +99,9 @@ class UserUsecase extends Usecase
     public function register(Request $request): array
     {
         $validator = Validator::make($request->all(), [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'confirmed', 'min:6'],
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|confirmed|min:6',
         ]);
 
         $validator->validate();
@@ -100,7 +113,7 @@ class UserUsecase extends Usecase
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'access_type' => 2, 
+                'access_type' => 2,
                 'school_id' => null,
                 'is_active' => 1,
                 'created_at' => now(),
@@ -131,31 +144,36 @@ class UserUsecase extends Usecase
     public function create(Request $data): array
     {
         $validator = Validator::make($data->all(), [
-            'name' => 'required',
+            'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'access_type' => 'required',
+            'password' => 'required|confirmed|min:6',
         ]);
 
         $validator->validate();
 
         DB::beginTransaction();
+
         try {
-            DB::table(DatabaseConst::USER)
-                ->insert([
-                    'name' => $data['name'],
-                    'email' => $data['email'],
-                    'access_type' => $data['access_type'],
-                    'password' => Hash::make(self::DEFAULT_PASSWORD),
-                    'is_active' => 1,
-                    'created_by' => Auth::user()?->id,
-                    'created_at' => now(),
-                ]);
+            $userID = DB::table(DatabaseConst::USER)->insertGetId([
+                'name' => $data->name,
+                'email' => $data->email,
+                'password' => Hash::make($data->password),
+                'access_type' => 2,
+                'school_id' => Auth::user()->school_id,
+                'is_active' => 1,
+                'created_at' => now(),
+            ]);
 
             DB::commit();
 
-            return Response::buildSuccessCreated();
+            return Response::buildSuccess(
+                data: [
+                    'user_id' => $userID,
+                ],
+                message: 'Tambah User berhasil'
+            );
         } catch (Exception $e) {
-            DB::rollback();
+            DB::rollBack();
 
             Log::error(
                 message: $e->getMessage(),
@@ -180,7 +198,6 @@ class UserUsecase extends Usecase
         $update = [
             'name' => $data['name'],
             'email' => $data['email'],
-            'access_type' => $data['access_type'],
             'updated_by' => Auth::user()?->id,
             'updated_at' => now(),
         ];
@@ -223,7 +240,7 @@ class UserUsecase extends Usecase
                     'deleted_at' => now(),
                 ]);
 
-            if (! $delete) {
+            if (!$delete) {
                 DB::rollback();
                 throw new Exception('FAILED DELETE DATA');
             }
@@ -272,7 +289,7 @@ class UserUsecase extends Usecase
                 ->lockForUpdate()
                 ->first(['id']);
 
-            if (! $locked) {
+            if (!$locked) {
                 DB::rollback();
 
                 throw new Exception('FAILED LOCKED DATA');

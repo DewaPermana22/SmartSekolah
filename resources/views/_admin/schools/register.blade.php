@@ -46,19 +46,7 @@
                         @enderror
                     </div>
 
-                    {{-- MOU Date --}}
-                    <div>
-                        <label for="mou_date" class="block text-sm font-medium mb-2 dark:text-white">
-                            Tanggal MOU <span class="text-gray-400">(Opsional)</span>
-                        </label>
-                        <input type="date" id="mou_date" name="mou_date" value="{{ old('mou_date') }}"
-                            class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600 @error('mou_date') border-red-500 focus:border-red-500 focus:ring-red-500 @enderror">
-                        @error('mou_date')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    {{-- Address --}}
+                  
                     <div>
                         <label for="address" class="block text-sm font-medium mb-2 dark:text-white">
                             Alamat Sekolah <span class="text-gray-400">(Opsional)</span>
