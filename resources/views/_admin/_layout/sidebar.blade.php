@@ -17,7 +17,7 @@
         <div class="px-6 pt-4 flex items-center">
             <!-- Logo -->
             <a class="flex-none rounded-xl text-xl inline-block font-semibold focus:outline-hidden focus:opacity-80"
-                href="#" aria-label="Preline">
+                href="#" aria-label="SmartSekolah">
                 @include('_admin._layout.icons.sidebar.logo')
             </a>
             <!-- End Logo -->
@@ -82,14 +82,14 @@
                                     <a navigate
                                         class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('admin.teachers.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
                                         href="{{ route('admin.teachers.index') }}">
-                                        Teacher
+                                        Guru
                                     </a>
                                 </li>
                                 <li>
                                     <a navigate
                                         class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('admin.students.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
                                         href="{{ route('admin.students.index') }}">
-                                        Student
+                                        Siswa
                                     </a>
                                 </li>
                                 <li>

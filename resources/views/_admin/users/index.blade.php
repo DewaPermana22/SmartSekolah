@@ -31,49 +31,78 @@
     <div class="flex flex-col">
         <div class="overflow-x-auto">
             <div class="min-w-full inline-block align-middle">
-                <div class="overflow-hidden">
+                <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-neutral-900 dark:border-neutral-700 mb-6">
+                    <div class="p-4 sm:p-6">
+                        <form navigate-form method="GET" action="{{ route('admin.users.index') }}">
+                            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div class="lg:col-span-2">
+                                    <label for="keywords" class="block text-sm font-medium mb-2 text-gray-700 dark:text-neutral-300">
+                                        Cari
+                                    </label>
+                                    <div class="relative">
+                                        <input type="text" id="keywords" name="keywords" value="{{ $keywords ?? '' }}"
+                                            placeholder="Ketik nama atau email..."
+                                            class="py-3 px-4 ps-11 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600">
+                                        <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-4">
+                                            <svg class="flex-shrink-0 size-4 text-gray-400 dark:text-neutral-500"
+                                                xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round">
+                                                <circle cx="11" cy="11" r="8" />
+                                                <path d="m21 21-4.3-4.3" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
 
-                    <div class="px-2 pt-4">
-                        <form action="{{ route('admin.users.index') }}" method="GET" navigate-form
-                            class="flex flex-col sm:flex-row gap-3">
-                            <div class="sm:w-64">
-                                <label for="keywords" class="sr-only">Search</label>
-                                <div class="relative">
-                                    <input type="text" name="keywords" id="keywords" value="{{ $keywords ?? '' }}"
-                                        class="py-1 px-3 block w-full border-gray-200 rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 
-                                        placeholder-neutral-300 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
-                                        placeholder="Nama atau Email">
+                                <div>
+                                    <label for="access_type" class="block text-sm font-medium mb-2 text-gray-700 dark:text-neutral-300">
+                                        Hak Akses
+                                    </label>
+                                    <select id="access_type" name="access_type" data-hs-select='{
+                                        "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                                        "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-3 ps-4 pe-9 flex gap-x-2 text-nowrap w-full cursor-pointer bg-white border border-gray-200 rounded-lg text-start text-sm focus:border-blue-500 focus:ring-blue-500 before:absolute before:inset-0 before:z-[1] dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400",
+                                        "dropdownClasses": "mt-2 z-50 w-full max-h-72 p-1 space-y-0.5 bg-white border border-gray-200 rounded-lg overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500 dark:bg-neutral-900 dark:border-neutral-700",
+                                        "optionClasses": "py-2 px-4 w-full text-sm text-gray-800 cursor-pointer hover:bg-gray-100 rounded-lg focus:outline-none focus:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-neutral-800 dark:text-neutral-200 dark:focus:bg-neutral-800",
+                                        "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"flex-shrink-0 size-3.5 text-blue-600 dark:text-blue-500\" xmlns=\"http:.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>",
+                                        "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"flex-shrink-0 size-3.5 text-gray-500 dark:text-neutral-500\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
+                                    }' class="hidden">
+                                        <option value="all" {{ ($access_type ?? 'all') == 'all' ? 'selected' : '' }}>
+                                            Semua Hak Akses
+                                        </option>
+                                        <option value="1" {{ ($access_type ?? '') == '1' ? 'selected' : '' }}>
+                                            Admin
+                                        </option>
+                                        <option value="2" {{ ($access_type ?? '') == '2' ? 'selected' : '' }}>
+                                            User
+                                        </option>
+                                    </select>
                                 </div>
                             </div>
-                            <div class="sm:w-48">
-                                <select name="access_type"
-                                    class="py-1 px-3 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600">
-                                    <option value="all" {{ ($access_type ?? 'all') == 'all' ? 'selected' : '' }}>
-                                        Semua Hak Akses
-                                    </option>
-                                    <option value="admin" {{ ($access_type ?? '') == 'admin' ? 'selected' : '' }}>Admin
-                                    </option>
-                                    <option value="user" {{ ($access_type ?? '') == 'user' ? 'selected' : '' }}>User
-                                    </option>
-                                </select>
-                            </div>
-                            <div>
+
+                            <div class="mt-5 flex gap-x-2">
                                 <button type="submit"
-                                    class="py-1 px-3 inline-flex items-center gap-x-1 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 cursor-pointer">
-                                    @include('_admin._layout.icons.search')
+                                    class="py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none transition-all">
+                                    <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24"
+                                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="8" />
+                                        <path d="m21 21-4.3-4.3" />
+                                    </svg>
                                     Cari
                                 </button>
                                 @if (!empty($keywords) || ($access_type ?? 'all') !== 'all')
-                                    <a class="py-1 px-3 inline-flex items-center gap-x-1 text-sm font-semibold rounded-lg border border-blue-600 text-blue-600 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 disabled:opacity-50 disabled:pointer-events-none dark:border-blue-500 dark:text-blue-500 dark:hover:bg-blue-500/10 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 cursor-pointer"
-                                        href="{{ route('admin.users.index') }}">
-                                        @include('_admin._layout.icons.reset')
+                                    <a navigate-form href="{{ route('admin.users.index') }}"
+                                        class="py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800">
                                         Reset
                                     </a>
                                 @endif
                             </div>
                         </form>
                     </div>
+                </div>
 
+                <div class="overflow-hidden">
                     <div class="mx-0 my-4 overflow-x-auto border border-gray-200 rounded-lg dark:border-neutral-700">
                         <table class="w-full divide-y divide-gray-200 dark:divide-neutral-700">
                             <thead class=" dark:bg-neutral-800">

@@ -96,7 +96,7 @@ class SchoolUsecase extends Usecase
 
         $schoolID = DB::table(DatabaseConst::SCHOOL)->insertGetId($payload);
 
-        DB::table(DatabaseConst::USER)->update([
+        DB::table(DatabaseConst::USER)->where('id', $userID)->update([
             'school_id' => $schoolID,
             'updated_by' => $userID,
             'updated_at' => now(),

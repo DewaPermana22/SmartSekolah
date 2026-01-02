@@ -97,6 +97,6 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 Route::middleware('auth')->prefix('teacher')->name('teacher.')->group(function() {
     Route::prefix('ai-tools')->name('ai.')->group(function() {
         Route::get('materi-ajar', [AIToolsController::class, 'materiAjar'])->name('materi');
-        Route::get('illustrasi', [AIToolsController::class, 'illustrasi'])->name('illustrasi');
+        Route::get('ilustrasi', [AIToolsController::class, 'illustrasi'])->name('illustrasi');
     });
 });
