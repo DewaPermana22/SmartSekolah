@@ -3,6 +3,8 @@
 namespace App\Usecase;
 
 use App\Constants\AIConst;
+use App\Constants\ResponseConst;
+use App\Http\Presenter\Response;
 use Illuminate\Support\Facades\Http;
 
 class ToolsAiUsecase
@@ -43,5 +45,21 @@ class ToolsAiUsecase
         $response->throw();
 
         return $response->json() ?? [];
+    }
+
+    public function extractImageFromResponse(array $data): array
+    {
+        $parts = $data['candidates'][0]['content']['parts'] ?? [];
+
+        foreach ($parts as $part) {
+            if (isset($part['inlineData'])) {
+                return [
+                    'data' => $part['inlineData']['data'],
+                    'mimeType' => $part['inlineData']['mimeType']
+                ];
+            }
+        }
+
+        throw new \Exception('Image not found in Gemini response');
     }
 }

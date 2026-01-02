@@ -14,8 +14,10 @@ class AIConst
     const DEEPSEEK_TEXT_MODEL = 'deepseek-chat';
 
     // Base URLs
+        // $url = "https://generativelanguage.googleapis.com/v1beta/models/" . self::IMAGE_MODEL . ":generateContent?key={$apiKey}";
+
     const GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/';
-    const IMAGE_API_URL = 'https://api.generativeai.google.com/v1/images:generate';
+    // const IMAGE_API_URL = 'https://api.generativeai.google.com/v1/images:generate';
     const OPENAI_API_URL = 'https://api.openai.com/v1/responses';
     const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
 
@@ -25,6 +27,14 @@ class AIConst
             self::GEMINI_TEXT_MODEL => self::GEMINI_BASE_URL . self::GEMINI_TEXT_MODEL . ":generateContent?key={$apiKey}",
             self::OPENAI_TEXT_MODEL => self::OPENAI_API_URL,
             self::DEEPSEEK_TEXT_MODEL => self::DEEPSEEK_API_URL,
+            default => throw new \InvalidArgumentException("Invalid model: {$model}"),
+        };
+    }
+
+    public static function getUrlImageGeneration(string $model, string $apiKey): string
+    {
+        return match ($model) {
+            self::IMAGE_MODEL => self::GEMINI_BASE_URL . self::IMAGE_MODEL . ":generateContent?key={$apiKey}",
             default => throw new \InvalidArgumentException("Invalid model: {$model}"),
         };
     }
