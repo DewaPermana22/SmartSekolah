@@ -17,9 +17,13 @@ class SchoolController extends Controller
         'title' => 'Registrasi Sekolah',
     ];
 
+    protected string $baseRedirect;
+
     public function __construct(
         protected SchoolUsecase $usecase
-    ) {}
+    ) {
+        $this->baseRedirect = 'admin/'.$this->page['route'];
+    }
 
     public function add(): View|RedirectResponse
     {
@@ -53,5 +57,4 @@ class SchoolController extends Controller
                 ->with('error', $process['message'] ?? ResponseConst::DEFAULT_ERROR_MESSAGE);
         }
     }
-
 }

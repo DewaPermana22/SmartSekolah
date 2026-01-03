@@ -25,7 +25,8 @@
                 <form navigate method="GET" action="{{ route('admin.teachers.index') }}">
                     <div class="grid sm:grid-cols-1 gap-4">
                         <div>
-                            <label for="keywords" class="block text-sm font-medium mb-2 text-gray-700 dark:text-neutral-300">
+                            <label for="keywords"
+                                class="block text-sm font-medium mb-2 text-gray-700 dark:text-neutral-300">
                                 Cari
                             </label>
                             <div class="relative">
@@ -116,121 +117,168 @@
     @endif
 
     <div class="flex flex-col">
-        <div class="-m-1.5 overflow-x-auto">
-            <div class="p-1.5 min-w-full inline-block align-middle">
-                <div
-                    class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:bg-neutral-900 dark:border-neutral-700">
-                    <table class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
-                        <thead class="bg-gray-50 dark:bg-neutral-800">
-                    <tr>
-                        <th
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider">
-                            No</th>
-                        <th
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider">
-                            Nama</th>
-                        <th
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider">
-                            Email</th>
-                        
-                        <th
-                            class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-neutral-300 uppercase tracking-wider">
-                            Aksi</th>
-                    </tr>
-                </thead>
-                        <tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
-                            @forelse ($data as $index => $item)
-                                <tr class="hover:bg-gray-50 dark:hover:bg-neutral-800 transition-colors">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
-                                        {{ $loop->iteration }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
-                                        <div class="flex items-center gap-x-3">
-                                            <div
-                                                class="flex-shrink-0 flex items-center justify-center size-10 bg-blue-100 text-blue-600 rounded-full dark:bg-blue-900 dark:text-blue-200">
-                                                <span class="font-semibold text-xs uppercase">
-                                                    {{ substr($item->name, 0, 2) }}
-                                                </span>
-                                            </div>
-                                            <div class="grow">
-                                                <span class="block text-sm font-semibold text-gray-800 dark:text-neutral-200">
-                                                    {{ $item->name }}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
-                                        {{ $item->email }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                                        <div class="inline-flex gap-x-2">
-                                            <a navigate href="{{ route('admin.teachers.update', $item->id) }}"
-                                                class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium dark:text-blue-500">
-                                                <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg"
-                                                    width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                    stroke-linejoin="round">
-                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                                </svg>
-                                                Edit
-                                            </a>
-                                            <form navigate action="{{ route('admin.teachers.delete', $item->id) }}"
-                                                method="POST" class="inline-block"
-                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus guru ini?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    class="inline-flex items-center gap-x-1.5 text-sm text-red-600 decoration-2 hover:underline font-medium dark:text-red-500">
-                                                    <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg"
-                                                        width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                        stroke-linejoin="round">
-                                                        <polyline points="3 6 5 6 21 6" />
-                                                        <path
-                                                            d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                                                        <line x1="10" y1="11" x2="10"
-                                                            y2="17" />
-                                                        <line x1="14" y1="11" x2="14"
-                                                            y2="17" />
-                                                    </svg>
-                                                    Hapus
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
+        <div class="overflow-x-auto">
+            <div class="min-w-full inline-block align-middle">
+                <div class="overflow-hidden">
+
+
+
+                    <div class="mx-0 my-4 overflow-x-auto border border-gray-200 rounded-lg dark:border-neutral-700">
+                        <table class="w-full divide-y divide-gray-200 dark:divide-neutral-700">
+                            <thead class="bg-gray-50 dark:bg-neutral-700">
                                 <tr>
-                                    <td colspan="4" class="px-6 py-12 text-center">
-                                        <div class="flex flex-col items-center justify-center">
-                                            <svg class="size-16 text-gray-400 dark:text-neutral-600 mb-4"
-                                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                            </svg>
-                                            <p class="text-sm font-semibold text-gray-800 dark:text-neutral-200 mb-1">
-                                                Belum ada data guru
-                                            </p>
-                                            <p class="text-sm text-gray-500 dark:text-neutral-500">
-                                                Silakan tambahkan guru baru untuk memulai
-                                            </p>
-                                        </div>
-                                    </td>
+                                    <th scope="col" class="px-6 py-3 text-start">
+                                        <span class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
+                                            No
+                                        </span>
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-start">
+                                        <span class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
+                                            Nama
+                                        </span>
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-start">
+                                        <span class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
+                                            Email
+                                        </span>
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-end"></th>
                                 </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                            </thead>
+
+                            <tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
+                                @forelse($data as $d)
+                                    <tr class="hover:bg-gray-100 dark:hover:bg-neutral-700">
+                                        <td class="size-px whitespace-nowrap">
+                                            <div class="px-6 py-3">
+                                                <span
+                                                    class="block text-sm text-gray-800 dark:text-neutral-200">{{ $loop->iteration + ($data instanceof \Illuminate\Pagination\LengthAwarePaginator ? $data->firstItem() - 1 : 0) }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="size-px whitespace-nowrap">
+                                            <div class="px-6 py-3">
+                                                <span
+                                                    class="block text-sm font-semibold text-gray-800 dark:text-neutral-200">{{ $d->name }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="size-px whitespace-nowrap">
+                                            <div class="px-6 py-3">
+                                                <span
+                                                    class="block text-sm text-gray-800 dark:text-neutral-200">{{ $d->email }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="size-px whitespace-nowrap">
+                                            <div class="px-6 py-1.5 flex items-center gap-x-2 justify-end">
+                                                <a navigate
+                                                    class="p-2 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-yellow-100 text-yellow-800 hover:bg-yellow-200 focus:outline-none focus:bg-yellow-200 disabled:opacity-50 disabled:pointer-events-none dark:text-yellow-400 dark:bg-yellow-800/30 dark:hover:bg-yellow-800/20 dark:focus:bg-yellow-800/20"
+                                                    href="{{ route('admin.teachers.resetPassword', $d->id) }}"
+                                                    title="Reset Password">
+                                                    @include('_admin._layout.icons.key')
+                                                </a>
+                                                <a navigate
+                                                    class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:bg-blue-800/30 dark:hover:bg-blue-800/20 dark:focus:bg-blue-800/20"
+                                                    href="{{ route('admin.teachers.update', $d->id) }}">
+                                                    @include('_admin._layout.icons.pencil')
+                                                </a>
+                                                <button type="button"
+                                                    class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-red-100 text-red-800 hover:bg-red-200 focus:outline-none focus:bg-red-200 disabled:opacity-50 disabled:pointer-events-none dark:text-red-500 dark:bg-red-800/30 dark:hover:bg-red-800/20 dark:focus:bg-red-800/20 cursor-pointer"
+                                                    title="Delete" data-hs-overlay="#delete-modal"
+                                                    onclick="setDeleteData('{{ $d->id }}', '{{ $d->name }}')">
+                                                    @include('_admin._layout.icons.trash')
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5"
+                                            class="px-6 py-4 text-center text-sm text-gray-500 dark:text-neutral-500">
+                                            <x-admin.empty-state />
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+
+                    @if (count($data) > 0 && $data instanceof \Illuminate\Pagination\AbstractPaginator && $data->hasPages())
+                        <div class="px-6 py-4 border-t border-gray-200 dark:border-neutral-700">
+                            <div class="flex justify-end">
+                                {{ $data->links() }}
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
 
-    @if (method_exists($data, 'links'))
-        <div class="mt-5">
-            {{ $data->links() }}
-        </div>
-    @endif
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none" role="dialog" tabindex="-1" aria-labelledby="delete-modal-label">
+    <div class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
+        <div class="flex flex-col bg-white border shadow-lg rounded-xl pointer-events-auto dark:bg-neutral-900 dark:border-neutral-700">
+            
+            <!-- Header -->
+            <div class="flex justify-between items-center py-4 px-5 border-b dark:border-neutral-700">
+                <h3 id="delete-modal-label" class="font-semibold text-lg text-gray-800 dark:text-white">
+                    Hapus Guru
+                </h3>
+                <button type="button" class="size-8 inline-flex justify-center items-center rounded-lg border border-transparent text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700" aria-label="Close" data-hs-overlay="#delete-modal">
+                    <span class="sr-only">Close</span>
+                    <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6 6 18"></path>
+                        <path d="m6 6 12 12"></path>
+                    </svg>
+                </button>
+            </div>
 
+            <!-- Body -->
+            <div class="p-5 text-center">
+                <!-- Icon Warning -->
+                <div class="mb-4 inline-flex justify-center items-center size-16 rounded-full bg-red-100 dark:bg-red-900/20">
+                    <svg class="shrink-0 size-7 text-red-600 dark:text-red-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                        <path d="M12 9v4"></path>
+                        <path d="M12 17h.01"></path>
+                    </svg>
+                </div>
+                
+                <!-- Text Content -->
+                <div>
+                    <p class="text-gray-600 dark:text-neutral-400">
+                        Apakah Anda yakin ingin menghapus 
+                        <span id="delete-item-name" class="font-semibold text-gray-900 dark:text-white"></span>?
+                    </p>
+                    <p class="mt-3 text-sm text-gray-500 dark:text-neutral-500">
+                        Tindakan ini <span class="text-red-600 dark:text-red-500 font-semibold">tidak dapat dibatalkan</span>.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="flex justify-end items-center gap-x-3 py-4 px-5 border-t dark:border-neutral-700">
+                <button type="button" class="py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700" data-hs-overlay="#delete-modal">
+                    Batal
+                </button>
+                
+                <form id="delete-form" method="POST" class="inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:bg-red-700">
+                        Ya, Hapus
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+    <script>
+        function setDeleteData(id, name) {
+            document.getElementById('delete-item-name').textContent = name;
+            document.getElementById('delete-form').action = '{{ url('admin/teachers/delete') }}/' + id;
+        }
+    </script>
 @endsection

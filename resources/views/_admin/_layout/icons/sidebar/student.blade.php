@@ -2,6 +2,7 @@
     stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
     class="lucide lucide-graduation-cap-icon lucide-graduation-cap">
     <path
-        d="M3 12C9.26752 12 12 9.36306 12 3C12 9.36306 14.7134 12 21 12C14.7134 12 12 14.7134 12 21C12 14.7134 9.26752 12 3 12Z"
-        stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"></path>
+        d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z" />
+    <path d="M22 10v6" />
+    <path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5" />
 </svg>

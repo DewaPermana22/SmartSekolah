@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Validator;
 class SchoolUsecase extends Usecase
 {
     public function __construct() {}
+
     public function getAll(array $filterData = []): array
     {
         try {
@@ -22,8 +23,8 @@ class SchoolUsecase extends Usecase
                 ->whereNull('deleted_at')
                 ->when($filterData['keywords'] ?? false, function ($query, $keywords) {
                     return $query->where(function ($q) use ($keywords) {
-                        $q->where('name', 'like', '%' . $keywords . '%')
-                            ->orWhere('email', 'like', '%' . $keywords . '%');
+                        $q->where('name', 'like', '%'.$keywords.'%')
+                            ->orWhere('email', 'like', '%'.$keywords.'%');
                     });
                 })
                 ->when($filterData['access_type'] ?? false, function ($query, $accessType) {
@@ -55,70 +56,68 @@ class SchoolUsecase extends Usecase
             return Response::buildErrorService($e->getMessage());
         }
     }
-   public function create(Request $data): array
-{
-    $validator = Validator::make($data->all(), [
-        'school_name' => 'required|string|max:255',
-        'mou_date' => 'nullable|date',
-        'address' => 'nullable|string',
-        'no_tlp' => 'nullable|string|max:20',
-    ]);
 
-    $validator->validate();
-
-    DB::beginTransaction();
-    try {
-        $userID = Auth::user()?->id;
-
-        if (! $userID) {
-            throw new Exception('User not authenticated');
-        }
-
-        $user = DB::table(DatabaseConst::USER)
-            ->where('id', $userID)
-            ->whereNull('deleted_at')
-            ->first(['school_id']);
-
-        if ($user && $user->school_id) {
-            throw new Exception('User sudah terdaftar di sekolah');
-        }
-
-        $payload = $data->only([
-            'school_name',
-            'mou_date',
-            'address',
-            'no_tlp',
+    public function create(Request $data): array
+    {
+        $validator = Validator::make($data->all(), [
+            'school_name' => 'required|string|max:255',
+            'address' => 'nullable|string',
+            'no_tlp' => 'nullable|string|max:20',
         ]);
 
-        $payload['created_by'] = $userID;
-        $payload['created_at'] = now();
-        $payload['updated_at'] = now();
+        $validator->validate();
 
-        $schoolID = DB::table(DatabaseConst::SCHOOL)->insertGetId($payload);
+        DB::beginTransaction();
+        try {
+            $userID = Auth::user()?->id;
 
-        DB::table(DatabaseConst::USER)->where('id', $userID)->update([
-            'school_id' => $schoolID,
-            'updated_by' => $userID,
-            'updated_at' => now(),
-        ]);
+            if (! $userID) {
+                throw new Exception('User not authenticated');
+            }
 
-        DB::commit();
+            $user = DB::table(DatabaseConst::USER)
+                ->where('id', $userID)
+                ->whereNull('deleted_at')
+                ->first(['school_id']);
 
-        return Response::buildSuccessCreated();
-    } catch (Exception $e) {
-        DB::rollback();
+            if ($user && $user->school_id) {
+                throw new Exception('User sudah terdaftar di sekolah');
+            }
 
-        Log::error(
-            message: $e->getMessage(),
-            context: [
-                'method' => __METHOD__,
-            ]
-        );
+            $payload = $data->only([
+                'school_name',
+                'address',
+                'no_tlp',
+            ]);
+            $payload['mou_date'] = now();
+            $payload['created_by'] = $userID;
+            $payload['created_at'] = now();
+            $payload['updated_at'] = now();
 
-        return Response::buildErrorService($e->getMessage());
+            $schoolID = DB::table(DatabaseConst::SCHOOL)->insertGetId($payload);
+
+            DB::table(DatabaseConst::USER)->where('id', $userID)->update([
+                'school_id' => $schoolID,
+                'updated_by' => $userID,
+                'updated_at' => now(),
+            ]);
+
+            DB::commit();
+
+            return Response::buildSuccessCreated();
+        } catch (Exception $e) {
+            DB::rollback();
+
+            Log::error(
+                message: $e->getMessage(),
+                context: [
+                    'method' => __METHOD__,
+                ]
+            );
+
+            return Response::buildErrorService($e->getMessage());
+        }
     }
-}
-
 
     public function getByID(int $id): array
     {
@@ -146,6 +145,7 @@ class SchoolUsecase extends Usecase
             return Response::buildErrorService($e->getMessage());
         }
     }
+
     public function update(Request $data, int $id): array
     {
         $validator = Validator::make($data->all(), [

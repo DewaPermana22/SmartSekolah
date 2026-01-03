@@ -1,31 +1,29 @@
 @extends('_admin._layout.app')
 
-@section('title', 'Pengguna Aplikasi')
+@section('title', 'Data Pengguna')
 
 @php
     use App\Constants\UserConst;
 @endphp
 
 @section('content')
-    <div class="grid gap-3 md:flex md:justify-between md:items-center py-4">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 gap-4">
         <div>
-            <h1 class="text-2xl font-extrabold text-gray-800 dark:text-neutral-200 mb-1">
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-neutral-200">
                 Data {{ $page['title'] }}
             </h1>
-            <p class="text-md text-gray-400 dark:text-neutral-400">
-                Pengguna Aplikasi
+            <p class="text-sm text-gray-500 dark:text-neutral-400">
+                Kelola data pengguna aplikasi sekolah Anda.
             </p>
         </div>
-
-        <div>
-            <div class="inline-flex gap-x-2">
-                <a navigate
-                    class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none font-bolder"
-                    href="{{ route('admin.users.add') }}">
-                    @include('_admin._layout.icons.add')
-                    Tambah Data
-                </a>
-            </div>
+        <div class="flex flex-col sm:flex-row gap-2">
+            <a navigate
+                class="py-3 px-4 inline-flex items-center justify-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-blue-700 transition-all shadow-md shadow-blue-500/20 active:scale-95 cursor-pointer"
+                href="{{ route('admin.users.add') }}">
+                @include('_admin._layout.icons.add')
+                Tambah Pengguna
+            </a>
         </div>
     </div>
     <div class="flex flex-col">
@@ -201,45 +199,55 @@
                     @endif
                 </div>
             </div>
-        </div>
+            <div>
+                
+                @if (!empty($keywords))
+                    <a class="py-1 px-3 inline-flex items-center gap-x-1 text-sm font-semibold rounded-lg border border-blue-600 text-blue-600 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 disabled:opacity-50 disabled:pointer-events-none dark:border-blue-500 dark:text-blue-500 dark:hover:bg-blue-500/10 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 cursor-pointer"
+                        href="{{ route('admin.users.index') }}">
+                        @include('_admin._layout.icons.reset')
+                        Reset
+                    </a>
+                @endif
+            </div>
+        </form>
     </div>
 
+    <!-- Table -->
+    
     <!-- Delete Confirmation Modal -->
     <div id="delete-modal" class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto"
-        role="dialog" tabindex="-1" aria-labelledby="delete-modal-label">
+        role="dialog" tabindex="-1">
         <div
             class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
             <div
-                class="relative flex flex-col bg-white border shadow-sm rounded-xl dark:bg-neutral-800 dark:border-neutral-700">
-                <div class="absolute top-2 end-2">
+                class="relative flex flex-col bg-white border border-gray-100 shadow-2xl rounded-2xl dark:bg-neutral-800 dark:border-neutral-700">
+                <div class="absolute top-4 end-4">
                     <button type="button"
-                        class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-none focus:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:hover:bg-neutral-600 dark:text-neutral-400 dark:focus:bg-neutral-600"
-                        aria-label="Close" data-hs-overlay="#delete-modal">
+                        class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-hidden disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:hover:bg-neutral-600 dark:text-neutral-400"
+                        data-hs-overlay="#delete-modal">
                         <span class="sr-only">Close</span>
                         @include('_admin._layout.icons.close_modal')
                     </button>
                 </div>
 
                 <div class="p-4 sm:p-10 text-center overflow-y-auto">
-                    <!-- Icon -->
                     <span
-                        class="mb-4 inline-flex justify-center items-center size-14 rounded-full border-4 border-red-50 bg-red-100 text-red-500 dark:bg-red-700 dark:border-red-600 dark:text-red-100">
-                        @include('_admin._layout.icons.warning_modal')
+                        class="mb-4 inline-flex justify-center items-center size-[62px] rounded-full border-4 border-red-50 bg-red-100 text-red-500 dark:bg-red-700/10 dark:border-red-900/20 dark:text-red-600">
+                        @include('_admin._layout.icons.warning_modal', ['class' => 'size-6'])
                     </span>
-                    <!-- End Icon -->
 
-                    <h3 id="delete-modal-label" class="mb-2 text-xl font-bold text-gray-800 dark:text-neutral-200">
+                    <h3 class="mb-2 text-2xl font-bold text-gray-800 dark:text-neutral-200">
                         Hapus Pengguna
                     </h3>
-                    <p class="text-gray-500 dark:text-neutral-500">
+                    <p class="text-gray-500 dark:text-neutral-400">
                         Apakah Anda yakin ingin menghapus <span id="delete-user-name"
-                            class="font-semibold text-gray-800 dark:text-neutral-200"></span>?
-                        <br>Tindakan ini tidak dapat dibatalkan.
+                            class="font-semibold text-gray-900 dark:text-white"></span>? Data yang dihapus tidak dapat
+                        dikembalikan.
                     </p>
 
-                    <div class="mt-6 flex justify-center gap-x-4">
+                    <div class="mt-8 flex justify-center gap-x-2">
                         <button type="button"
-                            class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-50 dark:bg-transparent dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+                            class="py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-xl border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-hidden disabled:opacity-50 disabled:pointer-events-none dark:bg-transparent dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
                             data-hs-overlay="#delete-modal">
                             Batal
                         </button>
@@ -247,8 +255,8 @@
                             @csrf
                             @method('DELETE')
                             <button type="submit"
-                                class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:bg-red-700 disabled:opacity-50 disabled:pointer-events-none">
-                                Ya, Hapus
+                                class="py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent bg-red-600 text-white hover:bg-red-700 focus:outline-hidden transition-all shadow-md shadow-red-500/20 active:scale-95">
+                                Ya, Hapus Data
                             </button>
                         </form>
                     </div>
@@ -260,7 +268,7 @@
     <script>
         function setDeleteData(id, name) {
             document.getElementById('delete-user-name').textContent = name;
-            document.getElementById('delete-form').action = '{{ url('admin/users/delete') }}/' + id;
+            document.getElementById('delete-form').action = '{{ url('admin/user/delete') }}/' + id;
         }
     </script>
 @endsection

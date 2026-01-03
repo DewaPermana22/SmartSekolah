@@ -177,12 +177,6 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
                                         <div class="flex items-center gap-x-3">
-                                            <div
-                                                class="flex-shrink-0 flex items-center justify-center size-10 bg-blue-100 text-blue-600 rounded-full dark:bg-blue-900 dark:text-blue-200">
-                                                <span class="font-semibold text-xs uppercase">
-                                                    {{ substr($item->name, 0, 2) }}
-                                                </span>
-                                            </div>
                                             <div class="grow">
                                                 <span class="block text-sm font-semibold text-gray-800 dark:text-neutral-200">
                                                     {{ $item->name }}
@@ -196,51 +190,23 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
                                         <span
                                             class="py-1 px-2.5 inline-flex items-center gap-x-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full dark:bg-blue-500/10 dark:text-blue-500">
-                                            <svg class="flex-shrink-0 size-3" xmlns="http://www.w3.org/2000/svg"
-                                                width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                stroke-linejoin="round">
-                                                <path
-                                                    d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
-                                            </svg>
+                                           
                                             {{ $item->display_class }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                                        <div class="inline-flex gap-x-2">
-                                            <a navigate href="{{ route('admin.students.update', $item->id) }}"
-                                                class="inline-flex items-center gap-x-1.5 text-sm text-blue-600 decoration-2 hover:underline font-medium dark:text-blue-500">
-                                                <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg"
-                                                    width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                    stroke-linejoin="round">
-                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                                </svg>
-                                                Edit
+                                    <td class="size-px whitespace-nowrap">
+                                        <div class="px-6 py-1.5 flex items-center gap-x-2 justify-end">
+                                            <a navigate
+                                                class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:bg-blue-800/30 dark:hover:bg-blue-800/20 dark:focus:bg-blue-800/20"
+                                                href="{{ route('admin.students.update', $item->id) }}">
+                                                @include('_admin._layout.icons.pencil')
                                             </a>
-                                            <form navigate action="{{ route('admin.students.delete', $item->id) }}"
-                                                method="POST" class="inline-block"
-                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus siswa ini?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    class="inline-flex items-center gap-x-1.5 text-sm text-red-600 decoration-2 hover:underline font-medium dark:text-red-500">
-                                                    <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg"
-                                                        width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                        stroke-linejoin="round">
-                                                        <polyline points="3 6 5 6 21 6" />
-                                                        <path
-                                                            d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                                                        <line x1="10" y1="11" x2="10"
-                                                            y2="17" />
-                                                        <line x1="14" y1="11" x2="14"
-                                                            y2="17" />
-                                                    </svg>
-                                                    Hapus
-                                                </button>
-                                            </form>
+                                            <button type="button"
+                                                class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-red-100 text-red-800 hover:bg-red-200 focus:outline-none focus:bg-red-200 disabled:opacity-50 disabled:pointer-events-none dark:text-red-500 dark:bg-red-800/30 dark:hover:bg-red-800/20 dark:focus:bg-red-800/20 cursor-pointer"
+                                                title="Delete" data-hs-overlay="#delete-modal"
+                                                onclick="setDeleteData('{{ $item->id }}', '{{ $item->name }}')">
+                                                @include('_admin._layout.icons.trash')
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -271,9 +237,71 @@
         </div>
     </div>
 
-    @if (method_exists($data, 'links'))
-        <div class="mt-5">
-            {{ $data->links() }}
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none" role="dialog" tabindex="-1" aria-labelledby="delete-modal-label">
+    <div class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
+        <div class="flex flex-col bg-white border shadow-lg rounded-xl pointer-events-auto dark:bg-neutral-900 dark:border-neutral-700">
+            
+            <!-- Header -->
+            <div class="flex justify-between items-center py-4 px-5 border-b dark:border-neutral-700">
+                <h3 id="delete-modal-label" class="font-semibold text-lg text-gray-800 dark:text-white">
+                    Hapus Siswa
+                </h3>
+                <button type="button" class="size-8 inline-flex justify-center items-center rounded-lg border border-transparent text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700" aria-label="Close" data-hs-overlay="#delete-modal">
+                    <span class="sr-only">Close</span>
+                    <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6 6 18"></path>
+                        <path d="m6 6 12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="p-5 text-center">
+                <!-- Icon Warning -->
+                <div class="mb-4 inline-flex justify-center items-center size-16 rounded-full bg-red-100 dark:bg-red-900/20">
+                    <svg class="shrink-0 size-7 text-red-600 dark:text-red-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                        <path d="M12 9v4"></path>
+                        <path d="M12 17h.01"></path>
+                    </svg>
+                </div>
+                
+                <!-- Text Content -->
+                <div>
+                    <p class="text-gray-600 dark:text-neutral-400">
+                        Apakah Anda yakin ingin menghapus 
+                        <span id="delete-item-name" class="font-semibold text-gray-900 dark:text-white"></span>?
+                    </p>
+                    <p class="mt-3 text-sm text-gray-500 dark:text-neutral-500">
+                        Tindakan ini <span class="text-red-600 dark:text-red-500 font-semibold">tidak dapat dibatalkan</span>.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="flex justify-end items-center gap-x-3 py-4 px-5 border-t dark:border-neutral-700">
+                <button type="button" class="py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700" data-hs-overlay="#delete-modal">
+                    Batal
+                </button>
+                
+                <form id="delete-form" method="POST" class="inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:bg-red-700">
+                        Ya, Hapus
+                    </button>
+                </form>
+            </div>
+
         </div>
-    @endif
+    </div>
+</div>
+
+    <script>
+        function setDeleteData(id, name) {
+            document.getElementById('delete-item-name').textContent = name;
+            document.getElementById('delete-form').action = '{{ url('admin/students/delete') }}/' + id;
+        }
+    </script>
 @endsection

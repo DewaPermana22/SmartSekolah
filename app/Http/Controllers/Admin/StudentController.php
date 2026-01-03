@@ -116,4 +116,37 @@ class StudentController extends Controller
             ->route('admin.students.index')
             ->with('error', $process['message'] ?? ResponseConst::DEFAULT_ERROR_MESSAGE);
     }
+
+    public function resetPassword(int $id): View|RedirectResponse
+    {
+        $student = $this->usecase->getById(id: $id);
+        if (empty($student['data'])) {
+            return redirect()->intended($this->baseRedirect)->with('error', ResponseConst::DEFAULT_ERROR_MESSAGE);
+        }
+
+        return view('_admin.students.reset_password', [
+            'page' => $this->page,
+            'data' => $student['data']['data'],
+            'id' => $id,
+        ]);
+    }
+
+    public function doResetPassword(int $id, Request $request): RedirectResponse
+    {
+        $request->validate([
+            'password' => 'required|confirmed|min:6',
+        ]);
+
+        $process = $this->usecase->resetPassword(id: $id, password: $request->password);
+
+        if ($process['success']) {
+            return redirect()
+                ->route('admin.students.index')
+                ->with('success', 'Password siswa berhasil direset.');
+        }
+
+        return redirect()
+            ->back()
+            ->with('error', $process['message'] ?? ResponseConst::DEFAULT_ERROR_MESSAGE);
+    }
 }
