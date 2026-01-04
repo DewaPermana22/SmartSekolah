@@ -20,6 +20,11 @@ class DatabaseConst
 
     const STUDENT = 'students';
 
+    const LEARNING_MODULE = 'learning_modules';
+
+    const SUBJECT = 'subjects';
+
     const TEACHER = 'teachers';
+    
     const IMAGE_MODEL = 'image_models';
 }
