@@ -11,7 +11,7 @@ class CheckSchoolRegistration
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): 
+     * @param  \Closure(\Illuminate\Http\Request):
      */
     public function handle(Request $request, Closure $next): Response
     {

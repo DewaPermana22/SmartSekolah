@@ -10,10 +10,10 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-gray-800 dark:text-neutral-200">
+            <h1 class="text-2xl font-extrabold text-gray-800 dark:text-neutral-200">
                 Data {{ $page['title'] }}
             </h1>
-            <p class="text-sm text-gray-500 dark:text-neutral-400">
+            <p class="text-md text-gray-500 dark:text-neutral-400">
                 Kelola data pengguna aplikasi sekolah Anda.
             </p>
         </div>
@@ -35,7 +35,7 @@
                 <label for="keywords" class="sr-only">Search</label>
                 <div class="relative">
                     <input type="text" name="keywords" id="keywords" value="{{ $keywords ?? '' }}"
-                        class="py-1 px-3 block w-full border-gray-200 rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 
+                        class="py-1 px-3 block w-full border-gray-200 rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900
                         placeholder-neutral-300 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
                         placeholder="Cari Nama ">
                 </div>

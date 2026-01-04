@@ -21,5 +21,6 @@ class DatabaseConst
     const STUDENT = 'students';
 
     const TEACHER = 'teachers';
-    const IMAGE_MODEL = 'image_models';
+    
+    const PROMPT_IMAGE_GENERATION = 'prompt_image_generation';
 }

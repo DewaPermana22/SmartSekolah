@@ -14,44 +14,72 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
-class ImageModelUsecase
+class PromptImageUsecase
 {
-    public function getAll(): array
+    public function getAll(array $filterData = []): array
     {
         try {
-            $data = DB::table(DatabaseConst::IMAGE_MODEL)
+            $query = DB::table(DatabaseConst::PROMPT_IMAGE_GENERATION)
                 ->whereNull('deleted_at')
-                ->orderBy('created_at', 'desc')
-                ->get();
+                ->when($filterData['keywords'] ?? false, function ($query, $keywords) {
+                    return $query->where('name', 'like', '%' . $keywords . '%');
+                })
+                ->orderBy('created_at', 'desc');
+
+            if (! empty($filterData['no_pagination'])) {
+                $data = $query->get();
+            } else {
+                $data = $query->paginate(20);
+
+                // Append filter parameters to pagination links
+                if (! empty($filterData)) {
+                    $data->appends($filterData);
+                }
+            }
 
             return Response::buildSuccess(
-                ['list' => $data],
+                [
+                    'list' => $data,
+                ],
                 ResponseConst::HTTP_SUCCESS
             );
         } catch (Exception $e) {
-            Log::error($e->getMessage(), ['method' => __METHOD__]);
+            Log::error(
+                message: $e->getMessage(),
+                context: [
+                    'method' => __METHOD__,
+                ]
+            );
+
             return Response::buildErrorService($e->getMessage());
         }
     }
 
-    public function getById(int $id): array
+    public function getByID(int $id): array
     {
         try {
-            $data = DB::table(DatabaseConst::IMAGE_MODEL)
+            $data = DB::table(DatabaseConst::PROMPT_IMAGE_GENERATION)
                 ->whereNull('deleted_at')
                 ->where('id', $id)
                 ->first();
 
             if (!$data) {
-                return Response::buildError(ResponseConst::HTTP_NOT_FOUND, 'Image model not found.');
+                return Response::buildErrorNotFound(
+                    "Image style not found!"
+                );
             }
 
             return Response::buildSuccess(
-                ['item' => $data],
-                ResponseConst::HTTP_SUCCESS
+                data: collect($data)->toArray()
             );
         } catch (Exception $e) {
-            Log::error($e->getMessage(), ['method' => __METHOD__]);
+            Log::error(
+                message: $e->getMessage(),
+                context: [
+                    'method' => __METHOD__,
+                ]
+            );
+
             return Response::buildErrorService($e->getMessage());
         }
     }
@@ -60,7 +88,8 @@ class ImageModelUsecase
     {
         $validator = Validator::make($data->all(), [
             'name'  => 'required|string',
-            'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'prompt' => 'required|string'
         ]);
 
         $validator->validate();
@@ -71,13 +100,22 @@ class ImageModelUsecase
 
         DB::beginTransaction();
         try {
+            $disk = Storage::disk('public');
+            $directory = 'image-models';
+
+            if (!$disk->exists($directory)) {
+                $disk->makeDirectory($directory);
+            }
+
             $file = $data->file('image');
             $fileName = uniqid('img_') . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('public/image-models', $fileName);
 
-            DB::table(DatabaseConst::IMAGE_MODEL)->insert([
+            $path = $file->storeAs($directory, $fileName, 'public');
+
+            DB::table(DatabaseConst::PROMPT_IMAGE_GENERATION)->insert([
                 'name' => $data->name,
-                'image_path_preview' => Storage::url($path),
+                'prompt' => $data->prompt,
+                'preview_path' => '/storage/' . $path,
                 'created_by' => Auth::user()?->id,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -92,11 +130,12 @@ class ImageModelUsecase
         }
     }
 
-    public function update(Request $data, int $id): array
+    public function update(Request $request, int $id): array
     {
-        $validator = Validator::make($data->all(), [
-            'name'  => 'required|string',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        $validator = Validator::make($request->all(), [
+            'name'  => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'prompt' => 'nullable|string'
         ]);
 
         $validator->validate();
@@ -107,34 +146,37 @@ class ImageModelUsecase
 
         DB::beginTransaction();
         try {
-            $imageModel = DB::table(DatabaseConst::IMAGE_MODEL)
+            $existing = DB::table(DatabaseConst::PROMPT_IMAGE_GENERATION)
                 ->where('id', $id)
                 ->whereNull('deleted_at')
                 ->first();
 
-            if (!$imageModel) {
+            if (!$existing) {
                 return Response::buildError(ResponseConst::HTTP_NOT_FOUND, 'Image model not found.');
             }
 
             $payload = [
-                'name' => $data->name,
+                'name' => $request->name ?? $existing->name,
+                'prompt' => $request->prompt ?? $existing->prompt,
                 'updated_by' => Auth::user()?->id,
                 'updated_at' => now(),
             ];
 
-            if ($data->hasFile('image')) {
-                if ($imageModel->image_path_preview) {
-                    $oldPath = str_replace('/storage/', 'public/', $imageModel->image_path_preview);
-                    Storage::delete($oldPath);
+            if ($request->hasFile('image')) {
+                if ($existing->preview_path) {
+                    $oldPath = str_replace('/storage/', '', $existing->preview_path);
+                    Storage::disk('public')->delete($oldPath);
                 }
 
-                $file = $data->file('image');
+                $file = $request->file('image');
                 $fileName = uniqid('img_') . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('public/image-models', $fileName);
-                $payload['image_path_preview'] = Storage::url($path);
+
+                $path = $file->storeAs('image-models', $fileName, 'public');
+
+                $payload['preview_path'] = '/storage/' . $path;
             }
 
-            DB::table(DatabaseConst::IMAGE_MODEL)
+            DB::table(DatabaseConst::PROMPT_IMAGE_GENERATION)
                 ->where('id', $id)
                 ->update($payload);
 
@@ -157,26 +199,27 @@ class ImageModelUsecase
 
         DB::beginTransaction();
         try {
-            $imageModel = DB::table(DatabaseConst::IMAGE_MODEL)
+            $data = DB::table(DatabaseConst::PROMPT_IMAGE_GENERATION)
                 ->where('id', $id)
                 ->whereNull('deleted_at')
                 ->first();
 
-            if (!$imageModel) {
+            if (!$data) {
                 return Response::buildError(ResponseConst::HTTP_NOT_FOUND, 'Image model not found.');
             }
 
-            if ($imageModel->image_path_preview) {
-                $path = str_replace('/storage/', 'public/', $imageModel->image_path_preview);
+            if ($data->preview_path) {
+                $path = str_replace('/storage/', 'public/', $data->preview_path);
                 Storage::delete($path);
             }
 
-            DB::table(DatabaseConst::IMAGE_MODEL)
+            DB::table(DatabaseConst::PROMPT_IMAGE_GENERATION)
                 ->where('id', $id)
                 ->update([
                     'deleted_at' => now(),
-                    'updated_by' => Auth::user()?->id,
+                    'updated_by' => Auth::user()->id,
                     'updated_at' => now(),
+                    'deleted_by' => Auth::user()->id,
                 ]);
 
             DB::commit();
