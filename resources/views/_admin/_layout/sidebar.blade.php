@@ -29,6 +29,7 @@
             class="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500 mt-4">
             <nav class="hs-accordion-group p-3 w-full flex flex-col flex-wrap" data-hs-accordion-always-open>
                 <ul class="flex flex-col space-y-1">
+                    @if(Auth::user()->access_type == UserConst::ADMIN || Auth::user()->access_type == UserConst::USER)
                     <li>
                         <a navigate
                             class="flex items-center gap-x-3.5 py-2.5 px-3 {{ request()->routeIs('admin.dashboard') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-white' }} text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 font-semibold"
@@ -37,90 +38,135 @@
                             Dashboard
                         </a>
                     </li>
+                    @endif
 
-                    @if (Auth::user()->school_id)
+                    @if(Auth::user()->access_type == UserConst::ADMIN)
                         <li>
                             <a navigate
-                                class="flex items-center gap-x-3.5 py-2.5 px-3 {{ request()->routeIs('admin.tasks.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-white' }} text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 font-semibold"
-                                href="{{ route('admin.tasks.index') }}">
-                                @include('_admin._layout.icons.sidebar.task')
-                                Manajemen Tugas
+                                class="flex items-center gap-x-3.5 py-2.5 px-3 {{ request()->routeIs('superadmin.schools.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-white' }} text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 font-semibold"
+                                href="{{ route('superadmin.schools.index') }}">
+                                @include('_admin._layout.icons.sidebar.data_master')
+                                Manajemen Sekolah
                             </a>
                         </li>
                         <li>
                             <a navigate
-                                class="flex items-center gap-x-3.5 py-2.5 px-3 {{ request()->routeIs('admin.teachers.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-white' }} text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 font-semibold"
-                                href="{{ route('admin.teachers.index') }}">
-                                @include('_admin._layout.icons.sidebar.teacher')
-                                Guru
+                                class="flex items-center gap-x-3.5 py-2.5 px-3 {{ request()->routeIs('superadmin.subjects.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-white' }} text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 font-semibold"
+                                href="{{ route('superadmin.subjects.index') }}">
+                                @include('_admin._layout.icons.sidebar.swatch_book')
+                                Mata Pelajaran
                             </a>
                         </li>
-                        <li>
-                            <a navigate
-                                class="flex items-center gap-x-3.5 py-2.5 px-3 {{ request()->routeIs('admin.students.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-white' }} text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 font-semibold"
-                                href="{{ route('admin.students.index') }}">
-                                @include('_admin._layout.icons.sidebar.student')
-                                Siswa
-                            </a>
-                        </li>
+                    @endif
 
-                        <li class="hs-accordion {{ request()->routeIs('admin.users.*') || request()->routeIs('admin.task_categories.*') ? 'active' : '' }}"
-                            id="projects-accordion">
+                    @if (Auth::user()->access_type == UserConst::USER)
+                        @if(Auth::user()->school_id)
+                            <li>
+                                <a navigate
+                                    class="flex items-center gap-x-3.5 py-2.5 px-3 {{ request()->routeIs('admin.teachers.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-white' }} text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 font-semibold"
+                                    href="{{ route('admin.teachers.index') }}">
+                                    @include('_admin._layout.icons.sidebar.teacher')
+                                    Guru
+                                </a>
+                            </li>
+                            <li>
+                                <a navigate
+                                    class="flex items-center gap-x-3.5 py-2.5 px-3 {{ request()->routeIs('admin.students.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-white' }} text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 font-semibold"
+                                    href="{{ route('admin.students.index') }}">
+                                    @include('_admin._layout.icons.sidebar.student')
+                                    Siswa
+                                </a>
+                            </li>
+
+                            <li class="hs-accordion {{ request()->routeIs('admin.users.*') || request()->routeIs('admin.task_categories.*') || request()->routeIs('admin.classrooms.*') ? 'active' : '' }}"
+                                id="projects-accordion">
+                                <button type="button"
+                                    class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5  py-2.5 px-3 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200 cursor-pointer font-semibold"
+                                    aria-expanded="true" aria-controls="projects-accordion-child">
+                                    @include('_admin._layout.icons.sidebar.data_master')
+                                    Data Master
+
+                                    @include('_admin._layout.icons.sidebar.chevron_down')
+
+                                    @include('_admin._layout.icons.sidebar.chevron_up')
+                                </button>
+
+                                <div id="projects-accordion-child"
+                                    class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 {{ request()->routeIs('admin.users.*') || request()->routeIs('admin.task_categories.*') || request()->routeIs('admin.classrooms.*') ? 'block' : 'hidden' }}"
+                                    role="region" aria-labelledby="projects-accordion">
+                                    <ul class="ps-8 pt-1 space-y-1">
+                                        <li>
+                                            <a navigate
+                                                class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('admin.classrooms.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
+                                                href="{{ route('admin.classrooms.index') }}">
+                                                Kelas
+                                            </a>
+                                        </li>
+                                        
+                                        <li>
+                                            <a navigate
+                                                class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('admin.users.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
+                                                href="{{ route('admin.users.index') }}">
+                                                Pengguna Aplikasi
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        @else
+                            <li>
+                                <a navigate
+                                    class="flex items-center gap-x-3.5 py-2.5 px-3 {{ request()->routeIs('school.register') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-white' }} text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 font-semibold"
+                                    href="{{ route('school.register') }}">
+                                    <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                                        <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                                    </svg>
+                                    Registrasi Sekolah
+                                </a>
+                            </li>
+                        @endif
+                    @endif
+
+                    @if(Auth::user()->access_type == UserConst::GURU)
+                        <li class="hs-accordion {{ request()->routeIs('teacher.ai.*') ? 'active' : '' }}"
+                            id="ai-accordion">
                             <button type="button"
                                 class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5  py-2.5 px-3 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200 cursor-pointer font-semibold"
-                                aria-expanded="true" aria-controls="projects-accordion-child">
-                                @include('_admin._layout.icons.sidebar.data_master')
-                                Data Master
+                                aria-expanded="true" aria-controls="ai-accordion-child">
+                                @include('_admin._layout.icons.sidebar.spark')
+                                Alat AI
 
                                 @include('_admin._layout.icons.sidebar.chevron_down')
 
                                 @include('_admin._layout.icons.sidebar.chevron_up')
                             </button>
 
-                            <div id="projects-accordion-child"
-                                class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 {{ request()->routeIs('admin.users.*') || request()->routeIs('admin.task_categories.*') || request()->routeIs('admin.classrooms.*') ? 'block' : 'hidden' }}"
-                                role="region" aria-labelledby="projects-accordion">
+                            <div id="ai-accordion-child"
+                                class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 {{ request()->routeIs('teacher.ai.*') ? 'block' : 'hidden' }}"
+                                role="region" aria-labelledby="ai-accordion">
                                 <ul class="ps-8 pt-1 space-y-1">
                                     <li>
                                         <a navigate
-                                            class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('admin.task_categories.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
-                                            href="{{ route('admin.task_categories.index') }}">
-                                            Kategori Tugas
+                                            class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('teacher.ai.materi') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
+                                            href="{{ route('teacher.ai.materi') }}">
+                                            Materi Ajar
                                         </a>
                                     </li>
                                     <li>
                                         <a navigate
-                                            class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('admin.classrooms.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
-                                            href="{{ route('admin.classrooms.index') }}">
-                                            Kelas
-                                        </a>
-                                    </li>
-                                    
-                                    <li>
-                                        <a navigate
-                                            class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('admin.users.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
-                                            href="{{ route('admin.users.index') }}">
-                                            Pengguna Aplikasi
+                                            class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('teacher.ai.illustrasi') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
+                                            href="{{ route('teacher.ai.illustrasi') }}">
+                                            Ilustrasi
                                         </a>
                                     </li>
                                 </ul>
                             </div>
                         </li>
-                    @else
-                        <li>
-                            <a navigate
-                                class="flex items-center gap-x-3.5 py-2.5 px-3 {{ request()->routeIs('school.register') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-white' }} text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 font-semibold"
-                                href="{{ route('school.register') }}">
-                                <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                                    <path d="M6 12v5c3 3 9 3 12 0v-5" />
-                                </svg>
-                                Registrasi Sekolah
-                            </a>
-                        </li>
                     @endif
+                </ul>
 
                     {{-- <li><a
                             class="w-full flex items-center gap-x-3.5  py-2.5 px-3 {{ request()->routeIs('admin.users.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }} text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"

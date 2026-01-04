@@ -18,5 +18,7 @@ class DatabaseConst
 
     const STUDENT = 'students';
 
-    const TEACHER = 'teachers'; 
+    const TEACHER = 'teachers';
+
+    const SUBJECT = 'subjects';
 }

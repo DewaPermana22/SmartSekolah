@@ -11,13 +11,13 @@ class CheckSchoolRegistration
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): 
+     * @param  \Closure(\Illuminate\Http\Request):
      */
     public function handle(Request $request, Closure $next): Response
     {
         $user = auth()->user();
 
-        if ($user && is_null($user->school_id)) {
+        if ($user && $user->access_type == \App\Constants\UserConst::USER && is_null($user->school_id)) {
             $allowedRoutes = [
                 'admin.dashboard',
                 'school.register',
