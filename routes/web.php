@@ -7,11 +7,12 @@ use App\Http\Controllers\Admin\TaskCategoryController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\AIToolsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Teacher\AITools\IlustrasiController;
 use App\Http\Controllers\Teacher\AITools\MateriAjarController;
 use App\Http\Controllers\Teacher\LearningModulesController;
+use App\Http\Controllers\ImageModelController;
+use App\Http\Controllers\TextPromptController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -99,6 +100,24 @@ Route::middleware(['auth', 'check.school'])->prefix('admin')->name('admin.')->gr
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/change-password', [UserController::class, 'changePassword'])->name('change_password');
         Route::post('/change-password', [UserController::class, 'doChangePassword'])->name('do_change_password');
+    });
+
+    Route::prefix('image-models')->name('image-model.')->group(function () {
+        Route::get('/', [ImageModelController::class, 'index'])->name('index');
+        Route::get('/add', [ImageModelController::class, 'add'])->name('add');
+        Route::post('/create', [ImageModelController::class, 'doCreate'])->name('create');
+        Route::get('/update/{id}', [ImageModelController::class, 'edit'])->name('edit');
+        Route::post('/update/{id}', [ImageModelController::class, 'doUpdate'])->name('do_update');
+        Route::delete('/delete/{id}', [ImageModelController::class, 'delete'])->name('delete');
+    });
+
+    Route::prefix('text-prompts')->name('text-prompt.')->group(function () {
+        Route::get('/', [TextPromptController::class, 'index'])->name('index');
+        Route::get('/add', [TextPromptController::class, 'add'])->name('add');
+        Route::post('/create', [TextPromptController::class, 'doCreate'])->name('create');
+        Route::get('/update/{id}', [TextPromptController::class, 'edit'])->name('edit');
+        Route::post('/update/{id}', [TextPromptController::class, 'doUpdate'])->name('do_update');
+        Route::delete('/delete/{id}', [TextPromptController::class, 'delete'])->name('delete');
     });
 });
 

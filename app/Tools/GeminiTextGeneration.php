@@ -28,13 +28,11 @@ class GeminiTextGeneration implements ToolInterface
                 'properties' => [
                     'topic' => [
                         'type' => 'string',
-                        'description' => 'The educational topic to explain (e.g., "Photosynthesis", "Pythagorean Theorem", "Indonesian History")',
                         'minLength' => 3,
                         'maxLength' => 500,
                     ],
                     'level' => [
                         'type' => 'string',
-                        'description' => 'Target education level for the content',
                     ],
                 ],
                 'required' => ['topic', 'level'],
