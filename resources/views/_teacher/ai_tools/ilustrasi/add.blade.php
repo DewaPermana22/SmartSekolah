@@ -225,10 +225,6 @@
                             <p class="text-gray-600 dark:text-neutral-400 mb-1">Gaya Gambar:</p>
                             <p class="font-semibold text-gray-800 dark:text-neutral-200">${styleNames[style]}</p>
                         </div>
-                        <div>
-                            <p class="text-gray-600 dark:text-neutral-400 mb-1">Resolusi:</p>
-                            <p class="font-semibold text-gray-800 dark:text-neutral-200">1024 x 768 px</p>
-                        </div>
                         <div class="md:col-span-2">
                             <p class="text-gray-600 dark:text-neutral-400 mb-1">Deskripsi:</p>
                             <p class="text-gray-700 dark:text-neutral-300">${description}</p>

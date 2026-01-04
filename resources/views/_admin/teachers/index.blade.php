@@ -4,38 +4,20 @@
 
 @section('content')
     <div class="grid gap-3 md:flex md:justify-between md:items-center py-4">
-        <div>
-            <h1 class="text-2xl font-extrabold text-gray-800 dark:text-neutral-200 mb-1">
-                Data {{ $page['title'] }}
-            </h1>
-            <p class="text-md text-gray-400 dark:text-neutral-400">
-                Manajemen Guru
-            </p>
+        <div class="mb-4 sm:mb-0">
+            <h1 class="text-2xl font-extrabold text-gray-800 dark:text-neutral-200 mb-1">{{ $page['title'] }}</h1>
+            <p class="text-md text-gray-400 dark:text-neutral-400">Kelola data guru dengan mudah</p>
         </div>
-
-        <div>
-            <div class="inline-flex gap-x-2">
-                <a navigate
-                    class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none font-bolder"
-                    href="{{ route('admin.teachers.add') }}">
-                    @include('_admin._layout.icons.add')
-                    Tambah Guru
-                </a>
-            </div>
-        </div>
+        <a navigate href="{{ route('admin.teachers.add') }}"
+            class="py-3 px-4 inline-flex items-center justify-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-blue-700 transition-all shadow-md shadow-blue-500/20 active:scale-95 cursor-pointer">
+            <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14" />
+                <path d="M12 5v14" />
+            </svg>
+            Tambah Guru
+        </a>
     </div>
-<!-- 
-    @if (session('success'))
-        <div class="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg dark:bg-green-900/20 dark:border-green-700">
-            <p class="text-sm text-green-800 dark:text-green-200">{{ session('success') }}</p>
-        </div>
-    @endif
-
-    @if (session('error'))
-        <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/20 dark:border-red-700">
-            <p class="text-sm text-red-800 dark:text-red-200">{{ session('error') }}</p>
-        </div>
-    @endif -->
 
     <div class="flex flex-col">
         <div class="overflow-x-auto">
@@ -49,7 +31,7 @@
                                 <label for="keywords" class="sr-only">Search</label>
                                 <div class="relative">
                                     <input type="text" name="keywords" id="keywords" value="{{ $keywords ?? '' }}"
-                                        class="py-1 px-3 block w-full border-gray-200 rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 
+                                        class="py-1 px-3 block w-full border-gray-200 rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900
                                         placeholder-neutral-300 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
                                         placeholder="Cari Nama Guru">
                                 </div>
@@ -70,6 +52,62 @@
                             </div>
                         </form>
                     </div>
+
+    @if (session('success'))
+        <div class="mb-4">
+            <div class="bg-teal-50 border border-teal-200 rounded-xl p-4 dark:bg-teal-800/10 dark:border-teal-900"
+                role="alert">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="flex-shrink-0 size-4 text-teal-600 mt-0.5 dark:text-teal-500"
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+                            <path d="m9 12 2 2 4-4" />
+                        </svg>
+                    </div>
+                    <div class="ms-3">
+                        <p class="text-sm text-teal-800 dark:text-teal-200">
+                            {{ session('success') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="mb-4">
+            <div class="bg-red-50 border border-red-200 rounded-xl p-4 dark:bg-red-800/10 dark:border-red-900"
+                role="alert">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="flex-shrink-0 size-4 text-red-600 mt-0.5 dark:text-red-500"
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+                            <path d="m15 9-6 6" />
+                            <path d="m9 9 6 6" />
+                        </svg>
+                    </div>
+                    <div class="ms-3">
+                        <p class="text-sm text-red-800 dark:text-red-200">
+                            {{ session('error') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <div class="flex flex-col">
+        <div class="overflow-x-auto">
+            <div class="min-w-full inline-block align-middle">
+                <div class="overflow-hidden">
+
+
 
                     <div class="mx-0 my-4 overflow-x-auto border border-gray-200 rounded-lg dark:border-neutral-700">
                         <table class="w-full divide-y divide-gray-200 dark:divide-neutral-700">
@@ -100,7 +138,7 @@
                                         <td class="size-px whitespace-nowrap">
                                             <div class="px-6 py-3">
                                                 <span
-                                                    class="block text-sm text-gray-800 dark:text-neutral-200">{{ $loop->iteration + ($data instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($data->firstItem() - 1) : 0) }}</span>
+                                                    class="block text-sm text-gray-800 dark:text-neutral-200">{{ $loop->iteration + ($data instanceof \Illuminate\Pagination\LengthAwarePaginator ? $data->firstItem() - 1 : 0) }}</span>
                                             </div>
                                         </td>
                                         <td class="size-px whitespace-nowrap">
@@ -175,40 +213,33 @@
                     </button>
                 </div>
 
-                <div class="p-4 sm:p-10 text-center overflow-y-auto">
-                    <!-- Icon -->
-                    <span
-                        class="mb-4 inline-flex justify-center items-center size-14 rounded-full border-4 border-red-50 bg-red-100 text-red-500 dark:bg-red-700 dark:border-red-600 dark:text-red-100">
-                        @include('_admin._layout.icons.warning_modal')
-                    </span>
-                    <!-- End Icon -->
-
-                    <h3 id="delete-modal-label" class="mb-2 text-xl font-bold text-gray-800 dark:text-neutral-200">
-                        Hapus Guru
-                    </h3>
-                    <p class="text-gray-500 dark:text-neutral-500">
-                        Apakah Anda yakin ingin menghapus <span id="delete-item-name"
-                            class="font-semibold text-gray-800 dark:text-neutral-200"></span>?
-                        <br>Tindakan ini tidak dapat dibatalkan.
+                <!-- Text Content -->
+                <div>
+                    <p class="text-gray-600 dark:text-neutral-400">
+                        Apakah Anda yakin ingin menghapus
+                        <span id="delete-item-name" class="font-semibold text-gray-900 dark:text-white"></span>?
                     </p>
-
-                    <div class="mt-6 flex justify-center gap-x-4">
-                        <button type="button"
-                            class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-50 dark:bg-transparent dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
-                            data-hs-overlay="#delete-modal">
-                            Batal
-                        </button>
-                        <form id="delete-form" method="POST" class="inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit"
-                                class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:bg-red-700 disabled:opacity-50 disabled:pointer-events-none">
-                                Ya, Hapus
-                            </button>
-                        </form>
-                    </div>
+                    <p class="mt-3 text-sm text-gray-500 dark:text-neutral-500">
+                        Tindakan ini <span class="text-red-600 dark:text-red-500 font-semibold">tidak dapat dibatalkan</span>.
+                    </p>
                 </div>
             </div>
+
+            <!-- Footer -->
+            <div class="flex justify-end items-center gap-x-3 py-4 px-5 border-t dark:border-neutral-700">
+                <button type="button" class="py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700" data-hs-overlay="#delete-modal">
+                    Batal
+                </button>
+
+                <form id="delete-form" method="POST" class="inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:bg-red-700">
+                        Ya, Hapus
+                    </button>
+                </form>
+            </div>
+
         </div>
     </div>
     <!-- Reset Password Confirmation Modal -->
@@ -263,6 +294,8 @@
             </div>
         </div>
     </div>
+</div>
+
 
     <script>
         function setDeleteData(id, name) {

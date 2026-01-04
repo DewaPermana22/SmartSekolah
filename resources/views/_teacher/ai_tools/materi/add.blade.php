@@ -66,6 +66,7 @@
                         </label>
                     </div>
                 </div>
+                
 
                 <div class="mb-6">
                     <label for="material_description" class="block text-sm font-medium mb-2 text-gray-800 dark:text-neutral-200">
@@ -126,6 +127,7 @@
             </div>
             <div id="resultContent" class="text-gray-800 dark:text-neutral-200">
             </div>
+            
         </div>
     </div>
 @endsection

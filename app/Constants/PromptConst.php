@@ -39,23 +39,31 @@ class PromptConst
     }
 
     //Prompt to generate Infographic
-    public static function generateInfographicPrompt(string $topic): string{
+    public static function generateInfographicPrompt(string $topic): string
+    {
         return "Buat infografis edukatif tentang topik: {$topic}.
-                Infografis harus:
-                - Menggunakan layout yang terstruktur dengan judul yang jelas
-                - Berisi poin-poin penting dalam bentuk visual yang mudah dipahami
-                - Menggunakan ikon, diagram, atau ilustrasi sederhana untuk menjelaskan konsep
-                - Menggunakan warna-warna cerah dan menarik untuk siswa
-                - Menampilkan informasi dalam bentuk hierarki yang jelas
-                - Menggunakan Bahasa Indonesia
-                - Cocok untuk ditampilkan di kelas atau bahan belajar siswa
-                - Ukuran file maksimal 5MB
-                - Gunakan resolusi sedang
-                Desain harus profesional namun tetap menarik untuk siswa.";
+
+            Ketentuan desain:
+            - Gunakan layout sederhana dan terstruktur dengan satu judul utama
+            - Tampilkan poin-poin penting secara ringkas dan visual
+            - Gunakan ikon atau ilustrasi sederhana (hindari detail berlebihan)
+            - Gunakan warna cerah namun tidak terlalu kompleks
+            - Gunakan Bahasa Indonesia yang mudah dipahami siswa
+            - Cocok untuk media pembelajaran di kelas
+
+            Ketentuan teknis:
+            - Gaya desain minimalis
+            - Detail visual rendah hingga sedang
+            - Hindari teks kecil dan elemen dekoratif berlebihan
+            - Fokus pada kejelasan informasi, bukan kompleksitas gambar
+
+            Buat gambar yang jelas, ringan, dan mudah dipahami.";
     }
 
+
     //Prompt to generate Poster
-    public static function generatePosterPrompt(string $topic): string{
+    public static function generatePosterPrompt(string $topic): string
+    {
         return "Buat poster edukatif tentang topik: {$topic}.
                 Poster harus:
                 - Memiliki judul yang besar dan menarik perhatian
@@ -72,7 +80,8 @@ class PromptConst
     }
 
     //Prompt to generate Basic Vector
-    public static function generateBasicVectorPrompt(string $subject): string{
+    public static function generateBasicVectorPrompt(string $subject): string
+    {
         return "Buat ilustrasi vektor sederhana tentang: {$subject}.
                 Ilustrasi harus:
                 - Menggunakan bentuk-bentuk dasar dan garis yang bersih
