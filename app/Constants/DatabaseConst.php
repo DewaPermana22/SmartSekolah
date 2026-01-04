@@ -20,11 +20,13 @@ class DatabaseConst
 
     const STUDENT = 'students';
 
+    const TEACHER = 'teachers';
+
+    const SUBJECT = 'subjects';
+  
     const LEARNING_MODULE = 'learning_modules';
 
     const SUBJECT = 'subjects';
-
-    const TEACHER = 'teachers';
 
     const PROMPT_IMAGE_GENERATION = 'prompt_image_generation';
 }

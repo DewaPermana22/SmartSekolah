@@ -17,7 +17,7 @@ class CheckSchoolRegistration
     {
         $user = auth()->user();
 
-        if ($user && is_null($user->school_id)) {
+        if ($user && $user->access_type == \App\Constants\UserConst::USER && is_null($user->school_id)) {
             $allowedRoutes = [
                 'admin.dashboard',
                 'school.register',

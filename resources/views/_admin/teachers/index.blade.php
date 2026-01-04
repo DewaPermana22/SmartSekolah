@@ -155,18 +155,18 @@
                                         </td>
                                         <td class="size-px whitespace-nowrap">
                                             <div class="px-6 py-1.5 flex items-center gap-x-2 justify-end">
-                                                <a navigate
-                                                    class="p-2 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-yellow-100 text-yellow-800 hover:bg-yellow-200 focus:outline-none focus:bg-yellow-200 disabled:opacity-50 disabled:pointer-events-none dark:text-yellow-400 dark:bg-yellow-800/30 dark:hover:bg-yellow-800/20 dark:focus:bg-yellow-800/20"
-                                                    href="{{ route('admin.teachers.resetPassword', $d->id) }}"
-                                                    title="Reset Password">
-                                                    @include('_admin._layout.icons.key')
-                                                </a>
+                                                <button type="button"
+                                                    class="p-2 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-yellow-100 text-yellow-800 hover:bg-yellow-200 focus:outline-none focus:bg-yellow-200 disabled:opacity-50 disabled:pointer-events-none dark:text-yellow-400 dark:bg-yellow-800/30 dark:hover:bg-yellow-800/20 dark:focus:bg-yellow-800/20 cursor-pointer"
+                                                    title="Reset Password" data-hs-overlay="#reset-password-modal"
+                                                    onclick="setResetPasswordData('{{ $d->id }}', '{{ $d->name }}')">
+                                                    @include('_admin._layout.icons.reset')
+                                                </button>
                                                 <a navigate
                                                     class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:bg-blue-800/30 dark:hover:bg-blue-800/20 dark:focus:bg-blue-800/20"
                                                     href="{{ route('admin.teachers.update', $d->id) }}">
                                                     @include('_admin._layout.icons.pencil')
                                                 </a>
-                                                <button type="button"
+                                                  <button type="button"
                                                     class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-red-100 text-red-800 hover:bg-red-200 focus:outline-none focus:bg-red-200 disabled:opacity-50 disabled:pointer-events-none dark:text-red-500 dark:bg-red-800/30 dark:hover:bg-red-800/20 dark:focus:bg-red-800/20 cursor-pointer"
                                                     title="Delete" data-hs-overlay="#delete-modal"
                                                     onclick="setDeleteData('{{ $d->id }}', '{{ $d->name }}')">
@@ -198,35 +198,19 @@
             </div>
         </div>
     </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div id="delete-modal" class="hs-overlay hidden size-full fixed top-0 start-0 z-[80] overflow-x-hidden overflow-y-auto pointer-events-none" role="dialog" tabindex="-1" aria-labelledby="delete-modal-label">
-    <div class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
-        <div class="flex flex-col bg-white border shadow-lg rounded-xl pointer-events-auto dark:bg-neutral-900 dark:border-neutral-700">
-
-            <!-- Header -->
-            <div class="flex justify-between items-center py-4 px-5 border-b dark:border-neutral-700">
-                <h3 id="delete-modal-label" class="font-semibold text-lg text-gray-800 dark:text-white">
-                    Hapus Guru
-                </h3>
-                <button type="button" class="size-8 inline-flex justify-center items-center rounded-lg border border-transparent text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700" aria-label="Close" data-hs-overlay="#delete-modal">
-                    <span class="sr-only">Close</span>
-                    <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M18 6 6 18"></path>
-                        <path d="m6 6 12 12"></path>
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Body -->
-            <div class="p-5 text-center">
-                <!-- Icon Warning -->
-                <div class="mb-4 inline-flex justify-center items-center size-16 rounded-full bg-red-100 dark:bg-red-900/20">
-                    <svg class="shrink-0 size-7 text-red-600 dark:text-red-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
-                        <path d="M12 9v4"></path>
-                        <path d="M12 17h.01"></path>
-                    </svg>
+     <div id="delete-modal" class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto"
+        role="dialog" tabindex="-1" aria-labelledby="delete-modal-label">
+        <div
+            class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
+            <div
+                class="relative flex flex-col bg-white border shadow-sm rounded-xl dark:bg-neutral-800 dark:border-neutral-700">
+                <div class="absolute top-2 end-2">
+                    <button type="button"
+                        class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-none focus:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:hover:bg-neutral-600 dark:text-neutral-400 dark:focus:bg-neutral-600"
+                        aria-label="Close" data-hs-overlay="#delete-modal">
+                        <span class="sr-only">Close</span>
+                        @include('_admin._layout.icons.close_modal')
+                    </button>
                 </div>
 
                 <!-- Text Content -->
@@ -258,6 +242,58 @@
 
         </div>
     </div>
+    <!-- Reset Password Confirmation Modal -->
+    <div id="reset-password-modal"
+        class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto" role="dialog"
+        tabindex="-1" aria-labelledby="reset-password-modal-label">
+        <div
+            class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
+            <div
+                class="relative flex flex-col bg-white border shadow-sm rounded-xl dark:bg-neutral-800 dark:border-neutral-700">
+                <div class="absolute top-2 end-2">
+                    <button type="button"
+                        class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-none focus:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:hover:bg-neutral-600 dark:text-neutral-400 dark:focus:bg-neutral-600"
+                        aria-label="Close" data-hs-overlay="#reset-password-modal">
+                        <span class="sr-only">Close</span>
+                        @include('_admin._layout.icons.close_modal')
+                    </button>
+                </div>
+
+                <div class="p-4 sm:p-10 text-center overflow-y-auto">
+                    <!-- Icon -->
+                    <span
+                        class="mb-4 inline-flex justify-center items-center size-14 rounded-full border-4 border-yellow-50 bg-yellow-100 text-yellow-500 dark:bg-yellow-700 dark:border-yellow-600 dark:text-yellow-100">
+                        @include('_admin._layout.icons.reset')
+                    </span>
+                    <!-- End Icon -->
+
+                    <h3 id="reset-password-modal-label" class="mb-2 text-xl font-bold text-gray-800 dark:text-neutral-200">
+                        Reset Password Guru
+                    </h3>
+                    <p class="text-gray-500 dark:text-neutral-500">
+                        Apakah Anda yakin ingin mereset password <span id="reset-item-name"
+                            class="font-semibold text-gray-800 dark:text-neutral-200"></span>?
+                        <br>Password akan direset menjadi default: <span class="font-bold text-blue-600">asdasd</span>
+                    </p>
+
+                    <div class="mt-6 flex justify-center gap-x-4">
+                        <button type="button"
+                            class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-50 dark:bg-transparent dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+                            data-hs-overlay="#reset-password-modal">
+                            Batal
+                        </button>
+                        <form id="reset-form" method="POST" class="inline">
+                            @csrf
+                            <button type="submit"
+                                class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-yellow-600 text-white hover:bg-yellow-700 focus:outline-none focus:bg-yellow-700 disabled:opacity-50 disabled:pointer-events-none">
+                                Ya, Reset
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -265,6 +301,11 @@
         function setDeleteData(id, name) {
             document.getElementById('delete-item-name').textContent = name;
             document.getElementById('delete-form').action = '{{ url('admin/teachers/delete') }}/' + id;
+        }
+
+        function setResetPasswordData(id, name) {
+            document.getElementById('reset-item-name').textContent = name;
+            document.getElementById('reset-form').action = '{{ url('admin/teachers/reset-password') }}/' + id;
         }
     </script>
 @endsection

@@ -209,7 +209,7 @@ class StudentUsecase extends Usecase
         }
     }
 
-    public function resetPassword(int $id, string $password): array
+    public function resetPassword(int $id): array
     {
         DB::beginTransaction();
         try {
@@ -225,7 +225,7 @@ class StudentUsecase extends Usecase
             DB::table(DatabaseConst::USER)
                 ->where('id', $student->user_id)
                 ->update([
-                    'password' => Hash::make($password),
+                    'password' => Hash::make('asdasd'),
                     'updated_at' => now(),
                 ]);
 

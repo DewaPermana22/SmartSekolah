@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\superAdmin\SchoolController as SuperAdminSchoolController;
+use App\Http\Controllers\superAdmin\SubjectController;
 use App\Http\Controllers\Teacher\AITools\IlustrasiController;
 use App\Http\Controllers\Teacher\AITools\MateriAjarController;
 use App\Http\Controllers\Teacher\LearningModulesController;
@@ -30,8 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/register-school', [SchoolController::class, 'doCreate'])->name('school.register.post');
 });
 
-
-Route::middleware(['auth', 'check.school'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:2', 'check.school'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function () {
         return view('_admin.dashboard');
     })->name('dashboard');
@@ -81,7 +82,6 @@ Route::middleware(['auth', 'check.school'])->prefix('admin')->name('admin.')->gr
         Route::post('/create', [StudentController::class, 'doCreate'])->name('create');
         Route::get('/update/{id}', [StudentController::class, 'update'])->name('update');
         Route::post('/update/{id}', [StudentController::class, 'doUpdate'])->name('do_update');
-        Route::get('/reset-password/{id}', [StudentController::class, 'resetPassword'])->name('resetPassword');
         Route::post('/reset-password/{id}', [StudentController::class, 'doResetPassword'])->name('doResetPassword');
         Route::delete('/delete/{id}', [StudentController::class, 'delete'])->name('delete');
     });
@@ -92,7 +92,6 @@ Route::middleware(['auth', 'check.school'])->prefix('admin')->name('admin.')->gr
         Route::post('/create', [TeacherController::class, 'doCreate'])->name('create');
         Route::get('/update/{id}', [TeacherController::class, 'update'])->name('update');
         Route::post('/update/{id}', [TeacherController::class, 'doUpdate'])->name('do_update');
-        Route::get('/reset-password/{id}', [TeacherController::class, 'resetPassword'])->name('resetPassword');
         Route::post('/reset-password/{id}', [TeacherController::class, 'doResetPassword'])->name('doResetPassword');
         Route::delete('/delete/{id}', [TeacherController::class, 'delete'])->name('delete');
     });
@@ -121,7 +120,7 @@ Route::middleware(['auth', 'check.school'])->prefix('admin')->name('admin.')->gr
     });
 });
 
-Route::middleware('auth')->prefix('teacher')->name('teacher.')->group(function () {
+Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->group(function () {
     Route::prefix('ai-tools')->name('ai.')->group(function () {
         Route::prefix('materi-ajar')->name('materi_ajar.')->group(function () {
             Route::get('/', [MateriAjarController::class, 'index'])->name('index');
@@ -142,4 +141,26 @@ Route::middleware('auth')->prefix('teacher')->name('teacher.')->group(function (
         Route::get('/detail/{id}', [LearningModulesController::class, 'detail'])->name('detail');
         Route::delete('/delete/{id}', [LearningModulesController::class, 'delete'])->name('delete');
     });
+});
+
+Route::middleware(['auth', 'role:1'])->prefix('superadmin')->name('superadmin.')->group(function () {
+    Route::prefix('schools')->name('schools.')->group(function () {
+        Route::get('/', [SuperAdminSchoolController::class, 'index'])->name('index');
+        Route::get('/add', [SuperAdminSchoolController::class, 'add'])->name('add');
+        Route::post('/create', [SuperAdminSchoolController::class, 'doCreate'])->name('create');
+        Route::get('/update/{id}', [SuperAdminSchoolController::class, 'update'])->name('update');
+        Route::post('/update/{id}', [SuperAdminSchoolController::class, 'doUpdate'])->name('do_update');
+        Route::delete('/delete/{id}', [SuperAdminSchoolController::class, 'delete'])->name('delete');
+        Route::post('/restore/{id}', [SuperAdminSchoolController::class, 'restore'])->name('restore');
+    });
+
+    Route::prefix('subjects')->name('subjects.')->group(function () {
+        Route::get('/', [SubjectController::class, 'index'])->name('index');
+        Route::get('/add', [SubjectController::class, 'add'])->name('add');
+        Route::post('/create', [SubjectController::class, 'doCreate'])->name('create');
+        Route::get('/update/{id}', [SubjectController::class, 'update'])->name('update');
+        Route::post('/update/{id}', [SubjectController::class, 'doUpdate'])->name('do_update');
+        Route::delete('/delete/{id}', [SubjectController::class, 'delete'])->name('delete');
+    });
+
 });
