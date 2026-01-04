@@ -11,7 +11,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Teacher\AITools\IlustrasiController;
 use App\Http\Controllers\Teacher\AITools\MateriAjarController;
 use App\Http\Controllers\Teacher\LearningModulesController;
-use App\Http\Controllers\ImageModelController;
+use App\Http\Controllers\PromptImageController;
 use App\Http\Controllers\TextPromptController;
 use Illuminate\Support\Facades\Route;
 
