@@ -42,8 +42,8 @@
 
                     <li>
                         <a navigate
-                            class="flex items-center gap-x-3.5 py-2.5 px-3 {{ request()->routeIs('admin.tasks.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-white' }} text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 font-semibold"
-                            href="">
+                            class="flex items-center gap-x-3.5 py-2.5 px-3 {{ request()->routeIs('teacher.learning_modules*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-white' }} text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 font-semibold"
+                            href="{{ route('teacher.learning_modules.index') }}">
                             @include('_admin._layout.icons.sidebar.swatch_book')
                             Modul Belajar
                         </a>
@@ -68,15 +68,15 @@
                             <ul class="ps-8 pt-1 space-y-1">
                                 <li>
                                     <a navigate
-                                        class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('teacher.ai.materi') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
-                                        href="{{ route('teacher.ai.materi') }}">
+                                        class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('teacher.ai.materi_ajar.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
+                                        href="{{ route('teacher.ai.materi_ajar.index') }}">
                                         Materi Ajar
                                     </a>
                                 </li>
                                 <li>
                                     <a navigate
                                         class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('teacher.ai.illustrasi') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
-                                        href="{{ route('teacher.ai.illustrasi') }}">
+                                        href="{{ route('teacher.ai.ilustrasi.index') }}">
                                         Ilustrasi
                                     </a>
                                 </li>

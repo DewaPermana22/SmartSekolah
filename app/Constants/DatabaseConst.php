@@ -19,4 +19,8 @@ class DatabaseConst
     const STUDENT = 'students';
 
     const TEACHER = 'teachers'; 
+
+    const LEARNING_MODULE = 'learning_modules';
+
+    const SUBJECT = 'subjects';
 }
