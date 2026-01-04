@@ -25,37 +25,6 @@
         </div>
     </div>
 
-    <!-- @if (session('success'))
-        <div class="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg dark:bg-green-900/20 dark:border-green-700">
-            <p class="text-sm text-green-800 dark:text-green-200">{{ session('success') }}</p>
-        </div>
-    @endif
-
-    @if (session('error'))
-        <div class="mb-4">
-            <div class="bg-red-50 border border-red-200 rounded-xl p-4 dark:bg-red-800/10 dark:border-red-900"
-                role="alert">
-                <div class="flex">
-                    <div class="flex-shrink-0">
-                        <svg class="flex-shrink-0 size-4 text-red-600 mt-0.5 dark:text-red-500"
-                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
-                            <path d="m15 9-6 6" />
-                            <path d="m9 9 6 6" />
-                        </svg>
-                    </div>
-                    <div class="ms-3">
-                        <p class="text-sm text-red-800 dark:text-red-200">
-                            {{ session('error') }}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif -->
-
     <div class="flex flex-col">
         <div class="overflow-x-auto">
             <div class="min-w-full inline-block align-middle">
@@ -89,6 +58,60 @@
                             </div>
                         </form>
                     </div>
+
+    @if (session('success'))
+        <div class="mb-4">
+            <div class="bg-teal-50 border border-teal-200 rounded-xl p-4 dark:bg-teal-800/10 dark:border-teal-900"
+                role="alert">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="flex-shrink-0 size-4 text-teal-600 mt-0.5 dark:text-teal-500"
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+                            <path d="m9 12 2 2 4-4" />
+                        </svg>
+                    </div>
+                    <div class="ms-3">
+                        <p class="text-sm text-teal-800 dark:text-teal-200">
+                            {{ session('success') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="mb-4">
+            <div class="bg-red-50 border border-red-200 rounded-xl p-4 dark:bg-red-800/10 dark:border-red-900"
+                role="alert">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="flex-shrink-0 size-4 text-red-600 mt-0.5 dark:text-red-500"
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+                            <path d="m15 9-6 6" />
+                            <path d="m9 9 6 6" />
+                        </svg>
+                    </div>
+                    <div class="ms-3">
+                        <p class="text-sm text-red-800 dark:text-red-200">
+                            {{ session('error') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <div class="flex flex-col">
+        <div class="overflow-x-auto">
+            <div class="min-w-full inline-block align-middle">
+                <div class="overflow-hidden">
 
                     <div class="mx-0 my-4 overflow-x-auto border border-gray-200 rounded-lg dark:border-neutral-700">
                         <table class="w-full divide-y divide-gray-200 dark:divide-neutral-700">

@@ -7,10 +7,11 @@ use App\Http\Controllers\Admin\TaskCategoryController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\AIToolsController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ImagePromptsController;
-use App\Http\Controllers\PromptImageController;
+use App\Http\Controllers\Teacher\AITools\IlustrasiController;
+use App\Http\Controllers\Teacher\AITools\MateriAjarController;
+use App\Http\Controllers\Teacher\LearningModulesController;
+use App\Http\Controllers\ImageModelController;
 use App\Http\Controllers\TextPromptController;
 use Illuminate\Support\Facades\Route;
 
@@ -122,7 +123,23 @@ Route::middleware(['auth', 'check.school'])->prefix('admin')->name('admin.')->gr
 
 Route::middleware('auth')->prefix('teacher')->name('teacher.')->group(function () {
     Route::prefix('ai-tools')->name('ai.')->group(function () {
-        Route::get('materi-ajar', [AIToolsController::class, 'materiAjar'])->name('materi');
-        Route::get('ilustrasi', [AIToolsController::class, 'illustrasi'])->name('illustrasi');
+        Route::prefix('materi-ajar')->name('materi_ajar.')->group(function () {
+            Route::get('/', [MateriAjarController::class, 'index'])->name('index');
+            Route::get('/add', [MateriAjarController::class, 'create'])->name('add');
+        });
+        Route::prefix('ilustrasi')->name('ilustrasi.')->group(function () {
+            Route::get('/', [IlustrasiController::class, 'index'])->name('index');
+            Route::get('/add', [IlustrasiController::class, 'create'])->name('add');
+        });
+    });
+
+    Route::prefix('learning-modules')->name('learning_modules.')->group(function () {
+        Route::get('/', [LearningModulesController::class, 'index'])->name('index');
+        Route::get('/add', [LearningModulesController::class, 'add'])->name('add');
+        Route::post('/create', [LearningModulesController::class, 'doCreate'])->name('create');
+        Route::get('/update/{id}', [LearningModulesController::class, 'update'])->name('update');
+        Route::post('/update/{id}', [LearningModulesController::class, 'doUpdate'])->name('do_update');
+        Route::get('/detail/{id}', [LearningModulesController::class, 'detail'])->name('detail');
+        Route::delete('/delete/{id}', [LearningModulesController::class, 'delete'])->name('delete');
     });
 });
