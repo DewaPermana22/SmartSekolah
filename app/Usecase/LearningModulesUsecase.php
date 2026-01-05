@@ -60,7 +60,7 @@ class LearningModulesUsecase extends Usecase
             'title' => 'required|string|max:255',
             'subject_id' => 'required|integer|exists:subjects,id',
             'classroom' => 'required|string|max:100',
-            'file' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,webp|max:10240',
+            'file' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,webp,png,jpg,jpeg|max:20480',
         ]);
 
         $validator->validate();
@@ -74,12 +74,19 @@ class LearningModulesUsecase extends Usecase
 
             $file = $data->file('file');
 
-            $originalName = $file->getClientOriginalName();
+            $extension = $file->getClientOriginalExtension();
+            
+            $subject = DB::table(DatabaseConst::SUBJECT)
+                ->where('id', $data->subject_id)
+                ->first();
+            $subjectName = $subject ? str_replace(' ', '_', $subject->name) : 'unknown';
+            
+            $fileName = date('Ymd') . '-' . $subjectName . '-' . str_replace(' ', '_', $data->title) . '.' . $extension;
 
             $filePath = Storage::disk('public')->putFileAs(
                 'learning_modules',
                 $file,
-                $originalName
+                $fileName
             );
 
             DB::table(DatabaseConst::LEARNING_MODULE)->insert([
