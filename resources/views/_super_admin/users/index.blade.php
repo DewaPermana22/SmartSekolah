@@ -3,7 +3,7 @@
 @section('title', 'Data Pengguna')
 
 @php
-use App\Constants\UserConst;
+    use App\Constants\UserConst;
 @endphp
 
 @section('content')
@@ -138,74 +138,76 @@ use App\Constants\UserConst;
         </table>
     </div>
 
-    @if (count($data) > 0 && $data->hasPages())
-    <div class="px-6 py-4 border-t border-gray-100 dark:border-neutral-700">
-        <div class="flex justify-between items-center">
-            <p class="text-sm text-gray-600 dark:text-neutral-400">
-                Menampilkan {{ $data->firstItem() }} sampai {{ $data->lastItem() }} dari {{ $data->total() }} data
-            </p>
-            {{ $data->links() }}
-        </div>
-    </div>
-    @endif
-</div>
-
-<!-- Delete Confirmation Modal -->
-<div id="delete-modal" class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto"
-    role="dialog" tabindex="-1">
-    <div
-        class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
-        <div
-            class="relative flex flex-col bg-white border border-gray-100 shadow-2xl rounded-2xl dark:bg-neutral-800 dark:border-neutral-700">
-            <div class="absolute top-4 end-4">
-                <button type="button"
-                    class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-hidden disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:hover:bg-neutral-600 dark:text-neutral-400"
-                    data-hs-overlay="#delete-modal">
-                    <span class="sr-only">Close</span>
-                    @include('_admin._layout.icons.close_modal')
-                </button>
+        @if (count($data) > 0 && $data->hasPages())
+            <div class="px-6 py-4 border-t border-gray-100 dark:border-neutral-700">
+                <div class="flex justify-between items-center">
+                    <p class="text-sm text-gray-600 dark:text-neutral-400">
+                        Menampilkan {{ $data->firstItem() }} sampai {{ $data->lastItem() }} dari {{ $data->total() }}
+                        data
+                    </p>
+                    {{ $data->links() }}
+                </div>
             </div>
+        @endif
+    </div>
 
-            <div class="p-4 sm:p-10 text-center overflow-y-auto">
-                <span
-                    class="mb-4 inline-flex justify-center items-center size-[62px] rounded-full border-4 border-red-50 bg-red-100 text-red-500 dark:bg-red-700/10 dark:border-red-900/20 dark:text-red-600">
-                    @include('_admin._layout.icons.warning_modal', ['class' => 'size-6'])
-                </span>
-
-                <h3 class="mb-2 text-2xl font-bold text-gray-800 dark:text-neutral-200">
-                    Hapus Pengguna
-                </h3>
-                <p class="text-gray-500 dark:text-neutral-400">
-                    Apakah Anda yakin ingin menghapus <span id="delete-user-name"
-                        class="font-semibold text-gray-900 dark:text-white"></span>? Data yang dihapus tidak dapat
-                    dikembalikan.
-                </p>
-
-                <div class="mt-8 flex justify-center gap-x-2">
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto"
+        role="dialog" tabindex="-1" aria-labelledby="delete-modal-label">
+        <div
+            class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
+            <div
+                class="relative flex flex-col bg-white border shadow-sm rounded-xl dark:bg-neutral-800 dark:border-neutral-700">
+                <div class="absolute top-2 end-2">
                     <button type="button"
-                        class="py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-xl border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-hidden disabled:opacity-50 disabled:pointer-events-none dark:bg-transparent dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
-                        data-hs-overlay="#delete-modal">
-                        Batal
+                        class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-none focus:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:hover:bg-neutral-600 dark:text-neutral-400 dark:focus:bg-neutral-600"
+                        aria-label="Close" data-hs-overlay="#delete-modal">
+                        <span class="sr-only">Close</span>
+                        @include('_admin._layout.icons.close_modal')
                     </button>
-                    <form id="delete-form" method="POST" class="inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit"
-                            class="py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent bg-red-600 text-white hover:bg-red-700 focus:outline-hidden transition-all shadow-md shadow-red-500/20 active:scale-95">
-                            Ya, Hapus Data
+                </div>
+
+                <div class="p-4 sm:p-10 text-center overflow-y-auto">
+                    <!-- Icon -->
+                    <span
+                        class="mb-4 inline-flex justify-center items-center size-14 rounded-full border-4 border-red-50 bg-red-100 text-red-500 dark:bg-red-700 dark:border-red-600 dark:text-red-100">
+                        @include('_admin._layout.icons.warning_modal')
+                    </span>
+                    <!-- End Icon -->
+
+                    <h3 id="delete-modal-label" class="mb-2 text-xl font-bold text-gray-800 dark:text-neutral-200">
+                        Hapus Pengguna
+                    </h3>
+                    <p class="text-gray-500 dark:text-neutral-500">
+                        Apakah Anda yakin ingin menghapus <span id="delete-item-name"
+                            class="font-semibold text-gray-800 dark:text-neutral-200"></span>?
+                        <br>Tindakan ini tidak dapat dibatalkan.
+                    </p>
+
+                    <div class="mt-6 flex justify-center gap-x-4">
+                        <button type="button"
+                            class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-50 dark:bg-transparent dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+                            data-hs-overlay="#delete-modal">
+                            Batal
                         </button>
-                    </form>
+                        <form id="delete-form" method="POST" class="inline" navigate-form>
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:bg-red-700 disabled:opacity-50 disabled:pointer-events-none">
+                                Ya, Hapus
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    function setDeleteData(id, name) {
-        document.getElementById('delete-user-name').textContent = name;
-        document.getElementById('delete-form').action = '{{ url('
-        admin / user / delete ') }}/' + id;
-    }
-</script>
+    <script>
+        function setDeleteData(id, name) {
+            document.getElementById('delete-item-name').textContent = name;
+            document.getElementById('delete-form').action = '{{ url('admin/users/delete') }}/' + id;
+        }
+    </script>
 @endsection

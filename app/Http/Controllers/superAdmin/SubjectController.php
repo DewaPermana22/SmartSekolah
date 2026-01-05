@@ -56,12 +56,12 @@ class SubjectController extends Controller
             return redirect()
                 ->route('superadmin.subjects.index')
                 ->with('success', ResponseConst::SUCCESS_MESSAGE_CREATED);
-        }
-
-        return redirect()
+        } else {   
+            return redirect()
             ->back()
             ->withInput()
             ->with('error', $process['message'] ?? ResponseConst::DEFAULT_ERROR_MESSAGE);
+        }
     }
 
     public function update(int $id): View|RedirectResponse|Response
@@ -81,7 +81,7 @@ class SubjectController extends Controller
         ]);
     }
 
-    public function doUpdate(int $id, Request $request): RedirectResponse
+    public function doUpdate(int $id, Request $request)
     {
         $process = $this->usecase->update(
             data: $request,
@@ -92,12 +92,12 @@ class SubjectController extends Controller
             return redirect()
                 ->route('superadmin.subjects.index')
                 ->with('success', ResponseConst::SUCCESS_MESSAGE_UPDATED);
+        } else {   
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', ResponseConst::DEFAULT_ERROR_MESSAGE);
         }
-
-        return redirect()
-            ->back()
-            ->withInput()
-            ->with('error', ResponseConst::DEFAULT_ERROR_MESSAGE);
     }
 
     public function delete(int $id): RedirectResponse

@@ -86,7 +86,7 @@
                                 class="block w-full border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 file:bg-gray-50 file:border-0 file:me-4 file:py-3 file:px-4 dark:file:bg-neutral-700 dark:file:text-neutral-400 @error('file') border-red-500 focus:border-red-500 focus:ring-red-500 @enderror"
                                 required>
                         </div>
-                        <p class="text-xs text-gray-500 mt-2">Format: PDF, DOC, DOCX, PPT, PPTX. Maksimal 10MB</p>
+                        <p class="text-xs text-gray-500 mt-2">Format: PDF, DOC, DOCX, PPT, PPTX, JPG, PNG, JPEG, WEBP. Maksimal 20MB</p>
                         @error('file')
                             <p class="text-xs text-red-600 mt-2" id="file-error">{{ $message }}</p>
                         @enderror

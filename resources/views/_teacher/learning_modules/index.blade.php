@@ -118,14 +118,24 @@
                     };
                     @endphp
 
-                    <div class="flex flex-col bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition dark:bg-neutral-900 dark:border-neutral-700">
-                        <!-- Header -->
-                        <div class="p-4 flex items-start gap-3">
-                            <svg class="size-8 {{ $icon }}" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                <path d="M14 2v6h6" />
-                            </svg>
+        <div class="flex flex-col bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition dark:bg-neutral-900 dark:border-neutral-700">
+            <!-- Header -->
+            <div class="p-4 flex items-start gap-3">
+                <div class="text-red-500">
+                    @if ($ext === 'pdf')
+                        @include('_admin._layout.icons.filetype.pdf')
+                    @elseif (in_array($ext, ['doc', 'docx']))
+                        @include('_admin._layout.icons.filetype.' . $ext)
+                    @elseif (in_array($ext, ['ppt', 'pptx']))
+                        @include('_admin._layout.icons.filetype.' . $ext)
+                    @else
+                        <svg class="size-8 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <path d="M14 2v6h6" />
+                        </svg>
+                    @endif
+                </div>
 
                             <div class="flex-1">
                                 <h3 class="text-sm font-semibold text-gray-800 dark:text-neutral-200 line-clamp-2">
