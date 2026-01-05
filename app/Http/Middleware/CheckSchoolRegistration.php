@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Constants\UserConst;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +18,7 @@ class CheckSchoolRegistration
     {
         $user = auth()->user();
 
-        if ($user && $user->access_type == \App\Constants\UserConst::USER && is_null($user->school_id)) {
+        if ($user && $user->access_type == UserConst::ADMIN_SEKOLAH && is_null($user->school_id)) {
             $allowedRoutes = [
                 'admin.dashboard',
                 'school.register',

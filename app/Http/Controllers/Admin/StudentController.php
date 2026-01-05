@@ -16,7 +16,7 @@ class StudentController extends Controller
 {
     protected array $page = [
         'route' => 'students',
-        'title' => 'Manajemen Siswa',
+        'title' => 'Akun Siswa',
     ];
 
     protected string $baseRedirect;

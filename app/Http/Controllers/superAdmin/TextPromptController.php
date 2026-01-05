@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\superAdmin;
 
 use App\Constants\ResponseConst;
+use App\Http\Controllers\Controller;
 use App\Usecase\TextPromptUsecase;
 use Illuminate\Http\Request;
 

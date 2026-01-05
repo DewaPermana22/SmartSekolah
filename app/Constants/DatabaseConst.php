@@ -23,10 +23,8 @@ class DatabaseConst
     const TEACHER = 'teachers';
 
     const SUBJECT = 'subjects';
-  
-    const LEARNING_MODULE = 'learning_modules';
 
-    const SUBJECT = 'subjects';
+    const LEARNING_MODULE = 'learning_modules';
 
     const PROMPT_IMAGE_GENERATION = 'prompt_image_generation';
 }

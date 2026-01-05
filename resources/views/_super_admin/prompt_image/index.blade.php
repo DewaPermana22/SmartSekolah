@@ -4,24 +4,9 @@
 
 @section('content')
 <div class="grid gap-3 md:flex md:justify-between md:items-center py-4">
-    <div>
-        <h1 class="text-2xl font-extrabold text-gray-800 dark:text-neutral-200 mb-1">
-            Data {{ $page['title'] }}
-        </h1>
-        <p class="text-md text-gray-400 dark:text-neutral-400">
-            Kelola Gaya Gambar untuk Tools Generator Ilustrasi
-        </p>
-    </div>
-
-    <div>
-        <div class="inline-flex gap-x-2">
-            <a navigate
-                class="py-3 px-4 inline-flex items-center justify-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-blue-700 transition-all shadow-md shadow-blue-500/20 active:scale-95 cursor-pointer"
-                href="{{ route('admin.image-prompts.add') }}">
-                @include('_admin._layout.icons.add')
-                Tambah Data
-            </a>
-        </div>
+    <x-page-title title="Data {{ $page['title'] }}" description="Kelola Gaya Gambar untuk Tools Generator Ilustrasi" />
+    <div class="inline-flex gap-x-2">
+        <x-add-button :href="route('superadmin.image-prompts.add')" label="Tambah Data" />
     </div>
 </div>
 <div class="flex flex-col">
@@ -30,7 +15,7 @@
             <div class="overflow-hidden">
 
                 <div class="px-2 pt-4">
-                    <form action="{{ route('admin.image-prompts.index') }}" method="GET" navigate-form
+                    <form action="{{ route('superadmin.image-prompts.index') }}" method="GET" navigate-form
                         class="flex flex-col sm:flex-row gap-3">
                         <div class="sm:w-64">
                             <label for="keywords" class="sr-only">Search</label>
@@ -76,7 +61,7 @@
                             </div>
 
                             <div class="mt-4 flex gap-x-2">
-                                <a navigate href="{{ route('admin.image-prompts.update', $d->id) }}"
+                                <a navigate href="{{ route('superadmin.image-prompts.update', $d->id) }}"
                                     class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:bg-blue-800/30 dark:hover:bg-blue-800/20 dark:focus:bg-blue-800/20">
                                     @include('_admin._layout.icons.pencil')
                                     Edit
@@ -169,7 +154,7 @@
 <script>
     function setDeleteData(id, name) {
         document.getElementById('delete-item-name').textContent = name;
-        const deleteUrl = "{{ route('admin.image-prompts.delete', ':id') }}";
+        const deleteUrl = "{{ route('superadmin.image-prompts.delete', ':id') }}";
         document.getElementById('delete-form').action = deleteUrl.replace(':id', id);
     }
 </script>

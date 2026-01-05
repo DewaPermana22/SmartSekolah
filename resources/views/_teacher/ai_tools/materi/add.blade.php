@@ -1,4 +1,4 @@
-@extends('_teacher._layout.app')
+@extends('_admin._layout.app')
 
 @section('title', 'AI Materi Ajar')
 
@@ -66,7 +66,7 @@
                         </label>
                     </div>
                 </div>
-                
+
 
                 <div class="mb-6">
                     <label for="material_description" class="block text-sm font-medium mb-2 text-gray-800 dark:text-neutral-200">
@@ -127,7 +127,7 @@
             </div>
             <div id="resultContent" class="text-gray-800 dark:text-neutral-200">
             </div>
-            
+
         </div>
     </div>
 @endsection
@@ -142,7 +142,7 @@
                     <p class="text-gray-700 dark:text-neutral-300 font-bold text-lg">FOTOSINTESIS</p>
                     <p class="text-sm text-gray-600 dark:text-neutral-400">Proses Pembentukan Makanan pada Tumbuhan</p>
                 </div>
-                
+
                 <div class="border-l-4 border-blue-500 bg-gray-50 dark:bg-neutral-900 p-4 rounded-r-lg">
                     <h4 class="font-semibold text-gray-800 dark:text-neutral-200 mb-2">Slide 2: Pengertian</h4>
                     <p class="text-gray-700 dark:text-neutral-300 mb-2">Fotosintesis adalah proses pembuatan makanan oleh tumbuhan hijau dengan bantuan sinar matahari.</p>
@@ -152,13 +152,13 @@
                         <li>Menghasilkan glukosa dan O₂</li>
                     </ul>
                 </div>
-                
+
                 <div class="border-l-4 border-blue-500 bg-gray-50 dark:bg-neutral-900 p-4 rounded-r-lg">
                     <h4 class="font-semibold text-gray-800 dark:text-neutral-200 mb-2">Slide 3: Proses Fotosintesis</h4>
                     <p class="text-gray-700 dark:text-neutral-300 font-mono text-sm mb-2">6CO₂ + 6H₂O + Cahaya → C₆H₁₂O₆ + 6O₂</p>
                     <p class="text-sm text-gray-600 dark:text-neutral-400">Karbondioksida + Air + Cahaya → Glukosa + Oksigen</p>
                 </div>
-                
+
                 <div class="border-l-4 border-blue-500 bg-gray-50 dark:bg-neutral-900 p-4 rounded-r-lg">
                     <h4 class="font-semibold text-gray-800 dark:text-neutral-200 mb-2">Slide 4: Faktor yang Mempengaruhi</h4>
                     <ul class="list-disc list-inside text-gray-700 dark:text-neutral-300 space-y-1">
@@ -169,7 +169,7 @@
                         <li>Kandungan CO₂ di udara</li>
                     </ul>
                 </div>
-                
+
                 <div class="border-l-4 border-blue-500 bg-gray-50 dark:bg-neutral-900 p-4 rounded-r-lg">
                     <h4 class="font-semibold text-gray-800 dark:text-neutral-200 mb-2">Slide 5: Manfaat Fotosintesis</h4>
                     <ul class="list-disc list-inside text-gray-700 dark:text-neutral-300 space-y-1">
@@ -184,12 +184,12 @@
             modul: `<div class="space-y-6">
                 <div>
                     <h4 class="text-xl font-bold text-gray-800 dark:text-neutral-200 mb-4">BAB 1: FOTOSINTESIS</h4>
-                    
+
                     <div class="mb-5">
                         <h5 class="font-semibold text-gray-800 dark:text-neutral-200 mb-2">A. Kompetensi Dasar</h5>
                         <p class="text-gray-700 dark:text-neutral-300">Siswa mampu memahami dan menjelaskan proses fotosintesis pada tumbuhan hijau.</p>
                     </div>
-                    
+
                     <div class="mb-5">
                         <h5 class="font-semibold text-gray-800 dark:text-neutral-200 mb-2">B. Tujuan Pembelajaran</h5>
                         <ol class="list-decimal list-inside text-gray-700 dark:text-neutral-300 space-y-1">
@@ -200,16 +200,16 @@
                         </ol>
                     </div>
                 </div>
-                
+
                 <div class="border-t border-gray-200 dark:border-neutral-700 pt-5">
                     <h5 class="font-semibold text-gray-800 dark:text-neutral-200 mb-4">C. Materi Pembelajaran</h5>
-                    
+
                     <div class="mb-5">
                         <h6 class="font-medium text-gray-800 dark:text-neutral-200 mb-2">1. Pengertian Fotosintesis</h6>
                         <p class="text-gray-700 dark:text-neutral-300 mb-2">Fotosintesis berasal dari kata "<strong>foto</strong>" yang berarti cahaya dan "<strong>sintesis</strong>" yang berarti penyusunan. Jadi, fotosintesis adalah proses penyusunan atau pembuatan makanan oleh tumbuhan hijau dengan bantuan cahaya matahari.</p>
                         <p class="text-gray-700 dark:text-neutral-300">Proses ini hanya dapat dilakukan oleh tumbuhan yang memiliki klorofil (zat hijau daun).</p>
                     </div>
-                    
+
                     <div class="mb-5">
                         <h6 class="font-medium text-gray-800 dark:text-neutral-200 mb-2">2. Tempat Terjadinya Fotosintesis</h6>
                         <p class="text-gray-700 dark:text-neutral-300 mb-2">Fotosintesis terjadi di daun, tepatnya di dalam kloroplas yang mengandung klorofil.</p>
@@ -221,7 +221,7 @@
                             <li><strong>Pembuluh:</strong> mengangkut air dan hasil fotosintesis</li>
                         </ul>
                     </div>
-                    
+
                     <div class="mb-5">
                         <h6 class="font-medium text-gray-800 dark:text-neutral-200 mb-2">3. Bahan-Bahan Fotosintesis</h6>
                         <ul class="list-disc list-inside text-gray-700 dark:text-neutral-300 ml-4 space-y-1">
@@ -231,7 +231,7 @@
                             <li>Klorofil sebagai zat penangkap cahaya</li>
                         </ul>
                     </div>
-                    
+
                     <div class="mb-5">
                         <h6 class="font-medium text-gray-800 dark:text-neutral-200 mb-2">4. Proses Fotosintesis</h6>
                         <p class="text-gray-700 dark:text-neutral-300 mb-2">Persamaan reaksi fotosintesis:</p>
@@ -247,7 +247,7 @@
                             <li>Oksigen dilepaskan ke udara sebagai hasil sampingan</li>
                         </ol>
                     </div>
-                    
+
                     <div class="mb-5">
                         <h6 class="font-medium text-gray-800 dark:text-neutral-200 mb-2">5. Hasil Fotosintesis</h6>
                         <ul class="list-disc list-inside text-gray-700 dark:text-neutral-300 ml-4 space-y-1">
@@ -255,7 +255,7 @@
                             <li><strong>Oksigen (O₂):</strong> dilepas ke udara untuk kehidupan makhluk lain</li>
                         </ul>
                     </div>
-                    
+
                     <div class="mb-5">
                         <h6 class="font-medium text-gray-800 dark:text-neutral-200 mb-2">6. Faktor yang Mempengaruhi Fotosintesis</h6>
                         <ol class="list-decimal list-inside text-gray-700 dark:text-neutral-300 ml-4 space-y-1">
@@ -267,7 +267,7 @@
                         </ol>
                     </div>
                 </div>
-                
+
                 <div class="border-t border-gray-200 dark:border-neutral-700 pt-5">
                     <h5 class="font-semibold text-gray-800 dark:text-neutral-200 mb-3">D. Rangkuman</h5>
                     <ul class="list-disc list-inside text-gray-700 dark:text-neutral-300 space-y-1">
@@ -278,7 +278,7 @@
                         <li>Sangat penting untuk kehidupan di Bumi</li>
                     </ul>
                 </div>
-                
+
                 <div class="border-t border-gray-200 dark:border-neutral-700 pt-5">
                     <h5 class="font-semibold text-gray-800 dark:text-neutral-200 mb-3">E. Latihan Soal</h5>
                     <ol class="list-decimal list-inside text-gray-700 dark:text-neutral-300 space-y-2">
@@ -294,7 +294,7 @@
                         <li>Mengapa tumbuhan disebut sebagai produsen dalam ekosistem?</li>
                     </ol>
                 </div>
-                
+
                 <div class="border-t border-gray-200 dark:border-neutral-700 pt-5">
                     <h5 class="font-semibold text-gray-800 dark:text-neutral-200 mb-3">F. Tugas</h5>
                     <div class="bg-gray-50 dark:bg-neutral-900 p-4 rounded-lg">

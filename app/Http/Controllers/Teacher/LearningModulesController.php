@@ -14,7 +14,7 @@ class LearningModulesController extends Controller
 {
     protected array $page = [
         'route' => 'learning-modules',
-        'title' => 'Learning Modules'
+        'title' => 'Modul Belajar'
     ];
 
     protected string $baseRedirect;

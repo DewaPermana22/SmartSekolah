@@ -1,4 +1,4 @@
-@extends('_teacher._layout.app')
+@extends('_admin._layout.app')
 
 @section('title', 'Tambah Modul Belajar')
 
@@ -113,6 +113,6 @@
             </form>
         </div>
 
-        
+
     </div>
 @endsection

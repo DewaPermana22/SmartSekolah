@@ -28,9 +28,9 @@ class UserUsecase extends Usecase
             $data = DB::table(DatabaseConst::USER)
                 ->whereNull('deleted_at')
                 ->when(Auth::user()->school_id, function ($query, $schoolId) {
-                    return $query->where('school_id', $schoolId)->where('access_type', UserConst::USER);
+                    return $query->where('school_id', $schoolId)->where('access_type', UserConst::ADMIN_SEKOLAH);
                 }, function ($query) {
-                    return $query->whereIn('access_type', [UserConst::ADMIN, UserConst::USER]);
+                    return $query->whereIn('access_type', [UserConst::SUPER_ADMIN, UserConst::ADMIN_SEKOLAH]);
                 })
                 ->when($filterData['keywords'] ?? false, function ($query, $keywords) {
                     return $query->where(function ($q) use ($keywords) {
@@ -76,9 +76,9 @@ class UserUsecase extends Usecase
                 ->whereNull('deleted_at')
                 ->where('id', $id)
                 ->when(Auth::user()->school_id, function ($query, $schoolId) {
-                    return $query->where('school_id', $schoolId)->where('access_type', UserConst::USER);
+                    return $query->where('school_id', $schoolId)->where('access_type', UserConst::ADMIN_SEKOLAH);
                 }, function ($query) {
-                    return $query->whereIn('access_type', [UserConst::ADMIN, UserConst::USER]);
+                    return $query->whereIn('access_type', [UserConst::SUPER_ADMIN, UserConst::ADMIN_SEKOLAH]);
                 })
                 ->first();
 

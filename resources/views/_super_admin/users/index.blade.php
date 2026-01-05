@@ -20,7 +20,7 @@ use App\Constants\UserConst;
     <div class="flex flex-col sm:flex-row gap-2">
         <a navigate
             class="py-3 px-4 inline-flex items-center justify-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-blue-700 transition-all shadow-md shadow-blue-500/20 active:scale-95 cursor-pointer"
-            href="{{ route('admin.users.add') }}">
+            href="{{ route('superadmin.users.add') }}">
             @include('_admin._layout.icons.add')
             Tambah Pengguna
         </a>
@@ -29,7 +29,7 @@ use App\Constants\UserConst;
 
 <!-- Filter Bar -->
 <div class="px-2 pt-0">
-    <form action="{{ route('admin.users.index') }}" method="GET" navigate-form
+    <form action="{{ route('superadmin.users.index') }}" method="GET" navigate-form
         class="flex flex-col sm:flex-row gap-3">
         <div class="sm:w-64">
             <label for="keywords" class="sr-only">Search</label>
@@ -48,7 +48,7 @@ use App\Constants\UserConst;
             </button>
             @if (!empty($keywords))
             <a class="py-1 px-3 inline-flex items-center gap-x-1 text-sm font-semibold rounded-lg border border-blue-600 text-blue-600 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 disabled:opacity-50 disabled:pointer-events-none dark:border-blue-500 dark:text-blue-500 dark:hover:bg-blue-500/10 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 cursor-pointer"
-                href="{{ route('admin.users.index') }}">
+                href="{{ route('superadmin.users.index') }}">
                 @include('_admin._layout.icons.reset')
                 Reset
             </a>
@@ -108,12 +108,12 @@ use App\Constants\UserConst;
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-end">
                         <div class="inline-flex items-center gap-x-1">
-                            <a navigate href="{{ route('admin.users.detail', $d->id) }}"
+                            <a navigate href="{{ route('superadmin.users.detail', $d->id) }}"
                                 class="p-2 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700"
                                 title="Detail">
                                 @include('_admin._layout.icons.view_detail', ['class' => 'size-4'])
                             </a>
-                            <a navigate href="{{ route('admin.users.update', $d->id) }}"
+                            <a navigate href="{{ route('superadmin.users.update', $d->id) }}"
                                 class="p-2 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-blue-600 shadow-sm hover:bg-blue-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-blue-400 dark:hover:bg-blue-900/20"
                                 title="Edit">
                                 @include('_admin._layout.icons.pencil', ['class' => 'size-4'])
