@@ -26,7 +26,9 @@ class DatabaseConst
   
     const LEARNING_MODULE = 'learning_modules';
 
-    const SUBJECT = 'subjects';
+    const IMAGE_MODEL = 'image_models';
 
+    const TEXT_GENERATION_HISTORY = 'text_generation_histories';
+    
     const PROMPT_IMAGE_GENERATION = 'prompt_image_generation';
 }

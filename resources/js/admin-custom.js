@@ -161,6 +161,17 @@ $(document).ready(function () {
         return true;
     }
 
+    function cleanupModalBackdrops() {
+        // backdrop Tailwind / custom
+        document.querySelectorAll(
+            '.delete-modal-backdrop, .modal-backdrop, .hs-overlay-backdrop'
+        ).forEach(el => el.remove());
+
+        // pastikan body normal lagi
+        document.body.classList.remove('overflow-hidden');
+    }
+
+
     // Intercept clicks on elements with 'navigate' attribute
     $("body").on("click", "a[navigate]", function (e) {
         e.preventDefault();
@@ -289,7 +300,7 @@ $(document).ready(function () {
                         inlineScripts.forEach(function (code) {
                             try {
                                 eval(code);
-                            } catch (e) {}
+                            } catch (e) { }
                         });
                         window.dispatchEvent(new Event("load"));
                     });
@@ -337,8 +348,8 @@ $(document).ready(function () {
                 var message = messages[0];
                 $input.after(
                     '<p class="text-sm text-red-600 mt-1 validation-error">' +
-                        message +
-                        "</p>"
+                    message +
+                    "</p>"
                 );
             }
         });
@@ -421,6 +432,7 @@ $(document).ready(function () {
 
                 if (handleSpaResponse(data, finalUrl)) {
                     console.log("Form SPA update success");
+                    cleanupModalBackdrops();
 
                     // Extract dynamic message from parsed response
                     // handleSpaResponse doesn't return the parsed DOM, so we parse again or rely on the inserted DOM.
@@ -430,8 +442,8 @@ $(document).ready(function () {
                     var toastMessage = apiMessage
                         ? apiMessage.trim()
                         : method.toUpperCase() === "GET"
-                        ? ""
-                        : "Form submitted successfully";
+                            ? ""
+                            : "Form submitted successfully";
 
                     // Show Toast Notification
                     if (window.Toastify && toastMessage) {
@@ -485,9 +497,9 @@ $(document).ready(function () {
                         } else {
                             alert(
                                 "An error occurred: " +
-                                    xhr.status +
-                                    " " +
-                                    xhr.statusText
+                                xhr.status +
+                                " " +
+                                xhr.statusText
                             );
                         }
                     }
