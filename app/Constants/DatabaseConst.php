@@ -20,13 +20,15 @@ class DatabaseConst
 
     const STUDENT = 'students';
 
-    const LEARNING_MODULE = 'learning_modules';
+    const TEACHER = 'teachers';
 
     const SUBJECT = 'subjects';
-
-    const TEACHER = 'teachers';
+  
+    const LEARNING_MODULE = 'learning_modules';
 
     const IMAGE_MODEL = 'image_models';
 
     const TEXT_GENERATION_HISTORY = 'text_generation_histories';
+    
+    const PROMPT_IMAGE_GENERATION = 'prompt_image_generation';
 }

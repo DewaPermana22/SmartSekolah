@@ -6,6 +6,7 @@ use App\Constants\AIConst;
 use App\Constants\PromptConst;
 use App\Http\Presenter\Response;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ImageGenerationUsecase
 {
@@ -16,9 +17,14 @@ class ImageGenerationUsecase
         $this->aiToolsUsecase = $aiToolsUsecase;
     }
 
-
-
-    private function generate(string $prompt): array
+    /**
+     * Generate image using AI and save with reference_id as filename
+     *
+     * @param string $prompt The prompt for image generation
+     * @param string $referenceId Unique reference ID (akan jadi nama file)
+     * @return array Response with image_path and status
+     */
+    private function generate(string $prompt, string $referenceId): array
     {
         try {
             $apiKey = $this->aiToolsUsecase->getApikeys('gemini');
@@ -28,100 +34,147 @@ class ImageGenerationUsecase
             );
 
             $payload = [
-                "contents" => [
-                    [
-                        "role" => "user",
-                        "parts" => [
-                            ["text" => $prompt]
-                        ]
-                    ]
-                ],
+                "contents" => [[
+                    "role" => "user",
+                    "parts" => [["text" => $prompt]]
+                ]],
                 "generationConfig" => [
-                    "responseModalities" => ["IMAGE"] // Perbaiki typo: responseModality -> responseModalities (plural + array)
+                    "responseModalities" => ["IMAGE"]
                 ]
             ];
 
-            Log::info('Image Generation Request', [
-                'url' => $url,
-                'prompt' => substr($prompt, 0, 100) // Log sebagian prompt saja
-            ]);
-
             $data = $this->aiToolsUsecase->makeRequest($url, $payload);
-
-            Log::info('Image Generation Response', [
-                'response_keys' => array_keys($data ?? []),
-                'has_candidates' => isset($data['candidates'])
-            ]);
-
-            // Extract image menggunakan method yang sama seperti GeminiServices
             $imageData = $this->aiToolsUsecase->extractImageFromResponse($data);
 
-            // Return dengan format Response yang konsisten
+            // Validate image data
+            if (!isset($imageData['data']) || empty($imageData['data'])) {
+                throw new \RuntimeException('No image data received from API');
+            }
+
+            $path = "generated-images/{$referenceId}.png";
+
+            // Decode and save image
+            $decodedImage = base64_decode($imageData['data'], true);
+
+            if ($decodedImage === false) {
+                throw new \RuntimeException('Failed to decode base64 image data');
+            }
+
+            // Save to public storage
+            $saved = Storage::disk('public')->put($path, $decodedImage);
+
+            if (!$saved) {
+                throw new \RuntimeException('Failed to save image to storage');
+            }
+
+            // Generate public URL
+            $publicUrl = asset('storage/' . $path);
+
+            Log::info('✅ Image generated and saved', [
+                'reference_id' => $referenceId,
+                'path' => $path,
+                'size' => strlen($decodedImage),
+                'url' => $publicUrl
+            ]);
+
             return Response::buildSuccess([
-                'image_base64' => $imageData['data'],
-                'mime_type' => $imageData['mimeType']
+                'image_path' => $path,
+                'reference_id' => $referenceId,
+                'url' => $publicUrl,
+                'size_bytes' => strlen($decodedImage)
             ], 200, 'Image generated successfully');
-        } catch (\Exception $e) {
-            Log::error('Image Generation Failed', [
+            
+        } catch (\Throwable $e) {
+            Log::error('❌ Image generation failed', [
+                'reference_id' => $referenceId,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
 
-            return Response::buildErrorService('Failed to generate image: ' . $e->getMessage());
+            return Response::buildErrorService(
+                'Failed to generate image: ' . $e->getMessage()
+            );
         }
     }
 
-    public function generateImage(string $description): array
+    /**
+     * Generate generic image from description
+     */
+    public function generateImage(string $description, string $referenceId): array
     {
         $prompt = PromptConst::generateImagePrompt($description);
-        return $this->generate($prompt);
+        return $this->generate($prompt, $referenceId);
     }
 
-    public function generateInfographic(string $topic): array
+    /**
+     * Generate educational infographic
+     */
+    public function generateInfographic(string $topic, string $referenceId): array
     {
         $prompt = PromptConst::generateInfographicPrompt($topic);
-        return $this->generate($prompt);
+        return $this->generate($prompt, $referenceId);
     }
 
-    public function generatePoster(string $topic): array
+    /**
+     * Generate promotional poster
+     */
+    public function generatePoster(string $topic, string $referenceId): array
     {
         $prompt = PromptConst::generatePosterPrompt($topic);
-        return $this->generate($prompt);
+        return $this->generate($prompt, $referenceId);
     }
 
-    public function generateBasicVector(string $subject): array
+    /**
+     * Generate basic vector image
+     */
+    public function generateBasicVector(string $subject, string $referenceId): array
     {
         $prompt = PromptConst::generateBasicVectorPrompt($subject);
-        return $this->generate($prompt);
+        return $this->generate($prompt, $referenceId);
     }
 
-    public function generateRealisticImage(string $subject): array
+    /**
+     * Generate realistic photographic image
+     */
+    public function generateRealisticImage(string $subject, string $referenceId): array
     {
         $prompt = PromptConst::generateRealisticImagePrompt($subject);
-        return $this->generate($prompt);
+        return $this->generate($prompt, $referenceId);
     }
 
-    public function generate3DRenderedImage(string $subject): array
+    /**
+     * Generate 3D rendered image
+     */
+    public function generate3DRenderedImage(string $subject, string $referenceId): array
     {
         $prompt = PromptConst::generate3DRenderedPrompt($subject);
-        return $this->generate($prompt);
+        return $this->generate($prompt, $referenceId);
     }
 
-    public function generateSketchPencilImage(string $subject): array
+    /**
+     * Generate sketch/pencil drawing image
+     */
+    public function generateSketchPencilImage(string $subject, string $referenceId): array
     {
         $prompt = PromptConst::generateSketchPencilPrompt($subject);
-        return $this->generate($prompt);
+        return $this->generate($prompt, $referenceId);
     }
 
-    public function generateCartoonStyleImage(string $subject): array
+    /**
+     * Generate cartoon style image
+     */
+    public function generateCartoonStyleImage(string $subject, string $referenceId): array
     {
         $prompt = PromptConst::generateCartoonStylePrompt($subject);
-        return $this->generate($prompt);
+        return $this->generate($prompt, $referenceId);
     }
 
-    public function generateWatercolorImage(string $subject): array
+    /**
+     * Generate watercolor painting image
+     */
+    public function generateWatercolorImage(string $subject, string $referenceId): array
     {
         $prompt = PromptConst::generateWatercolorPrompt($subject);
-        return $this->generate($prompt);
+        return $this->generate($prompt, $referenceId);
     }
 }

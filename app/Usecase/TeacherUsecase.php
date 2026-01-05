@@ -68,7 +68,7 @@ class TeacherUsecase extends Usecase
             $userId = DB::table(DatabaseConst::USER)->insertGetId([
                 'name' => $data->name,
                 'email' => $data->email,
-                'password' => Hash::make('password'),
+                'password' => Hash::make('asdasd'),
                 'access_type' => 3,
                 'school_id' => $schoolId,
                 'is_active' => 1,
@@ -176,7 +176,7 @@ class TeacherUsecase extends Usecase
     }
 
 
-    public function resetPassword(int $id, string $password): array
+    public function resetPassword(int $id): array
     {
         DB::beginTransaction();
         try {
@@ -192,7 +192,7 @@ class TeacherUsecase extends Usecase
             DB::table(DatabaseConst::USER)
                 ->where('id', $teacher->user_id)
                 ->update([
-                    'password' => Hash::make($password),
+                    'password' => Hash::make('asdasd'),
                     'updated_at' => now(),
                 ]);
 
@@ -211,12 +211,25 @@ class TeacherUsecase extends Usecase
     {
         DB::beginTransaction();
         try {
-            DB::table(DatabaseConst::TEACHER)
+            $teacher = DB::table(DatabaseConst::TEACHER)
                 ->where('id', $id)
-                ->update([
-                    'deleted_by' => Auth::user()?->id,
-                    'deleted_at' => now(),
-                ]);
+                ->first(); 
+
+            if ($teacher) {
+                DB::table(DatabaseConst::TEACHER)
+                    ->where('id', $id)
+                    ->update([
+                        'deleted_by' => Auth::id(),
+                        'deleted_at' => now(),
+                    ]);
+
+                DB::table(DatabaseConst::USER)
+                    ->where('id', $teacher->user_id)
+                    ->update([
+                        'deleted_by' => Auth::id(),
+                        'deleted_at' => now(),
+                    ]);
+            }
 
             DB::commit();
             return Response::buildSuccess(

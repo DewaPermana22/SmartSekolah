@@ -49,13 +49,10 @@ class ToolsController extends Controller
         ]);
 
         $referenceId = Str::uuid()->toString();
-        $message = 'Buatkan gambar dengan deskripsi: ' . htmlspecialchars($request->description, ENT_QUOTES);
 
         RunImageGeneration::dispatch(
-            message: $message,
             description: $request->description,
             referenceId: $referenceId,
-            type: 'infographic'
         );
 
         return response()->json(
@@ -125,7 +122,7 @@ class ToolsController extends Controller
     {
         $filePath = "generated-images/{$referenceId}.png";
 
-        if (Storage::disk('local')->exists($filePath)) {
+        if (Storage::disk('public')->exists($filePath)) {
             return response()->json(
                 Response::buildSuccess(
                     data: [

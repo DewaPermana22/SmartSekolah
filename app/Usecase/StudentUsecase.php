@@ -97,7 +97,7 @@ class StudentUsecase extends Usecase
             $userId = DB::table(DatabaseConst::USER)->insertGetId([
                 'name' => $data->name,
                 'email' => $data->email,
-                'password' => Hash::make('password'),
+                'password' => Hash::make('asdasd'),
                 'access_type' => 4,
                 'school_id' => $schoolId,
                 'is_active' => 1,
@@ -209,7 +209,7 @@ class StudentUsecase extends Usecase
         }
     }
 
-    public function resetPassword(int $id, string $password): array
+    public function resetPassword(int $id): array
     {
         DB::beginTransaction();
         try {
@@ -225,7 +225,7 @@ class StudentUsecase extends Usecase
             DB::table(DatabaseConst::USER)
                 ->where('id', $student->user_id)
                 ->update([
-                    'password' => Hash::make($password),
+                    'password' => Hash::make('asdasd'),
                     'updated_at' => now(),
                 ]);
 

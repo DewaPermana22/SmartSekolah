@@ -1,6 +1,6 @@
 @extends('_admin._layout.app')
 
-@section('title', 'Kategori Tugas')
+@section('title', 'Prompt Gambar')
 
 @section('content')
 <div class="grid gap-3 md:flex md:justify-between md:items-center py-4">
@@ -9,7 +9,7 @@
             Data {{ $page['title'] }}
         </h1>
         <p class="text-md text-gray-400 dark:text-neutral-400">
-            Manajemen Kategori Tugas
+            Kelola Gaya Gambar untuk Tools Generator Ilustrasi
         </p>
     </div>
 
@@ -17,7 +17,7 @@
         <div class="inline-flex gap-x-2">
             <a navigate
                 class="py-3 px-4 inline-flex items-center justify-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-blue-700 transition-all shadow-md shadow-blue-500/20 active:scale-95 cursor-pointer"
-                href="{{ route('admin.task_categories.add') }}">
+                href="{{ route('admin.image-prompts.add') }}">
                 @include('_admin._layout.icons.add')
                 Tambah Data
             </a>
@@ -30,7 +30,7 @@
             <div class="overflow-hidden">
 
                 <div class="px-2 pt-4">
-                    <form action="{{ route('admin.task_categories.index') }}" method="GET" navigate-form
+                    <form action="{{ route('admin.image-prompts.index') }}" method="GET" navigate-form
                         class="flex flex-col sm:flex-row gap-3">
                         <div class="sm:w-64">
                             <label for="keywords" class="sr-only">Search</label>
@@ -38,7 +38,7 @@
                                 <input type="text" name="keywords" id="keywords" value="{{ $keywords ?? '' }}"
                                     class="py-1 px-3 block w-full border-gray-200 rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900
                                         placeholder-neutral-300 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
-                                    placeholder="Cari Nama Kategori">
+                                    placeholder="Cari Nama Gaya Gambar">
                             </div>
                         </div>
                         <div>
@@ -49,7 +49,7 @@
                             </button>
                             @if (!empty($keywords))
                             <a class="py-1 px-3 inline-flex items-center gap-x-1 text-sm font-semibold rounded-lg border border-blue-600 text-blue-600 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 disabled:opacity-50 disabled:pointer-events-none dark:border-blue-500 dark:text-blue-500 dark:hover:bg-blue-500/10 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 cursor-pointer"
-                                href="{{ route('admin.task_categories.index') }}">
+                                href="{{ route('admin.image-prompts.index') }}">
                                 @include('_admin._layout.icons.reset')
                                 Reset
                             </a>
@@ -58,18 +58,25 @@
                     </form>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 my-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 my-4">
                     @forelse($data as $d)
-                    <div
-                        class="flex flex-col bg-white border-1 border-gray-200 shadow-sm rounded-2xl dark:bg-neutral-800 dark:border-neutral-700">
+                    <div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-2xl dark:bg-neutral-800 dark:border-neutral-700 overflow-hidden">
+                        <!-- Image Container -->
+                        <div class="relative h-40 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-neutral-700 dark:to-neutral-800">
+                            <img src="{{ $d->preview_path }}"
+                                alt="{{ $d->name }}"
+                                class="w-full h-full object-cover">
+                        </div>
+                        <!-- Card Content -->
                         <div class="p-4 md:p-5 flex flex-col h-full">
                             <div class="grow">
-                                <h3 class="text-lg font-bold text-gray-800 dark:text-white">
+                                <h3 class="text-sm font-bold text-gray-800 dark:text-white text-center">
                                     {{ $d->name }}
                                 </h3>
                             </div>
+
                             <div class="mt-4 flex gap-x-2">
-                                <a navigate href="{{ route('admin.task_categories.update', $d->id) }}"
+                                <a navigate href="{{ route('admin.image-prompts.update', $d->id) }}"
                                     class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:bg-blue-800/30 dark:hover:bg-blue-800/20 dark:focus:bg-blue-800/20">
                                     @include('_admin._layout.icons.pencil')
                                     Edit
@@ -128,9 +135,10 @@
                     class="mb-4 inline-flex justify-center items-center size-14 rounded-full border-4 border-red-50 bg-red-100 text-red-500 dark:bg-red-700 dark:border-red-600 dark:text-red-100">
                     @include('_admin._layout.icons.warning_modal')
                 </span>
+                <!-- End Icon -->
 
                 <h3 id="delete-modal-label" class="mb-2 text-xl font-bold text-gray-800 dark:text-neutral-200">
-                    Hapus Kategori
+                    Hapus Gaya Gambar
                 </h3>
                 <p class="text-gray-500 dark:text-neutral-500">
                     Apakah Anda yakin ingin menghapus <span id="delete-item-name"
@@ -161,8 +169,8 @@
 <script>
     function setDeleteData(id, name) {
         document.getElementById('delete-item-name').textContent = name;
-        document.getElementById('delete-form').action = '{{ url('
-        admin / task - categories / delete ') }}/' + id;
+        const deleteUrl = "{{ route('admin.image-prompts.delete', ':id') }}";
+        document.getElementById('delete-form').action = deleteUrl.replace(':id', id);
     }
 </script>
 @endsection

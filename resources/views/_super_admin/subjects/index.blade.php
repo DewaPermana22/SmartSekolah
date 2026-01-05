@@ -1,6 +1,6 @@
-@extends('_admin._layout.app')
+@extends('_super_admin._layout.app')
 
-@section('title', 'Manajemen Tugas')
+@section('title', 'Manajemen Mata Pelajaran')
 
 @section('content')
     <div class="grid gap-3 md:flex md:justify-between md:items-center py-4">
@@ -9,68 +9,61 @@
                 Data {{ $page['title'] }}
             </h1>
             <p class="text-md text-gray-400 dark:text-neutral-400">
-                Manajemen Tugas
+                Manajemen Mata Pelajaran
             </p>
         </div>
 
         <div>
             <div class="inline-flex gap-x-2">
                 <a navigate
-                    class="py-3 px-4 inline-flex items-center justify-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-blue-700 transition-all shadow-md shadow-blue-500/20 active:scale-95 cursor-pointer"
-                    href="{{ route('admin.tasks.add') }}">
+                    class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none font-bolder"
+                    href="{{ route('superadmin.subjects.add') }}">
                     @include('_admin._layout.icons.add')
-                    Tambah Data
+                    Tambah Mata Pelajaran
                 </a>
             </div>
         </div>
     </div>
+<!-- 
+    @if (session('success'))
+        <div class="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg dark:bg-green-900/20 dark:border-green-700">
+            <p class="text-sm text-green-800 dark:text-green-200">{{ session('success') }}</p>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/20 dark:border-red-700">
+            <p class="text-sm text-red-800 dark:text-red-200">{{ session('error') }}</p>
+        </div>
+    @endif -->
+
     <div class="flex flex-col">
         <div class="overflow-x-auto">
             <div class="min-w-full inline-block align-middle">
                 <div class="overflow-hidden">
 
-                    <div class="px-2 pt-4">
-                        <form action="{{ route('admin.tasks.index') }}" method="GET" navigate-form
+                    <div class="px-2 pt-0">
+                        <form action="{{ route('superadmin.subjects.index') }}" method="GET" navigate-form
                             class="flex flex-col sm:flex-row gap-3">
                             <div class="sm:w-64">
                                 <label for="keywords" class="sr-only">Search</label>
                                 <div class="relative">
                                     <input type="text" name="keywords" id="keywords" value="{{ $keywords ?? '' }}"
-                                        class="py-1 px-3 block w-full border-gray-200 rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900
+                                        class="py-1 px-3 block w-full border-gray-200 rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 
                                         placeholder-neutral-300 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
-                                        placeholder="Cari Judul Tugas">
+                                        placeholder="Cari Mata Pelajaran">
                                 </div>
                             </div>
-                            <div class="sm:w-48">
-                                <select name="status"
-                                    class="py-1 px-3 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600">
-                                    <option value="">Semua Status</option>
-                                    @foreach ($statuses as $key => $label)
-                                        <option value="{{ $key }}" {{ ($status ?? '') == $key ? 'selected' : '' }}>
-                                            {{ $label }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="sm:w-48">
-                                <select name="category_id"
-                                    class="py-1 px-3 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600">
-                                    <option value="">Semua Kategori</option>
-                                    @foreach ($categories as $cat)
-                                        <option value="{{ $cat->id }}"
-                                            {{ ($category_id ?? '') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+                           
                             <div>
                                 <button type="submit"
                                     class="py-1 px-3 inline-flex items-center gap-x-1 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 cursor-pointer">
                                     @include('_admin._layout.icons.search')
                                     Cari
                                 </button>
-                                @if (!empty($keywords) || !empty($status) || !empty($category_id))
+                                @if (!empty($keywords))
                                     <a class="py-1 px-3 inline-flex items-center gap-x-1 text-sm font-semibold rounded-lg border border-blue-600 text-blue-600 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 disabled:opacity-50 disabled:pointer-events-none dark:border-blue-500 dark:text-blue-500 dark:hover:bg-blue-500/10 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 cursor-pointer"
-                                        href="{{ route('admin.tasks.index') }}">
+                                        href="{{ route('superadmin.subjects.index') }}">
                                         @include('_admin._layout.icons.reset')
                                         Reset
                                     </a>
@@ -83,38 +76,17 @@
                         <table class="w-full divide-y divide-gray-200 dark:divide-neutral-700">
                             <thead class="bg-gray-50 dark:bg-neutral-700">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3 text-start">
-                                        <div class="flex items-center gap-x-2">
-                                            <span
-                                                class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
-                                                Judul Tugas
-                                            </span>
-                                        </div>
+                                    <th scope="col" class="text-center">
+                                        <span class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
+                                            No
+                                        </span>
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-start">
-                                        <div class="flex items-center gap-x-2">
-                                            <span
-                                                class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
-                                                Kategori
-                                            </span>
-                                        </div>
+                                        <span class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
+                                            Nama
+                                        </span>
                                     </th>
-                                    <th scope="col" class="px-6 py-3 text-start">
-                                        <div class="flex items-center gap-x-2">
-                                            <span
-                                                class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
-                                                Tanggal
-                                            </span>
-                                        </div>
-                                    </th>
-                                    <th scope="col" class="px-6 py-3 text-start">
-                                        <div class="flex items-center gap-x-2">
-                                            <span
-                                                class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
-                                                Status
-                                            </span>
-                                        </div>
-                                    </th>
+                                   
                                     <th scope="col" class="px-6 py-3 text-end"></th>
                                 </tr>
                             </thead>
@@ -123,50 +95,30 @@
                                 @forelse($data as $d)
                                     <tr class="hover:bg-gray-100 dark:hover:bg-neutral-700">
                                         <td class="size-px whitespace-nowrap">
-                                            <div class="px-6 py-3">
+                                            <div class="text-center">
                                                 <span
-                                                    class="block text-sm font-semibold text-gray-800 dark:text-neutral-200">{{ $d->title }}</span>
+                                                    class="block text-sm text-gray-800 dark:text-neutral-200">{{ $loop->iteration + ($data->firstItem() - 1) }}</span>
                                             </div>
                                         </td>
                                         <td class="size-px whitespace-nowrap">
                                             <div class="px-6 py-3">
                                                 <span
-                                                    class="block text-sm text-gray-800 dark:text-neutral-200">{{ $d->category_name ?? '-' }}</span>
+                                                    class="block text-sm font-semibold text-start text-gray-800 dark:text-neutral-200">{{ $d->name }}</span>
                                             </div>
                                         </td>
-                                        <td class="size-px whitespace-nowrap">
-                                            <div class="px-6 py-3">
-                                                <span
-                                                    class="block text-sm text-gray-800 dark:text-neutral-200">{{ \Carbon\Carbon::parse($d->task_date)->format('d M Y') }}</span>
-                                            </div>
-                                        </td>
-                                        <td class="size-px whitespace-nowrap">
-                                            <div class="px-6 py-3">
-                                                @if ($d->status == \App\Constants\TaskStatusConst::TODO)
-                                                    <span
-                                                        class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-white/10 dark:text-white">To
-                                                        Do</span>
-                                                @elseif($d->status == \App\Constants\TaskStatusConst::IN_PROGRESS)
-                                                    <span
-                                                        class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-800/30 dark:text-blue-500">In
-                                                        Progress</span>
-                                                @elseif($d->status == \App\Constants\TaskStatusConst::DONE)
-                                                    <span
-                                                        class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-teal-100 text-teal-800 dark:bg-teal-800/30 dark:text-teal-500">Done</span>
-                                                @endif
-                                            </div>
-                                        </td>
+                                      
                                         <td class="size-px whitespace-nowrap">
                                             <div class="px-6 py-1.5 flex items-center gap-x-2 justify-end">
+                                                
                                                 <a navigate
                                                     class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:bg-blue-800/30 dark:hover:bg-blue-800/20 dark:focus:bg-blue-800/20"
-                                                    href="{{ route('admin.tasks.update', $d->id) }}">
+                                                    href="{{ route('superadmin.subjects.update', $d->id) }}">
                                                     @include('_admin._layout.icons.pencil')
                                                 </a>
                                                 <button type="button"
                                                     class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-red-100 text-red-800 hover:bg-red-200 focus:outline-none focus:bg-red-200 disabled:opacity-50 disabled:pointer-events-none dark:text-red-500 dark:bg-red-800/30 dark:hover:bg-red-800/20 dark:focus:bg-red-800/20 cursor-pointer"
                                                     title="Delete" data-hs-overlay="#delete-modal"
-                                                    onclick="setDeleteData('{{ $d->id }}', '{{ $d->title }}')">
+                                                    onclick="setDeleteData('{{ $d->id }}', '{{ $d->name }}')">
                                                     @include('_admin._layout.icons.trash')
                                                 </button>
                                             </div>
@@ -174,7 +126,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6"
+                                        <td colspan="5"
                                             class="px-6 py-4 text-center text-sm text-gray-500 dark:text-neutral-500">
                                             <x-admin.empty-state />
                                         </td>
@@ -221,7 +173,7 @@
                     <!-- End Icon -->
 
                     <h3 id="delete-modal-label" class="mb-2 text-xl font-bold text-gray-800 dark:text-neutral-200">
-                        Hapus Tugas
+                        Hapus Mata Pelajaran
                     </h3>
                     <p class="text-gray-500 dark:text-neutral-500">
                         Apakah Anda yakin ingin menghapus <span id="delete-item-name"
@@ -235,7 +187,7 @@
                             data-hs-overlay="#delete-modal">
                             Batal
                         </button>
-                        <form id="delete-form" method="POST" class="inline">
+                        <form id="delete-form" method="POST" class="inline" navigate-form>
                             @csrf
                             @method('DELETE')
                             <button type="submit"
@@ -252,7 +204,7 @@
     <script>
         function setDeleteData(id, name) {
             document.getElementById('delete-item-name').textContent = name;
-            document.getElementById('delete-form').action = '{{ url('admin/tasks/delete') }}/' + id;
+            document.getElementById('delete-form').action = '{{ url('superadmin/subjects/delete') }}/' + id;
         }
     </script>
 @endsection

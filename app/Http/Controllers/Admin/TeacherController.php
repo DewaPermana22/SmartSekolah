@@ -99,34 +99,17 @@ class TeacherController extends Controller
             return redirect()
                 ->route('admin.teachers.index')
                 ->with('success', ResponseConst::SUCCESS_MESSAGE_DELETED);
-        }
-
-        return redirect()
+        } else {   
+            return redirect()
             ->route('admin.teachers.index')
             ->with('error', $process['message'] ?? ResponseConst::DEFAULT_ERROR_MESSAGE);
-    }
-
-    public function resetPassword(int $id): View|RedirectResponse
-    {
-        $teacher = $this->usecase->getById(id: $id);
-        if (empty($teacher['data'])) {
-            return redirect()->intended($this->baseRedirect)->with('error', ResponseConst::DEFAULT_ERROR_MESSAGE);
         }
-
-        return view('_admin.teachers.reset_password', [
-            'page' => $this->page,
-            'data' => $teacher['data']['data'],
-            'id' => $id,
-        ]);
     }
+
 
     public function doResetPassword(int $id, Request $request): RedirectResponse
     {
-        $request->validate([
-            'password' => 'required|confirmed|min:6',
-        ]);
-
-        $process = $this->usecase->resetPassword(id: $id, password: $request->password);
+        $process = $this->usecase->resetPassword(id: $id);
 
         if ($process['success']) {
             return redirect()
