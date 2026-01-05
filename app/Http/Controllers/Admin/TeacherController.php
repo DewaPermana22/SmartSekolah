@@ -99,11 +99,11 @@ class TeacherController extends Controller
             return redirect()
                 ->route('admin.teachers.index')
                 ->with('success', ResponseConst::SUCCESS_MESSAGE_DELETED);
-        }
-
-        return redirect()
+        } else {   
+            return redirect()
             ->route('admin.teachers.index')
             ->with('error', $process['message'] ?? ResponseConst::DEFAULT_ERROR_MESSAGE);
+        }
     }
 
 

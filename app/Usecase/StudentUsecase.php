@@ -97,7 +97,7 @@ class StudentUsecase extends Usecase
             $userId = DB::table(DatabaseConst::USER)->insertGetId([
                 'name' => $data->name,
                 'email' => $data->email,
-                'password' => Hash::make('password'),
+                'password' => Hash::make('asdasd'),
                 'access_type' => 4,
                 'school_id' => $schoolId,
                 'is_active' => 1,
