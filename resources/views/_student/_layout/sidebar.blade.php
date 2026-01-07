@@ -34,7 +34,7 @@
                     <li>
                         <a navigate
                             class="flex items-center gap-x-3.5 py-2.5 px-3 {{ request()->routeIs('admin.dashboard') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-white' }} text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 font-semibold"
-                            href="{{ route('superadmin.dashboard') }}">
+                            href="">
                             @include('_admin._layout.icons.sidebar.dashboard')
                             Beranda
                         </a>
@@ -42,14 +42,14 @@
 
                     <li>
                         <a navigate
-                            class="flex items-center gap-x-3.5 py-2.5 px-3 {{ request()->routeIs('superadmin.schools.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-white' }} text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 font-semibold"
-                            href="{{ route('superadmin.schools.index') }}">
-                            @include('_admin._layout.icons.sidebar.school')
-                            Data Sekolah
+                            class="flex items-center gap-x-3.5 py-2.5 px-3 {{ request()->routeIs('student.learning_modules.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-white' }} text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 font-semibold"
+                            href="{{ route('student.learning_modules.index') }}">
+                            @include('_admin._layout.icons.sidebar.swatch_book')
+                            Modul Belajar
                         </a>
                     </li>
 
-                    <li class="hs-accordion {{ request()->routeIs('superadmin.subjects.*') || request()->routeIs('admin.task_categories.*') || request()->routeIs('admin.classrooms.*') ? 'active' : '' }}"
+                    <!-- <li class="hs-accordion {{ request()->routeIs('superadmin.subjects.*') || request()->routeIs('admin.task_categories.*') || request()->routeIs('admin.classrooms.*') ? 'active' : '' }}"
                                 id="projects-accordion">
                                 <button type="button"
                                     class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5  py-2.5 px-3 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200 cursor-pointer font-semibold"
@@ -84,7 +84,7 @@
                                        
                                     </ul>
                                 </div>
-                            </li>
+                            </li> -->
 
                     {{-- <li><a class="w-full flex items-center gap-x-3.5  py-2.5 px-3 {{ request()->routeIs('admin.users.*') ? 'bg-gray-100 dark:bg-neutral-700' : '' }} text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
                             href="{{ route('admin.users.index') }}">

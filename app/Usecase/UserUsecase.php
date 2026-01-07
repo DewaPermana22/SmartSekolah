@@ -4,8 +4,8 @@ namespace App\Usecase;
 
 use App\Constants\DatabaseConst;
 use App\Constants\ResponseConst;
-use App\Http\Presenter\Response;
 use App\Constants\UserConst;
+use App\Http\Presenter\Response;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -43,10 +43,14 @@ class UserUsecase extends Usecase
                         return $query->where('access_type', $accessType);
                     }
                 })
+                ->when($filterData['school_id'] ?? false, function ($query, $schoolId) {
+                    if ($schoolId !== 'all') {
+                        return $query->where('school_id', $schoolId);
+                    }
+                })
                 ->orderBy('created_at', 'desc')
                 ->paginate(20);
 
-            // Append filter parameters to pagination links
             if (!empty($filterData)) {
                 $data->appends($filterData);
             }
@@ -96,6 +100,7 @@ class UserUsecase extends Usecase
             return Response::buildErrorService($e->getMessage());
         }
     }
+
     public function register(Request $request): array
     {
         $validator = Validator::make($request->all(), [
@@ -154,12 +159,20 @@ class UserUsecase extends Usecase
         DB::beginTransaction();
 
         try {
+            $accessType = $data->access_type ?? 2;
+            $schoolId = Auth::user()->school_id;
+
+            if (Auth::user()->access_type == UserConst::ADMIN) {
+                $accessType = $data->access_type;
+                $schoolId = ($accessType == UserConst::ADMIN) ? null : $data->school_id;
+            }
+
             $userID = DB::table(DatabaseConst::USER)->insertGetId([
                 'name' => $data->name,
                 'email' => $data->email,
                 'password' => Hash::make($data->password),
-                'access_type' => 2,
-                'school_id' => Auth::user()->school_id,
+                'access_type' => $accessType,
+                'school_id' => $schoolId,
                 'is_active' => 1,
                 'created_at' => now(),
             ]);
@@ -201,6 +214,11 @@ class UserUsecase extends Usecase
             'updated_by' => Auth::user()?->id,
             'updated_at' => now(),
         ];
+
+        if (Auth::user()->access_type == UserConst::ADMIN) {
+            $update['access_type'] = $data['access_type'];
+            $update['school_id'] = ($data['access_type'] == UserConst::ADMIN) ? null : $data['school_id'];
+        }
 
         DB::beginTransaction();
 

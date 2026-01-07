@@ -13,7 +13,8 @@ class AuthController extends Controller
 {
     public function __construct(
         private UserUsecase $userUsecase
-    ) {}
+    ) {
+    }
 
     public function login()
     {
@@ -33,7 +34,7 @@ class AuthController extends Controller
     {
         $result = $this->userUsecase->register($request);
 
-        if (! $result['success']) {
+        if (!$result['success']) {
             return back()
                 ->withErrors(['register_error' => $result['message']])
                 ->withInput();
@@ -90,9 +91,9 @@ class AuthController extends Controller
             case UserConst::USER:
                 return redirect()->intended(route('admin.dashboard'));
             case UserConst::GURU:
-                return redirect()->route('teacher.ai.materi');
+                return redirect()->route('teacher.learning_modules.index');
             case UserConst::SISWA:
-                return redirect()->intended(route('admin.dashboard'));
+                return redirect()->intended(route('student.learning_modules.index'));
             default:
                 return redirect()->intended(route('admin.dashboard'));
         }

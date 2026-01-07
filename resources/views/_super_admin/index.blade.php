@@ -1,4 +1,4 @@
-@extends('_admin._layout.app')
+@extends('_super_admin._layout.app')
 
 @section('title', 'Kategori Tugas')
 
@@ -37,7 +37,7 @@
                                 <div class="relative">
                                     <input type="text" name="keywords" id="keywords" value="{{ $keywords ?? '' }}"
                                         class="py-1 px-3 block w-full border-gray-200 rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900
-                                        placeholder-neutral-300 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+                                                placeholder-neutral-300 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
                                         placeholder="Cari Nama Kategori">
                                 </div>
                             </div>
@@ -61,7 +61,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 my-4">
                         @forelse($data as $d)
                             <div
-                                class="flex flex-col bg-white border-1 border-gray-200 shadow-sm rounded-2xl dark:bg-neutral-800 dark:border-neutral-700">
+                                class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-2xl dark:bg-neutral-800 dark:border-neutral-700">
                                 <div class="p-4 md:p-5 flex flex-col h-full">
                                     <div class="grow">
                                         <h3 class="text-lg font-bold text-gray-800 dark:text-white">

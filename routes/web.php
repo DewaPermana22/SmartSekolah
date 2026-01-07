@@ -7,13 +7,16 @@ use App\Http\Controllers\Admin\TaskCategoryController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\superAdmin\UserController as SuperAdminUserController;
+use App\Http\Controllers\superAdmin\DashboardController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PromptImageController;
 use App\Http\Controllers\superAdmin\SchoolController as SuperAdminSchoolController;
 use App\Http\Controllers\superAdmin\SubjectController;
 use App\Http\Controllers\Teacher\AITools\IlustrasiController;
 use App\Http\Controllers\Teacher\AITools\MateriAjarController;
 use App\Http\Controllers\Teacher\LearningModulesController;
-use App\Http\Controllers\PromptImageController;
+use App\Http\Controllers\Student\LearningModulesController as StudentLearningModulesController;
 use App\Http\Controllers\TextPromptController;
 use Illuminate\Support\Facades\Route;
 
@@ -99,7 +102,7 @@ Route::middleware(['auth', 'role:2', 'check.school'])->prefix('admin')->name('ad
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/change-password', [UserController::class, 'changePassword'])->name('change_password');
         Route::post('/change-password', [UserController::class, 'doChangePassword'])->name('do_change_password');
-});
+    });
 
     Route::prefix('image-prompts')->name('image-prompts.')->group(function () {
         Route::get('/', [PromptImageController::class, 'index'])->name('index');
@@ -143,7 +146,9 @@ Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->grou
     });
 });
 
+
 Route::middleware(['auth', 'role:1'])->prefix('superadmin')->name('superadmin.')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::prefix('schools')->name('schools.')->group(function () {
         Route::get('/', [SuperAdminSchoolController::class, 'index'])->name('index');
         Route::get('/add', [SuperAdminSchoolController::class, 'add'])->name('add');
@@ -163,4 +168,21 @@ Route::middleware(['auth', 'role:1'])->prefix('superadmin')->name('superadmin.')
         Route::delete('/delete/{id}', [SubjectController::class, 'delete'])->name('delete');
     });
 
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', [SuperAdminUserController::class, 'index'])->name('index');
+        Route::get('/add', [SuperAdminUserController::class, 'add'])->name('add');
+        Route::post('/create', [SuperAdminUserController::class, 'doCreate'])->name('create');
+        Route::get('/detail/{id}', [SuperAdminUserController::class, 'detail'])->name('detail');
+        Route::get('/update/{id}', [SuperAdminUserController::class, 'update'])->name('update');
+        Route::post('/update/{id}', [SuperAdminUserController::class, 'doUpdate'])->name('doUpdate');
+        Route::delete('/delete/{id}', [SuperAdminUserController::class, 'delete'])->name('delete');
+        Route::post('/reset-password/{id}', [SuperAdminUserController::class, 'resetPassword'])->name('resetPassword');
+    });
+
+});
+
+Route::middleware(['auth', 'role:4'])->prefix('student')->name('student.')->group(function () {
+    Route::prefix('learning-modules')->name('learning_modules.')->group(function () {
+        Route::get('/', [StudentLearningModulesController::class, 'index'])->name('index');
+    });
 });

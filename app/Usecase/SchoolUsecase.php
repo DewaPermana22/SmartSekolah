@@ -14,7 +14,9 @@ use Illuminate\Support\Facades\Validator;
 
 class SchoolUsecase extends Usecase
 {
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
     public function getAll(array $filterData = []): array
     {
@@ -23,8 +25,8 @@ class SchoolUsecase extends Usecase
                 ->whereNull('deleted_at')
                 ->when($filterData['keywords'] ?? false, function ($query, $keywords) {
                     return $query->where(function ($q) use ($keywords) {
-                        $q->where('name', 'like', '%'.$keywords.'%')
-                            ->orWhere('email', 'like', '%'.$keywords.'%');
+                        $q->where('name', 'like', '%' . $keywords . '%')
+                            ->orWhere('email', 'like', '%' . $keywords . '%');
                     });
                 })
                 ->when($filterData['access_type'] ?? false, function ($query, $accessType) {
@@ -35,7 +37,7 @@ class SchoolUsecase extends Usecase
                 ->orderBy('created_at', 'desc')
                 ->paginate(20);
 
-            if (! empty($filterData)) {
+            if (!empty($filterData)) {
                 $data->appends($filterData);
             }
 
@@ -61,6 +63,7 @@ class SchoolUsecase extends Usecase
     {
         $validator = Validator::make($data->all(), [
             'school_name' => 'required|string|max:255',
+            'grade' => 'required|integer',
             'address' => 'nullable|string',
             'no_tlp' => 'nullable|string|max:20',
         ]);
@@ -71,7 +74,7 @@ class SchoolUsecase extends Usecase
         try {
             $userID = Auth::user()?->id;
 
-            if (! $userID) {
+            if (!$userID) {
                 throw new Exception('User not authenticated');
             }
 
@@ -86,6 +89,7 @@ class SchoolUsecase extends Usecase
 
             $payload = $data->only([
                 'school_name',
+                'grade',
                 'address',
                 'no_tlp',
             ]);
@@ -127,7 +131,7 @@ class SchoolUsecase extends Usecase
                 ->where('id', $id)
                 ->first();
 
-            if (! $data) {
+            if (!$data) {
                 return Response::buildErrorNotFound('Data sekolah tidak ditemukan');
             }
 
@@ -149,10 +153,11 @@ class SchoolUsecase extends Usecase
     public function update(Request $data, int $id): array
     {
         $validator = Validator::make($data->all(), [
-            'school_name' => $data['school_name'],
-            'mou_date' => $data['mou_date'] ?? null,
-            'address' => $data['address'] ?? null,
-            'no_tlp' => $data['no_tlp'] ?? null,
+            'school_name' => 'required|string|max:255',
+            'grade' => 'required|integer',
+            'mou_date' => 'nullable|date',
+            'address' => 'nullable|string',
+            'no_tlp' => 'nullable|string|max:20',
         ]);
 
         $validator->validate();
@@ -160,7 +165,7 @@ class SchoolUsecase extends Usecase
         DB::beginTransaction();
 
         try {
-            $payload = $data->only(['title', 'task_category_id', 'task_date', 'status', 'description']);
+            $payload = $data->only(['school_name', 'grade', 'mou_date', 'address', 'no_tlp']);
             $payload['updated_by'] = Auth::user()?->id;
             $payload['updated_at'] = now();
 
@@ -199,7 +204,7 @@ class SchoolUsecase extends Usecase
                     'deleted_at' => now(),
                 ]);
 
-            if (! $delete) {
+            if (!$delete) {
                 DB::rollback();
                 throw new Exception('FAILED DELETE DATA');
             }
