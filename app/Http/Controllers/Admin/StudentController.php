@@ -125,7 +125,7 @@ class StudentController extends Controller
         if ($process['success']) {
             return redirect()
                 ->route('admin.students.index')
-                ->with('success', 'Password siswa berhasil direset.');
+                ->with('success', ResponseConst::SUCCESS_MESSAGE_RESET_PASSWORD);
         }
 
         return redirect()

@@ -114,7 +114,7 @@ class TeacherController extends Controller
         if ($process['success']) {
             return redirect()
                 ->route('admin.teachers.index')
-                ->with('success', 'Password guru berhasil direset.');
+                ->with('success', ResponseConst::SUCCESS_MESSAGE_RESET_PASSWORD);
         }
 
         return redirect()

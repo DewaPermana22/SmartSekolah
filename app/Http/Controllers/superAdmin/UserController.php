@@ -155,7 +155,7 @@ class UserController extends Controller
         if ($resetProcess['success']) {
             return redirect()
                 ->route('superadmin.users.index')
-                ->with('success', 'Password berhasil direset menjadi default');
+                ->with('success', ResponseConst::SUCCESS_MESSAGE_RESET_PASSWORD);
         } else {
             return redirect()
                 ->route('superadmin.users.index')
