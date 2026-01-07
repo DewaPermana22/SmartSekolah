@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Teacher;
 
+use App\Http\Controllers\Controller;
 use App\Http\Presenter\Response;
 use App\Jobs\RunTextGeneration;
 use App\Jobs\RunImageGeneration;
@@ -11,30 +12,26 @@ use Illuminate\Support\Str;
 
 class ToolsController extends Controller
 {
-    public function generateText(Request $request)
+    public function doCreateMateri(Request $request)
     {
         $request->validate([
-            'topic' => 'required|string|max:255',
-            'level' => 'required|string|max:100',
+            'description' => 'required|string|max:255',
+            'categories' => 'required|string|exists:prompt_text_generation,categories',
         ]);
 
         $referenceId = Str::uuid()->toString();
 
-        $message = 'Buatkan materi "' . htmlspecialchars($request->topic, ENT_QUOTES)
-            . '" untuk tingkat ' . htmlspecialchars($request->level, ENT_QUOTES);
-
         RunTextGeneration::dispatch(
-            message: $message,
-            topic: $request->topic,
-            level: $request->level,
-            referenceId: $referenceId
+            referenceId: $referenceId,
+            description: $request->description,
+            categories: $request->categories
         );
 
         return response()->json(
             Response::buildSuccess(
                 data: [
                     'reference_id' => $referenceId,
-                    'status_url' => route('job_status_text', ['referenceId' => $referenceId]),
+                    'status_url'   => route('job_status_text', ['referenceId' => $referenceId]),
                 ],
                 message: 'Text generation job queued successfully'
             ),
@@ -42,10 +39,12 @@ class ToolsController extends Controller
         );
     }
 
-    public function generateInfographics(Request $request)
+
+    public function doCreate(Request $request)
     {
         $request->validate([
             'description' => 'required|string|max:255',
+            'image_style_id' => 'nullable|integer|exists:prompt_image_generation,id',
         ]);
 
         $referenceId = Str::uuid()->toString();
@@ -53,6 +52,7 @@ class ToolsController extends Controller
         RunImageGeneration::dispatch(
             description: $request->description,
             referenceId: $referenceId,
+            imageStyleId: $request->image_style_id,
         );
 
         return response()->json(
@@ -64,26 +64,6 @@ class ToolsController extends Controller
                 message: 'Image generation job queued successfully'
             ),
             202
-        );
-    }
-
-    public function testingGeminiUsecase(Request $request)
-    {
-        $request->validate([
-            'topic' => 'required|string|max:255',
-            'level' => 'required|string|max:100',
-        ]);
-
-        $text = app(\App\Usecase\TextGenerationtUsecase::class)
-            ->generateTextGemini($request->topic, $request->level);
-
-        return response()->json(
-            Response::buildSuccess(
-                data: [
-                    'generated_text' => $text,
-                ],
-                message: 'Text generated successfully'
-            )
         );
     }
 
