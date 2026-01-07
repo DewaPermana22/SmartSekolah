@@ -3,8 +3,10 @@
 namespace App\Usecase;
 
 use App\Constants\AIConst;
+use App\Constants\DatabaseConst;
 use App\Constants\PromptConst;
 use App\Http\Presenter\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -83,7 +85,7 @@ class ImageGenerationUsecase
                 'url' => $publicUrl,
                 'size_bytes' => strlen($decodedImage)
             ], 200, 'Image generated successfully');
-            
+
         } catch (\Throwable $e) {
             Log::error('❌ Image generation failed', [
                 'reference_id' => $referenceId,
@@ -100,81 +102,23 @@ class ImageGenerationUsecase
     /**
      * Generate generic image from description
      */
-    public function generateImage(string $description, string $referenceId): array
+    public function generateIlustration(string $description, string $referenceId, int $model_id): array
     {
-        $prompt = PromptConst::generateImagePrompt($description);
-        return $this->generate($prompt, $referenceId);
-    }
+        $imageModel = DB::table(DatabaseConst::PROMPT_IMAGE_GENERATION)
+            ->where('id', $model_id)
+            ->whereNull('deleted_at')
+            ->whereNull('deleted_by')
+            ->first();
 
-    /**
-     * Generate educational infographic
-     */
-    public function generateInfographic(string $topic, string $referenceId): array
-    {
-        $prompt = PromptConst::generateInfographicPrompt($topic);
-        return $this->generate($prompt, $referenceId);
-    }
+        if (!$imageModel) {
+            return Response::buildErrorService('Invalid image model ID provided.');
+        }
 
-    /**
-     * Generate promotional poster
-     */
-    public function generatePoster(string $topic, string $referenceId): array
-    {
-        $prompt = PromptConst::generatePosterPrompt($topic);
-        return $this->generate($prompt, $referenceId);
-    }
+        $prompt = $this->aiToolsUsecase->resolver(
+            $imageModel->prompt,
+            ['description' => $description]
+        );
 
-    /**
-     * Generate basic vector image
-     */
-    public function generateBasicVector(string $subject, string $referenceId): array
-    {
-        $prompt = PromptConst::generateBasicVectorPrompt($subject);
-        return $this->generate($prompt, $referenceId);
-    }
-
-    /**
-     * Generate realistic photographic image
-     */
-    public function generateRealisticImage(string $subject, string $referenceId): array
-    {
-        $prompt = PromptConst::generateRealisticImagePrompt($subject);
-        return $this->generate($prompt, $referenceId);
-    }
-
-    /**
-     * Generate 3D rendered image
-     */
-    public function generate3DRenderedImage(string $subject, string $referenceId): array
-    {
-        $prompt = PromptConst::generate3DRenderedPrompt($subject);
-        return $this->generate($prompt, $referenceId);
-    }
-
-    /**
-     * Generate sketch/pencil drawing image
-     */
-    public function generateSketchPencilImage(string $subject, string $referenceId): array
-    {
-        $prompt = PromptConst::generateSketchPencilPrompt($subject);
-        return $this->generate($prompt, $referenceId);
-    }
-
-    /**
-     * Generate cartoon style image
-     */
-    public function generateCartoonStyleImage(string $subject, string $referenceId): array
-    {
-        $prompt = PromptConst::generateCartoonStylePrompt($subject);
-        return $this->generate($prompt, $referenceId);
-    }
-
-    /**
-     * Generate watercolor painting image
-     */
-    public function generateWatercolorImage(string $subject, string $referenceId): array
-    {
-        $prompt = PromptConst::generateWatercolorPrompt($subject);
         return $this->generate($prompt, $referenceId);
     }
 }

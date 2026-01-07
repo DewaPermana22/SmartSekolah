@@ -50,7 +50,7 @@ class PromptImageController extends Controller
 
         if ($process['success']) {
             return redirect()
-                ->route('admin.image-prompts.index')
+                ->route('superadmin.image-prompts.index')
                 ->with('success', ResponseConst::SUCCESS_MESSAGE_CREATED);
         }
 
@@ -84,7 +84,7 @@ class PromptImageController extends Controller
 
         if ($process['success']) {
             return redirect()
-                ->route('admin.image-prompts.index')
+                ->route('superadmin.image-prompts.index')
                 ->with('success', ResponseConst::SUCCESS_MESSAGE_UPDATED);
         }
 
@@ -100,7 +100,7 @@ class PromptImageController extends Controller
 
         if ($process['success']) {
             return redirect()
-                ->route('admin.image-prompts.index')
+                ->route('superadmin.image-prompts.index')
                 ->with('success', ResponseConst::SUCCESS_MESSAGE_DELETED);
         }
 

@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Agents\ImageGenerationAgent;
+use App\Usecase\ImageGenerationUsecase;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -23,43 +24,33 @@ class RunImageGeneration implements ShouldQueue
     public function __construct(
         public string $referenceId,
         public string $description,
+        public int $imageStyleId,
     ) {}
 
     public function handle(): void
     {
         try {
-            $agent = new ImageGenerationAgent();
+            $usecase = app(ImageGenerationUsecase::class);
+            $result = $usecase->generateIlustration(
+                description: $this->description,
+                referenceId: $this->referenceId,
+                model_id: $this->imageStyleId,
+            );
 
-            $structuredMessage = "Buatkan infografis dengan deskripsi: '{$this->description}'. " .
-                "Gunakan reference_id: '{$this->referenceId}'. " .
-                "Eksekusi tool infographics_generation sekarang.";
-
-            $agent->run($structuredMessage);
-
-            $expectedPath = "generated-images/{$this->referenceId}.png";
-
-            $maxTries = 10;
-            $fileFound = false;
-
-            for ($i = 0; $i < $maxTries; $i++) {
-                if (Storage::disk('public')->exists($expectedPath)) {
-                    $fileFound = true;
-                    break;
+            if (($result['status'] ?? null) !== 'success') {
+                if (Storage::disk('public')->exists("generated-images/{$this->referenceId}.png")) {
+                    Log::warning('Job marked failed but image exists', [
+                        'reference_id' => $this->referenceId
+                    ]);
+                    return;
                 }
-                sleep(1);
-            }
 
-            if (!$fileFound) {
-                throw new RuntimeException("File gambar tidak ditemukan di storage: {$expectedPath}. Pastikan tool infographics_generation benar-benar menyimpan file.");
+                throw new RuntimeException(
+                    $result['message'] ?? 'Image generation failed'
+                );
             }
-
-            $fileSize = Storage::disk('public')->size($expectedPath);
-            if ($fileSize < 1000) {
-                throw new RuntimeException("File gambar corrupt atau terlalu kecil: {$fileSize} bytes");
-            }
-
         } catch (Throwable $e) {
-            Log::error('❌ RunImageGeneration FAILED', [
+            Log::error('RunImageGeneration FAILED', [
                 'reference_id' => $this->referenceId,
                 'error' => $e->getMessage()
             ]);

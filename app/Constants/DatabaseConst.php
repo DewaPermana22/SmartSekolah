@@ -12,7 +12,7 @@ class DatabaseConst
 
     const TASK = 'tasks';
 
-    const PROMPT_TEXT_GENERATION = 'prompt_text_generations';
+    const PROMPT_TEXT_GENERATION = 'prompt_text_generation';
 
     const SCHOOL = 'schools';
 

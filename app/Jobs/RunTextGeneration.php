@@ -2,12 +2,14 @@
 
 namespace App\Jobs;
 
-use App\Agents\TextGenerationAgent;
+use App\Usecase\TextGenerationtUsecase;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use RuntimeException;
 use Throwable;
 
 class RunTextGeneration implements ShouldQueue
@@ -19,71 +21,74 @@ class RunTextGeneration implements ShouldQueue
     public $backoff = 30;
 
     public function __construct(
-        public string $message,
+        public string $description,
+        public string $categories,
         public string $referenceId,
-        public string $topic,
-        public string $level
     ) {}
 
     public function handle(): void
     {
         try {
-            $agent = new TextGenerationAgent();
-            $result = $agent->run($this->message);
+            $usecase = app(TextGenerationtUsecase::class);
 
-            $generatedText = $this->extractContent($result);
+            $result = $usecase->generateTextGemini(
+                description: $this->description,
+                categories: $this->categories
+            );
+
+            if (!($result['success'] ?? false)) {
+                throw new RuntimeException(
+                    $result['message'] ?? 'Text generation failed'
+                );
+            }
+
+
+            $data = $result['data'];
+
+            $payload = [
+                'reference_id' => $this->referenceId,
+                'categories'   => $this->categories,
+                'generated_at' => now()->toDateTimeString(),
+                'content'      => $data['content'],
+                'usage'        => $data['usage'],
+            ];
 
             Storage::disk('local')->put(
-                "generated-texts/{$this->referenceId}.txt",
-                $generatedText
+                "generated-texts/{$this->referenceId}.json",
+                json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
             );
+
+            Log::info('Text generation completed', [
+                'reference_id' => $this->referenceId,
+                'categories' => $this->categories,
+                'usage' => $data['usage']
+            ]);
         } catch (Throwable $e) {
+            Log::error('RunTextGeneration FAILED', [
+                'reference_id' => $this->referenceId,
+                'error' => $e->getMessage()
+            ]);
+
             throw $e;
         }
     }
 
-    /**
-     * Extract clean content from nested JSON response
-     */
-    private function extractContent(string $response): string
-    {
-        try {
-            // Decode first level
-            $decoded = json_decode($response, true);
-
-            // Extract from generate_educational_text_response
-            if (isset($decoded['generate_educational_text_response']['content'])) {
-                $content = $decoded['generate_educational_text_response']['content'];
-
-                // Decode nested JSON string
-                $nestedDecoded = json_decode($content, true);
-
-                // Extract actual content from data
-                if (isset($nestedDecoded['data']['content'])) {
-                    return $nestedDecoded['data']['content'];
-                }
-            }
-
-            return $response;
-        } catch (\Exception $e) {
-            return $response;
-        }
-    }
-
-    /**
-     * Handle a job failure.
-     */
     public function failed(Throwable $exception): void
     {
         Storage::disk('local')->put(
-            "failed-generations/{$this->referenceId}.json",
+            "failed-text-generations/{$this->referenceId}.json",
             json_encode([
                 'reference_id' => $this->referenceId,
-                'topic' => $this->topic,
-                'level' => $this->level,
+                'categories' => $this->categories,
                 'error' => $exception->getMessage(),
                 'timestamp' => now()->toDateTimeString(),
             ], JSON_PRETTY_PRINT)
         );
+
+        Log::error('Job definitively FAILED after all retries', [
+            'reference_id' => $this->referenceId,
+            'tries' => $this->attempts(),
+            'error' => $exception->getMessage()
+        ]);
     }
 }

@@ -20,6 +20,13 @@ class ToolsAiUsecase
         return $key;
     }
 
+    public static function resolver(string $template, array $variables): string
+    {
+        foreach ($variables as $key => $value) {
+            $template = str_replace("{{ $key }}", $value, $template);
+        }
+        return $template;
+    }
 
     public function makeRequest(
         string $url,
