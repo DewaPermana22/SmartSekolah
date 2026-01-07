@@ -117,6 +117,8 @@ Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->grou
         Route::prefix('ilustrasi')->name('ilustrasi.')->group(function () {
             Route::get('/', [IlustrasiController::class, 'index'])->name('index');
             Route::get('/add', [IlustrasiController::class, 'create'])->name('add');
+            Route::get('/status/{referenceId}', [IlustrasiController::class, 'JobImageStatus'])->name('job_status');
+            Route::post('/create', [IlustrasiController::class, 'doCreate'])->name('do_create');
         });
     });
 
@@ -146,14 +148,14 @@ Route::middleware(['auth', 'role:1'])->prefix('superadmin')->name('superadmin.')
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::prefix('users')->name('users.')->group(function () {
-        Route::get('/', [UserController::class, 'index'])->name('index');
-        Route::get('/add', [UserController::class, 'add'])->name('add');
-        Route::post('/create', [UserController::class, 'doCreate'])->name('create');
-        Route::get('/detail/{id}', [UserController::class, 'detail'])->name('detail');
-        Route::get('/update/{id}', [UserController::class, 'update'])->name('update');
-        Route::post('/update/{id}', [UserController::class, 'doUpdate'])->name('doUpdate');
-        Route::delete('/delete/{id}', [UserController::class, 'delete'])->name('delete');
-        Route::post('/reset-password/{id}', [UserController::class, 'resetPassword'])->name('resetPassword');
+        Route::get('/', [SuperAdminUserController::class, 'index'])->name('index');
+        Route::get('/add', [SuperAdminUserController::class, 'add'])->name('add');
+        Route::post('/create', [SuperAdminUserController::class, 'doCreate'])->name('create');
+        Route::get('/detail/{id}', [SuperAdminUserController::class, 'detail'])->name('detail');
+        Route::get('/update/{id}', [SuperAdminUserController::class, 'update'])->name('update');
+        Route::post('/update/{id}', [SuperAdminUserController::class, 'doUpdate'])->name('doUpdate');
+        Route::delete('/delete/{id}', [SuperAdminUserController::class, 'delete'])->name('delete');
+        Route::post('/reset-password/{id}', [SuperAdminUserController::class, 'resetPassword'])->name('resetPassword');
     });
 
     Route::prefix('schools')->name('schools.')->group(function () {

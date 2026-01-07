@@ -26,6 +26,7 @@
                             type="radio"
                             name="style"
                             value="{{ $item->name }}"
+                            data-id="{{ $item->id }}"
                             class="peer absolute z-10 top-2 left-2"
                             {{ $loop->first === 0 ? 'checked' : '' }}>
 
@@ -120,8 +121,6 @@
         </div>
         <div id="resultContent" class="flex justify-center">
         </div>
-        <div id="imageInfo" class="mt-4 p-4 bg-gray-50 dark:bg-neutral-900 rounded-lg">
-        </div>
     </div>
 </div>
 @endsection
@@ -129,55 +128,194 @@
 @push('scripts')
 <script>
     $(document).ready(function() {
-        const sampleImage = 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&h=600&fit=crop';
+        let pollInterval;
+        let maxAttempts = 60;
+        let currentAttempt = 0;
 
         $('#illustrasiForm').on('submit', function(e) {
             e.preventDefault();
 
-            const style = $('input[name="style"]:checked').val();
+            const selectedStyle = $('input[name="style"]:checked');
+            const styleName = selectedStyle.val();
+            const styleId = selectedStyle.data('id');
             const description = $('#illustration_description').val();
 
+            if (!styleId) {
+                showError('Silakan pilih gaya gambar terlebih dahulu');
+                return;
+            }
+
+            if (!description.trim()) {
+                showError('Silakan masukkan deskripsi ilustrasi');
+                return;
+            }
+
+            // Reset state
             $('#loadingState').removeClass('hidden');
             $('#resultArea').addClass('hidden');
-
             $('#generateBtn').prop('disabled', true);
+            currentAttempt = 0;
 
-            setTimeout(function() {
-                $('#loadingState').addClass('hidden');
-                $('#resultArea').removeClass('hidden');
-                $('#generateBtn').prop('disabled', false);
+            // Kirim request ke API
+            $.ajax({
+                url: '/api/tools/ilustration',
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify({
+                    description: description,
+                    image_style_id: parseInt(styleId)
+                }),
+                success: function(response) {
 
-                const styleNames = {
-                    '3d-cartoon': '3D Kartun',
-                    'watercolor': 'Cat Air',
-                    'realistic': 'Realistis',
-                    'pencil-sketch': 'Sketsa Pensil',
-                    'flat-vector': 'Vektor Dasar',
-                    'infographic': 'Infografis'
-                };
+                    if (response.success && response.data.reference_id) {
+                        pollImageStatus(response.data.reference_id, styleName, description);
+                    } else {
+                        showError('Gagal memulai generate ilustrasi');
+                        $('#generateBtn').prop('disabled', false);
+                        $('#loadingState').addClass('hidden');
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Error:', xhr);
+                    let errorMsg = 'Terjadi kesalahan saat mengirim request';
 
-                $('#resultContent').html(`
-                    <div class="w-full max-w-2xl">
-                        <img src="${sampleImage}" alt="Generated illustration"
-                            class="w-full rounded-lg shadow-lg border border-gray-200 dark:border-neutral-700">
-                    </div>
-                `);
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg = xhr.responseJSON.message;
+                    } else if (xhr.responseJSON && xhr.responseJSON.errors) {
+                        errorMsg = Object.values(xhr.responseJSON.errors).flat().join(', ');
+                    }
 
-                $('#imageInfo').html(`
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <p class="text-gray-600 dark:text-neutral-400 mb-1">Gaya Gambar:</p>
-                            <p class="font-semibold text-gray-800 dark:text-neutral-200">${styleNames[style]}</p>
-                        </div>
-                        <div class="md:col-span-2">
-                            <p class="text-gray-600 dark:text-neutral-400 mb-1">Deskripsi:</p>
-                            <p class="text-gray-700 dark:text-neutral-300">${description}</p>
-                        </div>
-                    </div>
-                `);
-            }, 3000);
+                    showError(errorMsg);
+                    $('#generateBtn').prop('disabled', false);
+                    $('#loadingState').addClass('hidden');
+                }
+            });
         });
 
+        function pollImageStatus(referenceId, styleName, description) {
+            pollInterval = setInterval(function() {
+                currentAttempt++;
+
+                $.ajax({
+                    url: `/api/status/ilustration/${referenceId}`,
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                    success: function(response) {
+
+                        if (response.data.status === 'completed') {
+                            // Stop polling
+                            clearInterval(pollInterval);
+
+                            // Tampilkan hasil
+                            showResult(response.data.image_url, styleName, description, styleId);
+
+                            $('#loadingState').addClass('hidden');
+                            $('#generateBtn').prop('disabled', false);
+                        } else if (response.data.status === 'failed') {
+                            // Job gagal
+                            clearInterval(pollInterval);
+                            showError('Generate ilustrasi gagal. Silakan coba lagi.');
+                            $('#loadingState').addClass('hidden');
+                            $('#generateBtn').prop('disabled', false);
+                        } else if (currentAttempt >= maxAttempts) {
+                            // Timeout
+                            clearInterval(pollInterval);
+                            showError('Timeout: Proses generate memakan waktu terlalu lama');
+                            $('#loadingState').addClass('hidden');
+                            $('#generateBtn').prop('disabled', false);
+                        }
+                        // Jika status masih 'processing', terus polling
+                    },
+                    error: function(xhr) {
+                        clearInterval(pollInterval);
+                        console.error('Polling error:', xhr);
+                        showError('Terjadi kesalahan saat mengecek status');
+                        $('#loadingState').addClass('hidden');
+                        $('#generateBtn').prop('disabled', false);
+                    }
+                });
+            }, 1000); // Poll setiap 1 detik
+        }
+
+        function showResult(imageUrl, styleName, description, styleId) {
+            $('#resultContent').html(`
+            <div class="w-full max-w-2xl">
+                <img src="${imageUrl}" alt="Generated illustration"
+                    class="w-full rounded-lg shadow-lg border border-gray-200 dark:border-neutral-700"
+                    onerror="this.src='https://via.placeholder.com/800x600?text=Image+Not+Found'">
+            </div>
+        `);
+
+            // Setup download button
+            $('#downloadBtn').off('click').on('click', function() {
+                downloadImage(imageUrl);
+            });
+
+            $('#resultArea').removeClass('hidden');
+
+            saveToHistory(referenceId, description, styleId, imageUrl);
+        }
+
+        function showError(message) {
+            $('#loadingState').addClass('hidden');
+            alert('Error: ' + message);
+        }
+
+        function downloadImage(imageUrl) {
+            fetch(imageUrl)
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `ilustrasi-${Date.now()}.png`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => {
+                    console.error('Download error:', error);
+                    window.open(imageUrl, '_blank');
+                });
+        }
+
+        function saveToHistory(referenceId, description, styleId, imageUrl) {
+            $.ajax({
+                url: '/api/tools/ilustration/save-history',
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify({
+                    reference_id: referenceId,
+                    description: description,
+                    image_style_id: parseInt(styleId),
+                    image_url: imageUrl
+                }),
+                success: function(response) {
+                    alert('Riwayat berhasil disimpan!');
+                },
+                error: function(xhr) {
+                    console.error('Failed to save history:', xhr);
+                }
+            });
+        }
+
+
+        $(window).on('beforeunload', function() {
+            if (pollInterval) {
+                clearInterval(pollInterval);
+            }
+        });
     });
 </script>
 @endpush

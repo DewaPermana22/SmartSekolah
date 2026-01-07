@@ -29,4 +29,6 @@ class DatabaseConst
     const TEXT_GENERATION_HISTORY = 'text_generation_histories';
 
     const PROMPT_IMAGE_GENERATION = 'prompt_image_generation';
+
+    const IMAGE_GENERATION_HISTORIES = 'image_generation_histories';
 }
