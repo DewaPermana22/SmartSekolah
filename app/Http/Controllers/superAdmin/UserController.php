@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\superAdmin;
 
+use App\Constants\DatabaseConst;
 use App\Constants\ResponseConst;
 use App\Http\Controllers\Controller;
 use App\Usecase\UserUsecase;
@@ -9,11 +10,12 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
     protected array $page = [
-        'route' => 'user',
+        'route' => 'superadmin.users',
         'title' => 'Pengguna Aplikasi',
     ];
 
@@ -22,7 +24,7 @@ class UserController extends Controller
     public function __construct(
         protected UserUsecase $usecase
     ) {
-        $this->baseRedirect = 'admin/' . $this->page['route'];
+        $this->baseRedirect = 'superadmin/users';
     }
 
     public function index(Request $request): View|Response
@@ -30,21 +32,29 @@ class UserController extends Controller
         $data = $this->usecase->getAll([
             'keywords' => $request->get('keywords'),
             'access_type' => $request->get('access_type'),
+            'school_id' => $request->get('school_id'),
         ]);
         $data = $data['data']['list'] ?? [];
+
+        $schools = DB::table(DatabaseConst::SCHOOL)->whereNull('deleted_at')->get();
 
         return view('_super_admin.users.index', [
             'data' => $data,
             'page' => $this->page,
             'keywords' => $request->get('keywords'),
             'access_type' => $request->get('access_type'),
+            'school_id' => $request->get('school_id'),
+            'schools' => $schools,
         ]);
     }
 
     public function add(): View|Response
     {
+        $schools = DB::table(DatabaseConst::SCHOOL)->whereNull('deleted_at')->get();
+
         return view('_super_admin.users.add', [
             'page' => $this->page,
+            'schools' => $schools,
         ]);
     }
 
@@ -94,10 +104,13 @@ class UserController extends Controller
         }
         $data = $data['data'] ?? [];
 
+        $schools = DB::table(DatabaseConst::SCHOOL)->whereNull('deleted_at')->get();
+
         return view('_super_admin.users.update', [
             'data' => (object) $data,
             'userId' => $id,
             'page' => $this->page,
+            'schools' => $schools,
         ]);
     }
 
@@ -116,7 +129,7 @@ class UserController extends Controller
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('success', ResponseConst::DEFAULT_ERROR_MESSAGE);
+                ->with('error', $process['message'] ?? ResponseConst::DEFAULT_ERROR_MESSAGE);
         }
     }
 
@@ -147,27 +160,6 @@ class UserController extends Controller
             return redirect()
                 ->route('superadmin.users.index')
                 ->with('error', $resetProcess['message'] ?? ResponseConst::DEFAULT_ERROR_MESSAGE);
-        }
-    }
-
-    public function changePassword(): View
-    {
-        return view('_admin.profile.change_password');
-    }
-
-    public function doChangePassword(Request $request): RedirectResponse
-    {
-        $process = $this->usecase->changePassword($request->all());
-
-        if ($process['success']) {
-            return redirect()
-                ->back()
-                ->with('success', 'Password berhasil diubah.');
-        } else {
-            return redirect()
-                ->back()
-                ->withInput()
-                ->with('error', $process['message'] ?? ResponseConst::DEFAULT_ERROR_MESSAGE);
         }
     }
 }

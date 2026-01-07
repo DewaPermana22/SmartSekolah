@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\TaskCategoryController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\superAdmin\UserController as SuperAdminUserController;
+use App\Http\Controllers\superAdmin\DashboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\superAdmin\PromptImageController;
 use App\Http\Controllers\superAdmin\SchoolController;
@@ -136,13 +138,12 @@ Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->grou
         Route::post('/update/{id}', [TaskController::class, 'doUpdate'])->name('do_update');
         Route::delete('/delete/{id}', [TaskController::class, 'delete'])->name('delete');
     });
-    
+
 });
 
+
 Route::middleware(['auth', 'role:1'])->prefix('superadmin')->name('superadmin.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('_super_admin.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('index');
@@ -181,5 +182,11 @@ Route::middleware(['auth', 'role:1'])->prefix('superadmin')->name('superadmin.')
         Route::get('/update/{id}', [SubjectController::class, 'update'])->name('update');
         Route::post('/update/{id}', [SubjectController::class, 'doUpdate'])->name('do_update');
         Route::delete('/delete/{id}', [SubjectController::class, 'delete'])->name('delete');
+    });
+});
+
+Route::middleware(['auth', 'role:4'])->prefix('student')->name('student.')->group(function () {
+    Route::prefix('learning-modules')->name('learning_modules.')->group(function () {
+        Route::get('/', [StudentLearningModulesController::class, 'index'])->name('index');
     });
 });

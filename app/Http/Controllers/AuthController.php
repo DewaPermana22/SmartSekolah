@@ -13,7 +13,8 @@ class AuthController extends Controller
 {
     public function __construct(
         private UserUsecase $userUsecase
-    ) {}
+    ) {
+    }
 
     public function login()
     {
@@ -33,7 +34,7 @@ class AuthController extends Controller
     {
         $result = $this->userUsecase->register($request);
 
-        if (! $result['success']) {
+        if (!$result['success']) {
             return back()
                 ->withErrors(['register_error' => $result['message']])
                 ->withInput();

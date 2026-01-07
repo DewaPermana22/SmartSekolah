@@ -27,70 +27,64 @@
             action="{{ route('superadmin.image-prompts.do_update', $id) }}" method="POST" enctype="multipart/form-data">
             @csrf
 
-            <div class="space-y-4">
-                {{-- Name --}}
-                <div>
-                    <label for="name" class="block text-sm font-medium mb-2 dark:text-white">Nama Gaya Gambar <span
-                            class="text-red-500">*</span></label>
-                    <input type="text" id="name" name="name" value="{{ old('name', $data->name) }}"
-                        class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 placeholder-neutral-300 dark:placeholder-neutral-500 dark:focus:ring-neutral-600 @error('name') border-red-500 focus:border-red-500 focus:ring-red-500 @enderror"
-                        placeholder="Contoh: 3D Kartun" required>
-                    @error('name')
-                    <p class="text-xs text-red-600 mt-2" id="name-error">{{ $message }}</p>
-                    @enderror
+                <div class="space-y-4">
+                    {{-- Name --}}
+                    <div>
+                        <label for="name" class="block text-sm font-medium mb-2 dark:text-white">Nama Gaya Gambar <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" id="name" name="name" value="{{ old('name', $data->name) }}"
+                            class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 placeholder-neutral-300 dark:placeholder-neutral-500 dark:focus:ring-neutral-600 @error('name') border-red-500 focus:border-red-500 focus:ring-red-500 @enderror"
+                            placeholder="Contoh: 3D Kartun" required>
+                        @error('name')
+                            <p class="text-xs text-red-600 mt-2" id="name-error">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Prompt --}}
+                    <div>
+                        <label for="prompt" class="block text-sm font-medium mb-2 dark:text-white">Prompt <span
+                                class="text-red-500">*</span></label>
+                        <textarea id="prompt" name="prompt" rows="4"
+                            class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 placeholder-neutral-300 dark:placeholder-neutral-500 dark:focus:ring-neutral-600 @error('prompt') border-red-500 focus:border-red-500 focus:ring-red-500 @enderror"
+                            placeholder="Masukkan prompt untuk generate gambar"
+                            required>{{ old('prompt', $data->prompt) }}</textarea>
+                        @error('prompt')
+                            <p class="text-xs text-red-600 mt-2" id="prompt-error">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Image Upload --}}
+                    <div>
+                        <label for="image" class="block text-sm font-medium mb-2 dark:text-white">
+                            Sampul
+                            <span class="text-gray-500 text-xs">(Kosongkan jika tidak ingin mengubah)</span>
+                        </label>
+
+                        <input type="file" id="image" name="image" accept="image/jpeg,image/jpg,image/png,image/webp" class="
+                        file:text-blue-500 hover:file:underline file:mr-3 border file:cursor-pointer
+                        py-3 px-4 block w-full border-gray-200 rounded-lg text-sm
+                        focus-within:border-blue-500 focus-within:ring-blue-500
+                        dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-300
+                        @error('image') border-red-500 focus:border-red-500 focus:ring-red-500 @enderror
+                    ">
+
+                        <p id="image-helper" class="text-xs text-gray-500 dark:text-neutral-500 mt-1"
+                            data-existing-url="{{ $data->preview_path ?? '' }}">
+                            @if(isset($data->preview_path))
+                                <span class="text-blue-600 underline cursor-pointer hover:text-blue-800 dark:text-blue-400">
+                                    Lihat gambar saat ini
+                                </span>
+                            @else
+                                Klik, drag & drop, atau Ctrl+V untuk paste gambar (maks 5MB)
+                            @endif
+                        </p>
+
+                        @error('image')
+                            <p class="text-xs text-red-600 mt-2">{{ $message }}</p>
+                        @enderror
+                    </div>
+
                 </div>
-
-                {{-- Prompt --}}
-                <div>
-                    <label for="prompt" class="block text-sm font-medium mb-2 dark:text-white">Prompt <span
-                            class="text-red-500">*</span></label>
-                    <textarea id="prompt" name="prompt" rows="4"
-                        class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 placeholder-neutral-300 dark:placeholder-neutral-500 dark:focus:ring-neutral-600 @error('prompt') border-red-500 focus:border-red-500 focus:ring-red-500 @enderror"
-                        placeholder="Masukkan prompt untuk generate gambar" required>{{ old('prompt', $data->prompt) }}</textarea>
-                    @error('prompt')
-                    <p class="text-xs text-red-600 mt-2" id="prompt-error">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Image Upload --}}
-                <div>
-                    <label for="image" class="block text-sm font-medium mb-2 dark:text-white">
-                        Sampul
-                        <span class="text-gray-500 text-xs">(Kosongkan jika tidak ingin mengubah)</span>
-                    </label>
-
-                    <input
-                        type="file"
-                        id="image"
-                        name="image"
-                        accept="image/jpeg,image/jpg,image/png,image/webp"
-                        class="
-            file:text-blue-500 hover:file:underline file:mr-3 border file:cursor-pointer
-            py-3 px-4 block w-full border-gray-200 rounded-lg text-sm
-            focus-within:border-blue-500 focus-within:ring-blue-500
-            dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-300
-            @error('image') border-red-500 focus:border-red-500 focus:ring-red-500 @enderror
-        ">
-
-                    <p
-                        id="image-helper"
-                        class="text-xs text-gray-500 dark:text-neutral-500 mt-1"
-                        data-existing-url="{{ $data->preview_path ?? '' }}">
-                        @if(isset($data->preview_path))
-                        <span class="text-blue-600 underline cursor-pointer hover:text-blue-800 dark:text-blue-400">
-                            Lihat gambar saat ini
-                        </span>
-                        @else
-                        Klik, drag & drop, atau Ctrl+V untuk paste gambar (maks 5MB)
-                        @endif
-                    </p>
-
-                    @error('image')
-                    <p class="text-xs text-red-600 mt-2">{{ $message }}</p>
-                    @enderror
-                </div>
-
-            </div>
 
             <div class="flex justify-start gap-x-2 mt-4">
                 <a navigate href="{{ route('superadmin.image-prompts.index') }}"
@@ -113,98 +107,98 @@
     </div>
 </div>
 
-<script>
-    (function() {
-        let previewUrl = null;
+    <script>
+        (function () {
+            let previewUrl = null;
 
-        function initImageHelper() {
-            const fileInput = document.getElementById('image');
-            const helper = document.getElementById('image-helper');
+            function initImageHelper() {
+                const fileInput = document.getElementById('image');
+                const helper = document.getElementById('image-helper');
 
-            if (!fileInput || !helper) return;
+                if (!fileInput || !helper) return;
 
-            // prevent double bind (navigate-form)
-            if (fileInput.dataset.bound === '1') return;
-            fileInput.dataset.bound = '1';
+                // prevent double bind (navigate-form)
+                if (fileInput.dataset.bound === '1') return;
+                fileInput.dataset.bound = '1';
 
-            const existingUrl = helper.dataset.existingUrl;
+                const existingUrl = helper.dataset.existingUrl;
 
-            function setLink(text, url) {
-                helper.innerHTML = `
-                <span class="text-blue-600 underline cursor-pointer hover:text-blue-800 dark:text-blue-400">
-                    ${text}
-                </span>
-            `;
-                helper.onclick = () => window.open(url, '_blank');
-            }
-
-            function resetHelper() {
-                if (existingUrl) {
-                    setLink('Lihat gambar saat ini', existingUrl);
-                } else {
-                    helper.textContent =
-                        'Klik, drag & drop, atau Ctrl+V untuk paste gambar (maks 5MB)';
-                    helper.onclick = null;
+                function setLink(text, url) {
+                    helper.innerHTML = `
+                            <span class="text-blue-600 underline cursor-pointer hover:text-blue-800 dark:text-blue-400">
+                                ${text}
+                            </span>
+                        `;
+                    helper.onclick = () => window.open(url, '_blank');
                 }
-            }
 
-            function handleFile(file) {
-                if (!file || !file.type.startsWith('image/')) return;
-
-                if (previewUrl) URL.revokeObjectURL(previewUrl);
-                previewUrl = URL.createObjectURL(file);
-
-                setLink(`Lihat ${file.name}`, previewUrl);
-            }
-
-            /* FILE PICK */
-            fileInput.addEventListener('change', () => {
-                const file = fileInput.files[0];
-                if (!file) {
-                    resetHelper();
-                    return;
-                }
-                handleFile(file);
-            });
-
-            /* PASTE */
-            document.addEventListener('paste', e => {
-                const items = e.clipboardData?.items;
-                if (!items) return;
-
-                for (const item of items) {
-                    if (item.type.startsWith('image/')) {
-                        e.preventDefault();
-                        const file = item.getAsFile();
-                        const dt = new DataTransfer();
-                        dt.items.add(file);
-                        fileInput.files = dt.files;
-                        handleFile(file);
-                        break;
+                function resetHelper() {
+                    if (existingUrl) {
+                        setLink('Lihat gambar saat ini', existingUrl);
+                    } else {
+                        helper.textContent =
+                            'Klik, drag & drop, atau Ctrl+V untuk paste gambar (maks 5MB)';
+                        helper.onclick = null;
                     }
                 }
-            });
 
-            /* DRAG & DROP */
-            fileInput.addEventListener('dragover', e => e.preventDefault());
-            fileInput.addEventListener('drop', e => {
-                e.preventDefault();
-                const file = e.dataTransfer.files[0];
-                if (!file) return;
+                function handleFile(file) {
+                    if (!file || !file.type.startsWith('image/')) return;
 
-                const dt = new DataTransfer();
-                dt.items.add(file);
-                fileInput.files = dt.files;
-                handleFile(file);
-            });
+                    if (previewUrl) URL.revokeObjectURL(previewUrl);
+                    previewUrl = URL.createObjectURL(file);
 
-            // init default state
-            resetHelper();
-        }
+                    setLink(`Lihat ${file.name}`, previewUrl);
+                }
 
-        initImageHelper();
-        document.addEventListener('navigate:complete', initImageHelper);
-    })();
-</script>
+                /* FILE PICK */
+                fileInput.addEventListener('change', () => {
+                    const file = fileInput.files[0];
+                    if (!file) {
+                        resetHelper();
+                        return;
+                    }
+                    handleFile(file);
+                });
+
+                /* PASTE */
+                document.addEventListener('paste', e => {
+                    const items = e.clipboardData?.items;
+                    if (!items) return;
+
+                    for (const item of items) {
+                        if (item.type.startsWith('image/')) {
+                            e.preventDefault();
+                            const file = item.getAsFile();
+                            const dt = new DataTransfer();
+                            dt.items.add(file);
+                            fileInput.files = dt.files;
+                            handleFile(file);
+                            break;
+                        }
+                    }
+                });
+
+                /* DRAG & DROP */
+                fileInput.addEventListener('dragover', e => e.preventDefault());
+                fileInput.addEventListener('drop', e => {
+                    e.preventDefault();
+                    const file = e.dataTransfer.files[0];
+                    if (!file) return;
+
+                    const dt = new DataTransfer();
+                    dt.items.add(file);
+                    fileInput.files = dt.files;
+                    handleFile(file);
+                });
+
+                // init default state
+                resetHelper();
+            }
+
+            initImageHelper();
+            document.addEventListener('navigate:complete', initImageHelper);
+        })();
+    </script>
 
 @endsection

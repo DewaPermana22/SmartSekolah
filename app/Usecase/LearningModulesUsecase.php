@@ -19,14 +19,13 @@ class LearningModulesUsecase extends Usecase
     public function getAll(array $filterData = []): array
     {
         try {
-            $userId = Auth::user()?->id;
-            if (!$userId) {
+            $user = Auth::user();
+            if (!$user) {
                 throw new Exception('User not authenticated');
             }
 
             $query = DB::table(DatabaseConst::LEARNING_MODULE . ' as lm')
                 ->join(DatabaseConst::SUBJECT . ' as s', 'lm.subject_id', '=', 's.id')
-                ->where('lm.created_by', $userId)
                 ->whereNull('lm.deleted_at')
                 ->select(
                     'lm.id',
@@ -36,6 +35,12 @@ class LearningModulesUsecase extends Usecase
                     'lm.created_at',
                 )
                 ->orderBy('lm.created_at', 'desc');
+
+            if ($user->access_type == 4) {
+                $query->where('lm.school_id', $user->school_id);
+            } else {
+                $query->where('lm.created_by', $user->id);
+            }
 
             if (!empty($filterData['keywords'])) {
                 $query->where('lm.title', 'like', '%' . $filterData['keywords'] . '%')->orWhere('s.name', 'like', '%' . $filterData['keywords'] . '%');
@@ -97,6 +102,7 @@ class LearningModulesUsecase extends Usecase
                 'created_by' => $userId,
                 'created_at' => now(),
                 'updated_at' => now(),
+                'school_id' => Auth::user()?->school_id,
             ]);
 
             DB::commit();

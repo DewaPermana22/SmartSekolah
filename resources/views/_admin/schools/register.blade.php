@@ -33,7 +33,6 @@
                         </div>
                     @endif
 
-                    {{-- School Name --}}
                     <div>
                         <label for="school_name" class="block text-sm font-medium mb-2 dark:text-white">
                             Nama Sekolah <span class="text-red-500">*</span>
@@ -46,7 +45,25 @@
                         @enderror
                     </div>
 
-                  
+                    <div>
+                        <label for="grade" class="block text-sm font-medium mb-2 dark:text-white">
+                            Tingkat Sekolah <span class="text-red-500">*</span>
+                        </label>
+                        <select id="grade" name="grade"
+                            class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600 @error('grade') border-red-500 focus:border-red-500 focus:ring-red-500 @enderror"
+                            required>
+                            <option value="" selected disabled>Pilih Tingkat Sekolah</option>
+                            @foreach (\App\Constants\GradeConst::getGrades() as $value => $label)
+                                <option value="{{ $value }}" {{ old('grade') == $value ? 'selected' : '' }}>
+                                    {{ $label }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('grade')
+                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
                     <div>
                         <label for="address" class="block text-sm font-medium mb-2 dark:text-white">
                             Alamat Sekolah <span class="text-gray-400">(Opsional)</span>
@@ -59,7 +76,6 @@
                         @enderror
                     </div>
 
-                    {{-- Phone Number --}}
                     <div>
                         <label for="no_tlp" class="block text-sm font-medium mb-2 dark:text-white">
                             No. Telepon <span class="text-gray-400">(Opsional)</span>
@@ -73,7 +89,6 @@
                     </div>
                 </div>
 
-                {{-- Footer --}}
                 <div class="mt-6 flex justify-end gap-x-2">
                     <button type="submit" id="submit-btn"
                         class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none cursor-pointer">

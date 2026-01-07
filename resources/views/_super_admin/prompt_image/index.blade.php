@@ -43,22 +43,22 @@
                     </form>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 my-4">
-                    @forelse($data as $d)
-                    <div class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-2xl dark:bg-neutral-800 dark:border-neutral-700 overflow-hidden">
-                        <!-- Image Container -->
-                        <div class="relative h-40 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-neutral-700 dark:to-neutral-800">
-                            <img src="{{ $d->preview_path }}"
-                                alt="{{ $d->name }}"
-                                class="w-full h-full object-cover">
-                        </div>
-                        <!-- Card Content -->
-                        <div class="p-4 md:p-5 flex flex-col h-full">
-                            <div class="grow">
-                                <h3 class="text-sm font-bold text-gray-800 dark:text-white text-center">
-                                    {{ $d->name }}
-                                </h3>
-                            </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 my-4">
+                        @forelse($data as $d)
+                            <div
+                                class="flex flex-col bg-white border border-gray-200 shadow-sm rounded-2xl dark:bg-neutral-800 dark:border-neutral-700 overflow-hidden">
+                                <!-- Image Container -->
+                                <div
+                                    class="relative h-40 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-neutral-700 dark:to-neutral-800">
+                                    <img src="{{ $d->preview_path }}" alt="{{ $d->name }}" class="w-full h-full object-cover">
+                                </div>
+                                <!-- Card Content -->
+                                <div class="p-4 md:p-5 flex flex-col h-full">
+                                    <div class="grow">
+                                        <h3 class="text-sm font-bold text-gray-800 dark:text-white text-center">
+                                            {{ $d->name }}
+                                        </h3>
+                                    </div>
 
                             <div class="mt-4 flex gap-x-2">
                                 <a navigate href="{{ route('superadmin.image-prompts.update', $d->id) }}"
@@ -86,70 +86,70 @@
                     @endforelse
                 </div>
 
-                @if (count($data) > 0 && $data->hasPages())
-                <div class="px-6 py-4 border-t border-gray-200 dark:border-neutral-700">
-                    <div class="flex justify-end">
-                        {{ $data->links() }}
+                    @if (count($data) > 0 && $data->hasPages())
+                        <div class="px-6 py-4 border-t border-gray-200 dark:border-neutral-700">
+                            <div class="flex justify-end">
+                                {{ $data->links() }}
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto"
+        role="dialog" tabindex="-1" aria-labelledby="delete-modal-label">
+        <div
+            class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
+            <div
+                class="relative flex flex-col bg-white border shadow-sm rounded-xl dark:bg-neutral-800 dark:border-neutral-700">
+                <div class="absolute top-2 end-2">
+                    <button type="button"
+                        class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-none focus:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:hover:bg-neutral-600 dark:text-neutral-400 dark:focus:bg-neutral-600"
+                        aria-label="Close" data-hs-overlay="#delete-modal">
+                        <span class="sr-only">Close</span>
+                        @include('_admin._layout.icons.close_modal')
+                    </button>
+                </div>
+
+                <div class="p-4 sm:p-10 text-center overflow-y-auto">
+                    <!-- Icon -->
+                    <span
+                        class="mb-4 inline-flex justify-center items-center size-14 rounded-full border-4 border-red-50 bg-red-100 text-red-500 dark:bg-red-700 dark:border-red-600 dark:text-red-100">
+                        @include('_admin._layout.icons.warning_modal')
+                    </span>
+                    <!-- End Icon -->
+
+                    <h3 id="delete-modal-label" class="mb-2 text-xl font-bold text-gray-800 dark:text-neutral-200">
+                        Hapus Gaya Gambar
+                    </h3>
+                    <p class="text-gray-500 dark:text-neutral-500">
+                        Apakah Anda yakin ingin menghapus <span id="delete-item-name"
+                            class="font-semibold text-gray-800 dark:text-neutral-200"></span>?
+                        <br>Tindakan ini tidak dapat dibatalkan.
+                    </p>
+
+                    <div class="mt-6 flex justify-center gap-x-4">
+                        <button type="button"
+                            class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-50 dark:bg-transparent dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+                            data-hs-overlay="#delete-modal">
+                            Batal
+                        </button>
+                        <form id="delete-form" method="POST" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:bg-red-700 disabled:opacity-50 disabled:pointer-events-none">
+                                Ya, Hapus
+                            </button>
+                        </form>
                     </div>
                 </div>
-                @endif
             </div>
         </div>
     </div>
-</div>
-
-<!-- Delete Confirmation Modal -->
-<div id="delete-modal" class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto"
-    role="dialog" tabindex="-1" aria-labelledby="delete-modal-label">
-    <div
-        class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
-        <div
-            class="relative flex flex-col bg-white border shadow-sm rounded-xl dark:bg-neutral-800 dark:border-neutral-700">
-            <div class="absolute top-2 end-2">
-                <button type="button"
-                    class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-none focus:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:hover:bg-neutral-600 dark:text-neutral-400 dark:focus:bg-neutral-600"
-                    aria-label="Close" data-hs-overlay="#delete-modal">
-                    <span class="sr-only">Close</span>
-                    @include('_admin._layout.icons.close_modal')
-                </button>
-            </div>
-
-            <div class="p-4 sm:p-10 text-center overflow-y-auto">
-                <!-- Icon -->
-                <span
-                    class="mb-4 inline-flex justify-center items-center size-14 rounded-full border-4 border-red-50 bg-red-100 text-red-500 dark:bg-red-700 dark:border-red-600 dark:text-red-100">
-                    @include('_admin._layout.icons.warning_modal')
-                </span>
-                <!-- End Icon -->
-
-                <h3 id="delete-modal-label" class="mb-2 text-xl font-bold text-gray-800 dark:text-neutral-200">
-                    Hapus Gaya Gambar
-                </h3>
-                <p class="text-gray-500 dark:text-neutral-500">
-                    Apakah Anda yakin ingin menghapus <span id="delete-item-name"
-                        class="font-semibold text-gray-800 dark:text-neutral-200"></span>?
-                    <br>Tindakan ini tidak dapat dibatalkan.
-                </p>
-
-                <div class="mt-6 flex justify-center gap-x-4">
-                    <button type="button"
-                        class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-50 dark:bg-transparent dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
-                        data-hs-overlay="#delete-modal">
-                        Batal
-                    </button>
-                    <form id="delete-form" method="POST" class="inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit"
-                            class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:bg-red-700 disabled:opacity-50 disabled:pointer-events-none">
-                            Ya, Hapus
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script>
     function setDeleteData(id, name) {
