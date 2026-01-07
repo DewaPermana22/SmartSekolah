@@ -107,6 +107,13 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-end">
                                 <div class="inline-flex items-center gap-x-1">
+                                    <button type="button"
+                                        class="p-2 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-gray-200 bg-white text-yellow-500 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700 cursor-pointer"
+                                        title="Reset Password"
+                                        data-hs-overlay="#reset-password-modal"
+                                        onclick="setResetPasswordData('{{ $d->id }}', '{{ $d->name }}')">
+                                        @include('_admin._layout.icons.reset', ['class' => 'size-4'])
+                                    </button>
                                     <a navigate href="{{ route('admin.users.detail', $d->id) }}"
                                         class="p-2 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700"
                                         title="Detail">
@@ -203,11 +210,60 @@
             </div>
         </div>
     </div>
+  <div id="reset-password-modal" class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto" role="dialog" tabindex="-1" aria-labelledby="reset-password-modal-label">
+        <div class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
+            <div class="relative flex flex-col bg-white border shadow-sm rounded-xl dark:bg-neutral-800 dark:border-neutral-700">
+                <div class="absolute top-2 end-2">
+                    <button type="button"
+                        class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-none focus:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:hover:bg-neutral-600 dark:text-neutral-400 dark:focus:bg-neutral-600"
+                        aria-label="Close" data-hs-overlay="#reset-password-modal">
+                        <span class="sr-only">Close</span>
+                        @include('_admin._layout.icons.close_modal')
+                    </button>
+                </div>
 
+                <div class="p-4 sm:p-10 text-center overflow-y-auto">
+                    <span
+                        class="mb-4 inline-flex justify-center items-center size-14 rounded-full border-4 border-yellow-50 bg-yellow-100 text-yellow-500 dark:bg-yellow-700 dark:border-yellow-600 dark:text-yellow-100">
+                        @include('_admin._layout.icons.reset')
+                    </span>
+
+                    <h3 id="reset-password-modal-label" class="mb-2 text-xl font-bold text-gray-800 dark:text-neutral-200">
+                        Reset Password Pengguna
+                    </h3>
+                    <p class="text-gray-500 dark:text-neutral-500">
+                        Apakah Anda yakin ingin mereset password <span id="reset-item-name"
+                            class="font-semibold text-gray-800 dark:text-neutral-200"></span>?
+                        <br>Password akan direset menjadi default: <span
+                            class="font-bold text-blue-600">asdasd</span>
+                    </p>
+
+                    <div class="mt-6 flex justify-center gap-x-4">
+                        <button type="button"
+                            class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-50 dark:bg-transparent dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+                            data-hs-overlay="#reset-password-modal">
+                            Batal
+                        </button>
+                        <form id="reset-form" method="POST" class="inline">
+                            @csrf
+                            <button type="submit"
+                                class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-yellow-600 text-white hover:bg-yellow-700 focus:outline-none focus:bg-yellow-700 disabled:opacity-50 disabled:pointer-events-none">
+                                Ya, Reset
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
         function setDeleteData(id, name) {
             document.getElementById('delete-item-name').textContent = name;
             document.getElementById('delete-form').action = '{{ url('admin/users/delete') }}/' + id;
+        }
+        function setResetPasswordData(id, name) {
+            document.getElementById('reset-item-name').textContent = name;
+            document.getElementById('reset-form').action = '{{ url('admin/users/reset-password') }}/' + id;
         }
     </script>
 @endsection

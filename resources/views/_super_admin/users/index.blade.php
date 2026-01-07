@@ -65,7 +65,6 @@
         </form>
     </div>
 
-    <!-- Table -->
     <div
         class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden dark:bg-neutral-800 dark:border-neutral-700">
         <div class="overflow-x-auto">
@@ -179,7 +178,6 @@
         @endif
     </div>
 
-    <!-- Delete Confirmation Modal -->
     <div id="delete-modal" class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto"
         role="dialog" tabindex="-1" aria-labelledby="delete-modal-label">
         <div
@@ -196,12 +194,10 @@
                 </div>
 
                 <div class="p-4 sm:p-10 text-center overflow-y-auto">
-                    <!-- Icon -->
                     <span
                         class="mb-4 inline-flex justify-center items-center size-14 rounded-full border-4 border-red-50 bg-red-100 text-red-500 dark:bg-red-700 dark:border-red-600 dark:text-red-100">
                         @include('_admin._layout.icons.warning_modal')
                     </span>
-                    <!-- End Icon -->
 
                     <h3 id="delete-modal-label" class="mb-2 text-xl font-bold text-gray-800 dark:text-neutral-200">
                         Hapus Pengguna
@@ -244,12 +240,10 @@
                 </div>
 
                 <div class="p-4 sm:p-10 text-center overflow-y-auto">
-                    <!-- Icon -->
                     <span
                         class="mb-4 inline-flex justify-center items-center size-14 rounded-full border-4 border-yellow-50 bg-yellow-100 text-yellow-500 dark:bg-yellow-700 dark:border-yellow-600 dark:text-yellow-100">
                         @include('_admin._layout.icons.reset')
                     </span>
-                    <!-- End Icon -->
 
                     <h3 id="reset-password-modal-label" class="mb-2 text-xl font-bold text-gray-800 dark:text-neutral-200">
                         Reset Password Pengguna
