@@ -7,6 +7,7 @@ use App\Http\Presenter\Response;
 use App\Jobs\RunTextGeneration;
 use App\Jobs\RunImageGeneration;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -69,30 +70,70 @@ class ToolsController extends Controller
 
     public function JobTextstatus(string $referenceId)
     {
-        $filePath = "generated-texts/{$referenceId}.txt";
-
-        if (Storage::disk('local')->exists($filePath)) {
-            $content = Storage::disk('local')->get($filePath);
-
+        // 1. Check if completed
+        $completedPath = "generated-texts/{$referenceId}.json";
+        if (Storage::disk('local')->exists($completedPath)) {
+            $data = json_decode(Storage::disk('local')->get($completedPath), true);
+            
             return response()->json(
                 Response::buildSuccess(
                     data: [
                         'reference_id' => $referenceId,
                         'status' => 'completed',
-                        'content' => $content,
+                        'content' => $data['content'] ?? null,
+                        'usage' => $data['usage'] ?? null,
+                        'generated_at' => $data['generated_at'] ?? null,
                     ],
                     message: 'Text generation completed'
                 )
             );
         }
 
+        // 2. Check if failed
+        $failedPath = "failed-text-generations/{$referenceId}.json";
+        if (Storage::disk('local')->exists($failedPath)) {
+            $errorData = json_decode(Storage::disk('local')->get($failedPath), true);
+            
+            return response()->json(
+                Response::buildSuccess(
+                    data: [
+                        'reference_id' => $referenceId,
+                        'status' => 'failed',
+                        'error' => $errorData['error'] ?? 'Unknown error',
+                        'failed_at' => $errorData['timestamp'] ?? null,
+                    ],
+                    message: 'Text generation failed'
+                ),
+                500
+            );
+        }
+
+        // 3. Check if job still in queue or processing
+        $jobExists = DB::table('jobs')
+            ->where('payload', 'like', '%' . $referenceId . '%')
+            ->exists();
+
+        if ($jobExists) {
+            return response()->json(
+                Response::buildSuccess(
+                    data: [
+                        'reference_id' => $referenceId,
+                        'status' => 'queued',
+                    ],
+                    message: 'Text generation is queued'
+                ),
+                202
+            );
+        }
+
+        // 4. Job not found anywhere (might be processing or lost)
         return response()->json(
             Response::buildSuccess(
                 data: [
                     'reference_id' => $referenceId,
                     'status' => 'processing',
                 ],
-                message: 'Text generation is still in progress'
+                message: 'Text generation is processing'
             ),
             202
         );
@@ -100,28 +141,71 @@ class ToolsController extends Controller
 
     public function JobImageStatus(string $referenceId)
     {
-        $filePath = "generated-images/{$referenceId}.png";
-
-        if (Storage::disk('public')->exists($filePath)) {
+        // 1. Check if completed
+        $imagePath = "generated-images/{$referenceId}.png";
+        if (Storage::disk('public')->exists($imagePath)) {
+            $fileSize = Storage::disk('public')->size($imagePath);
+            $lastModified = Storage::disk('public')->lastModified($imagePath);
+            
             return response()->json(
                 Response::buildSuccess(
                     data: [
                         'reference_id' => $referenceId,
                         'status' => 'completed',
-                        'image_url' => Storage::url($filePath),
+                        'image_url' => Storage::url($imagePath),
+                        'size_bytes' => $fileSize,
+                        'generated_at' => date('Y-m-d H:i:s', $lastModified),
                     ],
                     message: 'Image generation completed'
                 )
             );
         }
 
+        // 2. Check if failed
+        $failedPath = "failed-image-generations/{$referenceId}.json";
+        if (Storage::disk('public')->exists($failedPath)) {
+            $errorData = json_decode(Storage::disk('public')->get($failedPath), true);
+            
+            return response()->json(
+                Response::buildSuccess(
+                    data: [
+                        'reference_id' => $referenceId,
+                        'status' => 'failed',
+                        'error' => $errorData['error'] ?? 'Unknown error',
+                        'failed_at' => $errorData['timestamp'] ?? null,
+                    ],
+                    message: 'Image generation failed'
+                ),
+                500
+            );
+        }
+
+        // 3. Check if job still in queue
+        $jobExists = DB::table('jobs')
+            ->where('payload', 'like', '%' . $referenceId . '%')
+            ->exists();
+
+        if ($jobExists) {
+            return response()->json(
+                Response::buildSuccess(
+                    data: [
+                        'reference_id' => $referenceId,
+                        'status' => 'queued',
+                    ],
+                    message: 'Image generation is queued'
+                ),
+                202
+            );
+        }
+
+        // 4. Job not found anywhere (might be processing or lost)
         return response()->json(
             Response::buildSuccess(
                 data: [
                     'reference_id' => $referenceId,
                     'status' => 'processing',
                 ],
-                message: 'Image generation is still in progress'
+                message: 'Image generation is processing'
             ),
             202
         );

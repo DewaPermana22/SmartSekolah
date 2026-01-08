@@ -23,7 +23,7 @@ class ToolsAiUsecase
     public static function resolver(string $template, array $variables): string
     {
         foreach ($variables as $key => $value) {
-            $template = str_replace("{{ $key }}", $value, $template);
+            $template = str_replace("{{$key}}", $value, $template);
         }
         return $template;
     }
