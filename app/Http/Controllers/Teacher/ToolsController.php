@@ -10,6 +10,7 @@ use App\Usecase\ImageGenerationUsecase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -72,30 +73,70 @@ class ToolsController extends Controller
 
     public function JobTextstatus(string $referenceId)
     {
-        $filePath = "generated-texts/{$referenceId}.txt";
-
-        if (Storage::disk('local')->exists($filePath)) {
-            $content = Storage::disk('local')->get($filePath);
+        // 1. Check if completed
+        $completedPath = "generated-texts/{$referenceId}.json";
+        if (Storage::disk('local')->exists($completedPath)) {
+            $data = json_decode(Storage::disk('local')->get($completedPath), true);
 
             return response()->json(
                 Response::buildSuccess(
                     data: [
                         'reference_id' => $referenceId,
                         'status' => 'completed',
-                        'content' => $content,
+                        'content' => $data['content'] ?? null,
+                        'usage' => $data['usage'] ?? null,
+                        'generated_at' => $data['generated_at'] ?? null,
                     ],
                     message: 'Text generation completed'
                 )
             );
         }
 
+        // 2. Check if failed
+        $failedPath = "failed-text-generations/{$referenceId}.json";
+        if (Storage::disk('local')->exists($failedPath)) {
+            $errorData = json_decode(Storage::disk('local')->get($failedPath), true);
+
+            return response()->json(
+                Response::buildSuccess(
+                    data: [
+                        'reference_id' => $referenceId,
+                        'status' => 'failed',
+                        'error' => $errorData['error'] ?? 'Unknown error',
+                        'failed_at' => $errorData['timestamp'] ?? null,
+                    ],
+                    message: 'Text generation failed'
+                ),
+                500
+            );
+        }
+
+        // 3. Check if job still in queue or processing
+        $jobExists = DB::table('jobs')
+            ->where('payload', 'like', '%' . $referenceId . '%')
+            ->exists();
+
+        if ($jobExists) {
+            return response()->json(
+                Response::buildSuccess(
+                    data: [
+                        'reference_id' => $referenceId,
+                        'status' => 'queued',
+                    ],
+                    message: 'Text generation is queued'
+                ),
+                202
+            );
+        }
+
+        // 4. Job not found anywhere (might be processing or lost)
         return response()->json(
             Response::buildSuccess(
                 data: [
                     'reference_id' => $referenceId,
                     'status' => 'processing',
                 ],
-                message: 'Text generation is still in progress'
+                message: 'Text generation is processing'
             ),
             202
         );

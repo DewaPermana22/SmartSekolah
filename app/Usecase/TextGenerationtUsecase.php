@@ -41,6 +41,8 @@ class TextGenerationtUsecase
             ]
         );
 
+        Log::info('Generated Prompt: ' . $prompt, ['method' => __METHOD__]);
+
         $apiKey = $this->aiToolsUsecase->getApikeys('gemini');
         $url = AIConst::getUrlTextGeneration(
             AIConst::GEMINI_TEXT_MODEL,

@@ -29,7 +29,6 @@ class MateriAjarController extends Controller
             'keywords' => $request->get('keywords'),
         ]);
         $data = $data['data']['list'] ?? [];
-
         return view('_teacher.ai_tools.materi.index', [
             'page' => $this->page,
             'data' => $data,
