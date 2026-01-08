@@ -11,7 +11,6 @@ Route::get('/user', function (Request $request) {
 //AI Tools
 Route::prefix('tools')->group(function () {
     Route::post('/ilustration', [ToolsController::class, 'doCreate'])->name('create_ilustration');
-    Route::post('/ilustration/save-history', [ToolsController::class, 'saveHistory'])->name('save_ilustration_history');
     Route::post('/materi', [ToolsController::class, 'doCreateMateri'])->name('create_materi');
 });
 

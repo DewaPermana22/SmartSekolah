@@ -16,6 +16,8 @@ use App\Http\Controllers\superAdmin\TextPromptController;
 use App\Http\Controllers\Teacher\AITools\IlustrasiController;
 use App\Http\Controllers\Teacher\AITools\MateriAjarController;
 use App\Http\Controllers\Teacher\LearningModulesController;
+use App\Http\Controllers\Teacher\ToolsController;
+use App\Http\Controllers\Student\LearningModulesController as studentLearningModulesController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -122,6 +124,8 @@ Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->grou
         });
     });
 
+    Route::post('api/ilustration/save-history', [ToolsController::class, 'saveHistory'])->name('save_ilustration_history');
+
     Route::prefix('learning-modules')->name('learning_modules.')->group(function () {
         Route::get('/', [LearningModulesController::class, 'index'])->name('index');
         Route::get('/add', [LearningModulesController::class, 'add'])->name('add');
@@ -140,7 +144,6 @@ Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->grou
         Route::post('/update/{id}', [TaskController::class, 'doUpdate'])->name('do_update');
         Route::delete('/delete/{id}', [TaskController::class, 'delete'])->name('delete');
     });
-
 });
 
 

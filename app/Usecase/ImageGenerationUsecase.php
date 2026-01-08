@@ -49,21 +49,18 @@ class ImageGenerationUsecase
             $data = $this->aiToolsUsecase->makeRequest($url, $payload);
             $imageData = $this->aiToolsUsecase->extractImageFromResponse($data);
 
-            // Validate image data
             if (!isset($imageData['data']) || empty($imageData['data'])) {
                 throw new \RuntimeException('No image data received from API');
             }
 
             $path = "generated-images/{$referenceId}.png";
 
-            // Decode and save image
             $decodedImage = base64_decode($imageData['data'], true);
 
             if ($decodedImage === false) {
                 throw new \RuntimeException('Failed to decode base64 image data');
             }
 
-            // Save to public storage
             $saved = Storage::disk('public')->put($path, $decodedImage);
 
             if (!$saved) {
@@ -78,7 +75,6 @@ class ImageGenerationUsecase
                 'url' => $publicUrl,
                 'size_bytes' => strlen($decodedImage)
             ], 200, 'Image generated successfully');
-
         } catch (\Throwable $e) {
             Log::error('Image generation failed', [
                 'reference_id' => $referenceId,
@@ -95,15 +91,31 @@ class ImageGenerationUsecase
     /**
      * Add image generation history record
      */
-    public function addHistory(int $modelId, string $description, string $imagePath, string $referenceId): void
+    public function addHistory(int $modelId, string $description, string $imagePath, string $referenceId, ?int $userId = null): void
     {
+        $finalUserId = $userId ?? Auth::id() ?? Auth::guard('web')->id();
+
+        if (!$finalUserId) {
+            Log::error('Cannot save history: User not authenticated', [
+                'reference_id' => $referenceId,
+                'auth_check' => Auth::check(),
+                'guards' => config('auth.guards'),
+            ]);
+            throw new \RuntimeException('User must be authenticated to save history');
+        }
+
         DB::table(DatabaseConst::IMAGE_GENERATION_HISTORIES)->insert([
             'user_input' => $description,
             'image_style_id' => $modelId,
             'reference' => $referenceId,
             'output_file_path' => $imagePath,
             'created_at' => now(),
-            'created_by' => Auth::user()->id ?? null,
+            'created_by' => $finalUserId,
+        ]);
+
+        Log::info('History saved successfully', [
+            'reference_id' => $referenceId,
+            'user_id' => $finalUserId,
         ]);
     }
 

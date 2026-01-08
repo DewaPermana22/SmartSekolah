@@ -19,7 +19,7 @@ class RunImageGeneration implements ShouldQueue
 
     public $tries = 3;
     public $timeout = 180;
-    public $backoff = 30;
+    public $backoff = [10, 30, 60];
 
     public function __construct(
         public string $referenceId,
@@ -37,7 +37,7 @@ class RunImageGeneration implements ShouldQueue
                 modelId: $this->imageStyleId,
             );
 
-            if (($result['status'] ?? null) !== 'success') {
+            if (($result['code'] ?? null) !== 200) {
                 if (Storage::disk('public')->exists("generated-images/{$this->referenceId}.png")) {
                     Log::warning('Job marked failed but image exists', [
                         'reference_id' => $this->referenceId
@@ -69,11 +69,5 @@ class RunImageGeneration implements ShouldQueue
                 'timestamp' => now()->toDateTimeString(),
             ], JSON_PRETTY_PRINT)
         );
-
-        Log::error('❌ Job definitively FAILED after all retries', [
-            'reference_id' => $this->referenceId,
-            'tries' => $this->attempts(),
-            'error' => $exception->getMessage()
-        ]);
     }
 }

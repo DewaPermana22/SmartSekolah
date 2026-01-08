@@ -8,6 +8,8 @@ use App\Jobs\RunTextGeneration;
 use App\Jobs\RunImageGeneration;
 use App\Usecase\ImageGenerationUsecase;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -101,28 +103,71 @@ class ToolsController extends Controller
 
     public function JobImageStatus(string $referenceId)
     {
-        $filePath = "generated-images/{$referenceId}.png";
+        // 1. Check if completed
+        $imagePath = "generated-images/{$referenceId}.png";
+        if (Storage::disk('public')->exists($imagePath)) {
+            $fileSize = Storage::disk('public')->size($imagePath);
+            $lastModified = Storage::disk('public')->lastModified($imagePath);
 
-        if (Storage::disk('public')->exists($filePath)) {
             return response()->json(
                 Response::buildSuccess(
                     data: [
                         'reference_id' => $referenceId,
                         'status' => 'completed',
-                        'image_url' => Storage::url($filePath),
+                        'image_url' => Storage::url($imagePath),
+                        'size_bytes' => $fileSize,
+                        'generated_at' => date('Y-m-d H:i:s', $lastModified),
                     ],
                     message: 'Image generation completed'
                 )
             );
         }
 
+        // 2. Check if failed
+        $failedPath = "failed-image-generations/{$referenceId}.json";
+        if (Storage::disk('public')->exists($failedPath)) {
+            $errorData = json_decode(Storage::disk('public')->get($failedPath), true);
+
+            return response()->json(
+                Response::buildSuccess(
+                    data: [
+                        'reference_id' => $referenceId,
+                        'status' => 'failed',
+                        'error' => $errorData['error'] ?? 'Unknown error',
+                        'failed_at' => $errorData['timestamp'] ?? null,
+                    ],
+                    message: 'Image generation failed'
+                ),
+                500
+            );
+        }
+
+        // 3. Check if job still in queue
+        $jobExists = DB::table('jobs')
+            ->where('payload', 'like', '%' . $referenceId . '%')
+            ->exists();
+
+        if ($jobExists) {
+            return response()->json(
+                Response::buildSuccess(
+                    data: [
+                        'reference_id' => $referenceId,
+                        'status' => 'queued',
+                    ],
+                    message: 'Image generation is queued'
+                ),
+                202
+            );
+        }
+
+        // 4. Job not found anywhere (might be processing or lost)
         return response()->json(
             Response::buildSuccess(
                 data: [
                     'reference_id' => $referenceId,
                     'status' => 'processing',
                 ],
-                message: 'Image generation is still in progress'
+                message: 'Image generation is processing'
             ),
             202
         );
@@ -150,7 +195,8 @@ class ToolsController extends Controller
                 modelId: $request->image_style_id,
                 description: $request->description,
                 imagePath: $imagePath,
-                referenceId: $request->reference_id
+                referenceId: $request->reference_id,
+                userId: Auth::id(),
             );
             return response()->json(
                 Response::buildSuccess(

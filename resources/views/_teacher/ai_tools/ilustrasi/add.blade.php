@@ -28,7 +28,7 @@
                             value="{{ $item->name }}"
                             data-id="{{ $item->id }}"
                             class="peer absolute z-10 top-2 left-2"
-                            {{ $loop->first === 0 ? 'checked' : '' }}>
+                            {{ $loop->first ? 'checked' : '' }}>
 
                         <div
                             class="border-2 border-gray-200 rounded-lg overflow-hidden
@@ -36,6 +36,7 @@
                            peer-checked:ring-2
                            peer-checked:ring-blue-500
                            peer-checked:ring-offset-2
+                           hover:border-gray-300
                            dark:border-neutral-700
                            dark:peer-checked:ring-offset-neutral-800
                            transition-all">
@@ -46,8 +47,7 @@
                                     alt="{{ $item->name }}"
                                     class="w-full h-full object-cover">
 
-                                <div
-                                    class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-2">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-2">
                                     <span class="text-white text-xs font-semibold">
                                         {{ $item->name }}
                                     </span>
@@ -131,6 +131,8 @@
         let pollInterval;
         let maxAttempts = 60;
         let currentAttempt = 0;
+        let currentReferenceId = null;
+        let historySaved = false;
 
         $('#illustrasiForm').on('submit', function(e) {
             e.preventDefault();
@@ -150,13 +152,12 @@
                 return;
             }
 
-            // Reset state
             $('#loadingState').removeClass('hidden');
             $('#resultArea').addClass('hidden');
             $('#generateBtn').prop('disabled', true);
             currentAttempt = 0;
+            historySaved = false;
 
-            // Kirim request ke API
             $.ajax({
                 url: '/api/tools/ilustration',
                 method: 'POST',
@@ -170,9 +171,9 @@
                     image_style_id: parseInt(styleId)
                 }),
                 success: function(response) {
-
                     if (response.success && response.data.reference_id) {
-                        pollImageStatus(response.data.reference_id, styleName, description);
+                        currentReferenceId = response.data.reference_id;
+                        pollImageStatus(response.data.reference_id, styleName, description, styleId);
                     } else {
                         showError('Gagal memulai generate ilustrasi');
                         $('#generateBtn').prop('disabled', false);
@@ -196,7 +197,7 @@
             });
         });
 
-        function pollImageStatus(referenceId, styleName, description) {
+        function pollImageStatus(referenceId, styleName, description, styleId) {
             pollInterval = setInterval(function() {
                 currentAttempt++;
 
@@ -207,30 +208,27 @@
                         'Accept': 'application/json'
                     },
                     success: function(response) {
-
                         if (response.data.status === 'completed') {
-                            // Stop polling
                             clearInterval(pollInterval);
-
-                            // Tampilkan hasil
-                            showResult(response.data.image_url, styleName, description, styleId);
+                            showResult(response.data.image_url, styleName, description, styleId, referenceId);
+                            if (!historySaved) {
+                                historySaved = true;
+                                saveToHistory(referenceId, description, styleId, response.data.image_url);
+                            }
 
                             $('#loadingState').addClass('hidden');
                             $('#generateBtn').prop('disabled', false);
                         } else if (response.data.status === 'failed') {
-                            // Job gagal
                             clearInterval(pollInterval);
                             showError('Generate ilustrasi gagal. Silakan coba lagi.');
                             $('#loadingState').addClass('hidden');
                             $('#generateBtn').prop('disabled', false);
                         } else if (currentAttempt >= maxAttempts) {
-                            // Timeout
                             clearInterval(pollInterval);
                             showError('Timeout: Proses generate memakan waktu terlalu lama');
                             $('#loadingState').addClass('hidden');
                             $('#generateBtn').prop('disabled', false);
                         }
-                        // Jika status masih 'processing', terus polling
                     },
                     error: function(xhr) {
                         clearInterval(pollInterval);
@@ -240,26 +238,23 @@
                         $('#generateBtn').prop('disabled', false);
                     }
                 });
-            }, 1000); // Poll setiap 1 detik
+            }, 1000);
         }
 
-        function showResult(imageUrl, styleName, description, styleId) {
+        function showResult(imageUrl, styleName, description, styleId, referenceId) {
             $('#resultContent').html(`
-            <div class="w-full max-w-2xl">
-                <img src="${imageUrl}" alt="Generated illustration"
-                    class="w-full rounded-lg shadow-lg border border-gray-200 dark:border-neutral-700"
-                    onerror="this.src='https://via.placeholder.com/800x600?text=Image+Not+Found'">
-            </div>
-        `);
+                <div class="w-full max-w-2xl">
+                    <img src="${imageUrl}?t=${Date.now()}" alt="Generated illustration"
+                        class="w-full rounded-lg shadow-lg border border-gray-200 dark:border-neutral-700"
+                        onerror="this.onerror=null; this.src='https://via.placeholder.com/800x600?text=Image+Not+Found'; console.error('Image failed to load:', '${imageUrl}');">
+                </div>
+            `);
 
-            // Setup download button
             $('#downloadBtn').off('click').on('click', function() {
                 downloadImage(imageUrl);
             });
 
             $('#resultArea').removeClass('hidden');
-
-            saveToHistory(referenceId, description, styleId, imageUrl);
         }
 
         function showError(message) {
@@ -288,7 +283,7 @@
 
         function saveToHistory(referenceId, description, styleId, imageUrl) {
             $.ajax({
-                url: '/api/tools/ilustration/save-history',
+                url: '/teacher/api/ilustration/save-history',
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
@@ -302,14 +297,13 @@
                     image_url: imageUrl
                 }),
                 success: function(response) {
-                    alert('Riwayat berhasil disimpan!');
+                    console.log('Riwayat berhasil disimpan!', response);
                 },
                 error: function(xhr) {
-                    console.error('Failed to save history:', xhr);
+                    console.error('Failed to save history:', xhr.responseJSON || xhr);
                 }
             });
         }
-
 
         $(window).on('beforeunload', function() {
             if (pollInterval) {
