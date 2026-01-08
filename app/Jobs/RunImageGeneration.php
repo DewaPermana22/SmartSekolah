@@ -34,7 +34,7 @@ class RunImageGeneration implements ShouldQueue
             $result = $usecase->generateIlustration(
                 description: $this->description,
                 referenceId: $this->referenceId,
-                model_id: $this->imageStyleId,
+                modelId: $this->imageStyleId,
             );
 
             if (($result['status'] ?? null) !== 'success') {

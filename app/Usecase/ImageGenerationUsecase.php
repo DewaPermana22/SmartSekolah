@@ -6,6 +6,7 @@ use App\Constants\AIConst;
 use App\Constants\DatabaseConst;
 use App\Constants\PromptConst;
 use App\Http\Presenter\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -69,15 +70,7 @@ class ImageGenerationUsecase
                 throw new \RuntimeException('Failed to save image to storage');
             }
 
-            // Generate public URL
             $publicUrl = asset('storage/' . $path);
-
-            Log::info('✅ Image generated and saved', [
-                'reference_id' => $referenceId,
-                'path' => $path,
-                'size' => strlen($decodedImage),
-                'url' => $publicUrl
-            ]);
 
             return Response::buildSuccess([
                 'image_path' => $path,
@@ -87,7 +80,7 @@ class ImageGenerationUsecase
             ], 200, 'Image generated successfully');
 
         } catch (\Throwable $e) {
-            Log::error('❌ Image generation failed', [
+            Log::error('Image generation failed', [
                 'reference_id' => $referenceId,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
@@ -100,12 +93,27 @@ class ImageGenerationUsecase
     }
 
     /**
+     * Add image generation history record
+     */
+    public function addHistory(int $modelId, string $description, string $imagePath, string $referenceId): void
+    {
+        DB::table(DatabaseConst::IMAGE_GENERATION_HISTORIES)->insert([
+            'user_input' => $description,
+            'image_style_id' => $modelId,
+            'reference' => $referenceId,
+            'output_file_path' => $imagePath,
+            'created_at' => now(),
+            'created_by' => Auth::user()->id ?? null,
+        ]);
+    }
+
+    /**
      * Generate generic image from description
      */
-    public function generateIlustration(string $description, string $referenceId, int $model_id): array
+    public function generateIlustration(string $description, string $referenceId, int $modelId): array
     {
         $imageModel = DB::table(DatabaseConst::PROMPT_IMAGE_GENERATION)
-            ->where('id', $model_id)
+            ->where('id', $modelId)
             ->whereNull('deleted_at')
             ->whereNull('deleted_by')
             ->first();
