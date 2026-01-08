@@ -1,15 +1,14 @@
 <?php
 
-use App\Http\Controllers\Admin\TaskCategoryController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ProfileController;
-use App\Http\Controllers\AuthController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\TaskCategoryController;
 
-Route::get('/', function () {
-    return redirect()->route('admin.dashboard');
-});
+Route::get('/', [HomeController::class, 'index'])->name('landing');
 
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'doLogin'])->name('login.post');
