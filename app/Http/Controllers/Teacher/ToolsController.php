@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers\Teacher;
 
+use App\Constants\DatabaseConst;
 use App\Http\Controllers\Controller;
 use App\Http\Presenter\Response;
 use App\Jobs\RunTextGeneration;
 use App\Jobs\RunImageGeneration;
 use App\Usecase\ImageGenerationUsecase;
+use App\Usecase\TextGenerationtUsecase;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -77,6 +80,7 @@ class ToolsController extends Controller
         $completedPath = "generated-texts/{$referenceId}.json";
         if (Storage::disk('local')->exists($completedPath)) {
             $data = json_decode(Storage::disk('local')->get($completedPath), true);
+
 
             return response()->json(
                 Response::buildSuccess(
@@ -248,6 +252,45 @@ class ToolsController extends Controller
             return response()->json(
                 Response::buildErrorService(
                     message: 'Failed to save history: ' . $e->getMessage()
+                ),
+                500
+            );
+        }
+    }
+
+    public function saveTextHistory(Request $request)
+    {
+        $request->validate([
+            'reference_id' => 'required|string',
+        ]);
+
+        try {
+            $referenceId = $request->reference_id;
+            $completedPath = "generated-texts/{$referenceId}.json";
+
+            if (!Storage::disk('local')->exists($completedPath)) {
+                return response()->json(
+                    Response::buildErrorNotFound(
+                        message: 'Text generation not found or not completed yet'
+                    ),
+                    404
+                );
+            }
+
+            $data = json_decode(Storage::disk('local')->get($completedPath), true);
+
+            $usecase = app(TextGenerationtUsecase::class);
+            $usecase->addHistory($data, $completedPath);
+
+            return response()->json(
+                Response::buildSuccess(
+                    message: 'Text generation history saved successfully'
+                )
+            );
+        } catch (\Exception $e) {
+            return response()->json(
+                Response::buildErrorService(
+                    message: 'Failed to save text history: ' . $e->getMessage()
                 ),
                 500
             );

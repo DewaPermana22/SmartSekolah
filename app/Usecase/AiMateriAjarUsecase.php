@@ -31,6 +31,7 @@ class AiMateriAjarUsecase extends Usecase
                     'tgh.user_input',
                     'tgh.output_text',
                     'tgh.output_file_path',
+                    'tgh.type',
                     'tgh.created_at',
                 )
                 ->orderBy('tgh.created_at', 'desc');
@@ -101,6 +102,7 @@ class AiMateriAjarUsecase extends Usecase
                     'tgh.output_text',
                     'tgh.output_file_path',
                     'u.name as created_by_name',
+                    'tgh.type',
                     'tgh.created_at',
                     'tgh.updated_at',
                 )

@@ -115,6 +115,9 @@ Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->grou
         Route::prefix('materi-ajar')->name('materi_ajar.')->group(function () {
             Route::get('/', [MateriAjarController::class, 'index'])->name('index');
             Route::get('/add', [MateriAjarController::class, 'create'])->name('add');
+            Route::delete('/delete/{id}', [MateriAjarController::class, 'delete'])->name('delete');
+            Route::delete('/delete/{id}', [MateriAjarController::class, 'delete'])->name('delete');
+            Route::get('/detail/{id}', [MateriAjarController::class, 'detail'])->name('detail');
         });
         Route::prefix('ilustrasi')->name('ilustrasi.')->group(function () {
             Route::get('/', [IlustrasiController::class, 'index'])->name('index');
@@ -125,6 +128,7 @@ Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->grou
     });
 
     Route::post('api/ilustration/save-history', [ToolsController::class, 'saveHistory'])->name('save_ilustration_history');
+    Route::post('api/text-generation/save-history', [ToolsController::class, 'saveTextHistory'])->name('save_text_history');
 
     Route::prefix('learning-modules')->name('learning_modules.')->group(function () {
         Route::get('/', [LearningModulesController::class, 'index'])->name('index');

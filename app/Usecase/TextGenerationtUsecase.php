@@ -4,8 +4,8 @@ namespace App\Usecase;
 
 use App\Constants\AIConst;
 use App\Constants\DatabaseConst;
-use App\Constants\PromptConst;
 use App\Http\Presenter\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -16,6 +16,29 @@ class TextGenerationtUsecase
     public function __construct(ToolsAiUsecase $aiToolsUsecase)
     {
         $this->aiToolsUsecase = $aiToolsUsecase;
+    }
+
+    /**
+     * Add text generation history record
+     */
+    public function addHistory(array $data, string $completedPath): void
+    {
+        DB::table(DatabaseConst::TEXT_GENERATION_HISTORY)->insert([
+            'user_input' => $data['input'],
+            'output_text' => $data['content'],
+            'output_file_path' => $completedPath,
+            'type' => $data['categories'] === "PPT" ? 0 : 1,
+            'token_usage' => $data['usage']['total_tokens'] ?? 0,
+            'created_by' => Auth::user()->id,
+            'updated_by' => Auth::user()?->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        Log::info('Text generation history saved successfully', [
+            'user_id' => Auth::user()->id,
+            'file_path' => $completedPath,
+        ]);
     }
 
     //Gemini Model Text Generation
@@ -77,6 +100,7 @@ class TextGenerationtUsecase
         $usage = $data['usageMetadata'] ?? [];
 
         return Response::buildSuccess([
+            'input' => $description,
             'categories' => $categories,
             'content'    => $text,
             'usage'      => [

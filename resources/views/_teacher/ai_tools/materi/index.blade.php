@@ -55,7 +55,7 @@
                                         <div class="flex items-center gap-x-2">
                                             <span
                                                 class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
-                                                Input Prompt
+                                                Input
                                             </span>
                                         </div>
                                     </th>
@@ -63,7 +63,7 @@
                                         <div class="flex items-center gap-x-2">
                                             <span
                                                 class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
-                                                Output
+                                                Tipe
                                             </span>
                                         </div>
                                     </th>
@@ -71,15 +71,15 @@
                                         <div class="flex items-center gap-x-2">
                                             <span
                                                 class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
-                                                Output File 
+                                                Tanggal & Waktu
                                             </span>
                                         </div>
                                     </th>
-                                    <th scope="col" class="px-2 py-3 text-start">
-                                        <div class="flex items-center gap-x-2">
+                                    <th scope="col" class="px-2 py-3 text-end">
+                                        <div class="text-center">
                                             <span
                                                 class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
-                                                Status
+                                                Aksi
                                             </span>
                                         </div>
                                     </th>
@@ -98,18 +98,26 @@
                                         <td class="size-px whitespace-nowrap">
                                             <div class="px-6 py-3">
                                                 <span
-                                                    class="block text-sm text-gray-800 dark:text-neutral-200">{{ $d->category_name ?? '-' }}</span>
+                                                    class="block text-sm text-gray-800 dark:text-neutral-200">{{ $d->type === 0 ? 'PPT' : "MODUL BELAJAR" }}</span>
                                             </div>
                                         </td>
                                         <td class="size-px whitespace-nowrap">
                                             <div class="px-6 py-3">
                                                 <span
-                                                    class="block text-sm text-gray-800 dark:text-neutral-200">{{ \Carbon\Carbon::parse($d->created_at)->format('d M Y') }}</span>
+                                                    class="block text-sm text-gray-800 dark:text-neutral-200">{{ \Carbon\Carbon::parse($d->created_at)->format('d M Y H:i:s') }}</span>
                                             </div>
                                         </td>
                                         
                                         <td class="size-px whitespace-nowrap">
                                             <div class="px-6 py-1.5 flex items-center gap-x-2 justify-end">
+                                                <a href="{{ route('teacher.ai.materi_ajar.detail', $d->id) }}"
+                                                    class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:bg-blue-800/30 dark:hover:bg-blue-800/20 dark:focus:bg-blue-800/20 cursor-pointer"
+                                                    title="Lihat Detail">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                    </svg>
+                                                </a>
                                                 <button type="button"
                                                     class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-red-100 text-red-800 hover:bg-red-200 focus:outline-none focus:bg-red-200 disabled:opacity-50 disabled:pointer-events-none dark:text-red-500 dark:bg-red-800/30 dark:hover:bg-red-800/20 dark:focus:bg-red-800/20 cursor-pointer"
                                                     title="Delete" data-hs-overlay="#delete-modal"
@@ -165,7 +173,7 @@
                         class="mb-4 inline-flex justify-center items-center size-14 rounded-full border-4 border-red-50 bg-red-100 text-red-500 dark:bg-red-700 dark:border-red-600 dark:text-red-100">
                         @include('_admin._layout.icons.warning_modal')
                     </span>
-                    <!-- End Icon -->
+                    
 
                     <h3 id="delete-modal-label" class="mb-2 text-xl font-bold text-gray-800 dark:text-neutral-200">
                         Hapus Tugas
@@ -182,7 +190,7 @@
                             data-hs-overlay="#delete-modal">
                             Batal
                         </button>
-                        <form id="delete-form" method="POST" class="inline">
+                        <form id="delete-form" method="POST" class="inline" navigate-form>
                             @csrf
                             @method('DELETE')
                             <button type="submit"
@@ -199,8 +207,8 @@
     <script>
         function setDeleteData(id, name) {
             document.getElementById('delete-item-name').textContent = name;
-            document.getElementById('delete-form').action = '{{ url('
-                    admin / tasks / delete ') }}/' + id;
+            const deleteUrl = '{{ route('teacher.ai.materi_ajar.delete', ':id') }}';
+            document.getElementById('delete-form').action = deleteUrl.replace(':id', id);
         }
     </script>
 @endsection
