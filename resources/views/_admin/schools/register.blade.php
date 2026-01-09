@@ -15,24 +15,10 @@
                 </p>
             </div>
 
-            <form id="school-form" class="p-6" action="{{ route('school.register.post') }}" method="POST">
+            <form id="school-form" class="p-6" action="{{ route('school.register.post') }}" method="POST" navigate-form>
                 @csrf
 
                 <div class="space-y-4">
-                    @if (session('success'))
-                        <div class="bg-green-50 border border-green-200 text-sm text-green-600 rounded-lg p-4 dark:bg-green-800/10 dark:border-green-900 dark:text-green-500"
-                            role="alert">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-
-                    @if (session('error'))
-                        <div class="bg-red-50 border border-red-200 text-sm text-red-600 rounded-lg p-4 dark:bg-red-800/10 dark:border-red-900 dark:text-red-500"
-                            role="alert">
-                            {{ session('error') }}
-                        </div>
-                    @endif
-
                     <div>
                         <label for="school_name" class="block text-sm font-medium mb-2 dark:text-white">
                             Nama Sekolah <span class="text-red-500">*</span>
