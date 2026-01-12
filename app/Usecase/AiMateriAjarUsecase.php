@@ -39,6 +39,9 @@ class AiMateriAjarUsecase extends Usecase
             if (!empty($filterData['keywords'])) {
                 $query->where('tgh.user_input', 'like', '%' . $filterData['keywords'] . '%')->orWhere('tgh.output_text', 'like', '%' . $filterData['keywords'] . '%');
             }
+            if(request()->has('type') && request()->get('type') != 'all') {
+                $query->where('tgh.type', $filterData['type']);
+            }
 
             $data = $query->paginate(20);
 

@@ -28,6 +28,15 @@
                                         placeholder="Cari Histori">
                                 </div>
                             </div>
+
+                            <div class="sm:w-64">
+                                <select name="type"
+                                    class="py-1 px-3 block w-full border-gray-200 rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
+                                    <option value="all">Semua</option>
+                                    <option value="0" {{ ($type ?? '') == 0 ? 'selected' : '' }}>PPT</option>
+                                    <option value="1" {{ ($type ?? '') == 1 ? 'selected' : '' }}>Modul Belajar</option>
+                                </select>
+                            </div>
                             
                             
                             <div>

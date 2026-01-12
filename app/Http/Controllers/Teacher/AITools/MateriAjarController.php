@@ -28,11 +28,15 @@ class MateriAjarController extends Controller
     {
         $data = $this->usecase->getAll([
             'keywords' => $request->get('keywords'),
-        ]);
+            'type' => $request->get('type'),
+        ]); 
+        
         $data = $data['data']['list'] ?? [];
         return view('_teacher.ai_tools.materi.index', [
             'page' => $this->page,
             'data' => $data,
+            'keywords' => $request->get('keywords'),
+            'type' => $request->get('type'),
         ]);
     }
 

@@ -32,6 +32,8 @@ class LearningModulesUsecase extends Usecase
                     'lm.title',
                     'lm.classroom',
                     'lm.file_path',
+                    'lm.summary',
+                    's.name as subject_name',
                     'lm.created_at',
                 )
                 ->orderBy('lm.created_at', 'desc');
@@ -44,6 +46,10 @@ class LearningModulesUsecase extends Usecase
 
             if (!empty($filterData['keywords'])) {
                 $query->where('lm.title', 'like', '%' . $filterData['keywords'] . '%')->orWhere('s.name', 'like', '%' . $filterData['keywords'] . '%');
+            }
+
+            if(!empty($filterData['subject_id']) && $filterData['subject_id'] != 'all') {
+                $query->where('lm.subject_id', $filterData['subject_id']);
             }
 
             $data = $query->paginate(20);

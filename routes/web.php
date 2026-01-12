@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ClassroomController;
+use App\Http\Controllers\Admin\SchoolController as AdminSchoolController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\TaskCategoryController;
 use App\Http\Controllers\Admin\TaskController;
@@ -44,8 +45,8 @@ Route::get('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/register', [AuthController::class, 'doRegister'])->name('register.post');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/register-school', [SchoolController::class, 'add'])->name('school.register');
-    Route::post('/register-school', [SchoolController::class, 'doCreate'])->name('school.register.post');
+    Route::get('/register-school', [AdminSchoolController::class, 'add'])->name('school.register');
+    Route::post('/register-school', [AdminSchoolController::class, 'doCreate'])->name('school.register.post');
 });
 
 Route::middleware(['auth', 'role:2', 'check.school'])->prefix('admin')->name('admin.')->group(function () {
