@@ -9,6 +9,8 @@ use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\TaskCategoryController;
 
 Route::get('/', [HomeController::class, 'index'])->name('landing');
+Route::get('/kumpulan-materi', [HomeController::class, 'kumpulan_materi'])->name('kumpulan_materi');
+Route::get('/detail-materi', [HomeController::class, 'detail_materi'])->name('detail_materi');
 
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'doLogin'])->name('login.post');

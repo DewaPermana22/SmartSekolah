@@ -16,16 +16,3 @@
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
-/* Form Input Styling for Tailwind CSS v4 */
-input:where([type="text"], [type="email"], [type="password"], [type="number"], [type="tel"], [type="url"], [type="search"], [type="date"], [type="datetime-local"], [type="month"], [type="week"], [type="time"]),
-select,
-textarea {
-    border: 1px solid oklch(.928 .006 264.531) !important;
-}
-
-/* Dark mode border colors */
-.dark input:where([type="text"], [type="email"], [type="password"], [type="number"], [type="tel"], [type="url"], [type="search"], [type="date"], [type="datetime-local"], [type="month"], [type="week"], [type="time"]),
-.dark select,
-.dark textarea {
-    border-color: oklch(.371 0 0) !important;
-}

@@ -1,8 +1,8 @@
 const hamburgerNavbar = document.querySelector(".hamburger-navbar");
 const navbar = document.querySelector(".navbar-element");
 const sections = document.querySelectorAll("section");
-const navLinks = document.querySelectorAll(".link-nav a")
-const containerSupporting = document.querySelector(".supportinglogomarqueehero");
+const navLinks = document.querySelectorAll(".link-nav a");
+const navItems = document.querySelectorAll(".link-nav");
 const visiMisiIndicator = document.querySelectorAll("#visimisiindicator");
 const visibtn = document.querySelectorAll("#visibtn");
 const misibtn = document.querySelectorAll("#misibtn");
@@ -24,42 +24,31 @@ hamburgerNavbar.addEventListener('click', () => {
     document.querySelector(".nav-link-mobile").classList.toggle('active');
 });
 
-const observerNavScroll = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if(entry.isIntersecting) {
-            let id = entry.target.id;
 
-            navLinks.forEach(link => {
-                link.parentElement.classList.remove("active");
-                if(link.getAttribute("href") == `#${id}`) {
+window.addEventListener("scroll", () => {
+    const enableSectionScroll = navbar.dataset.sectionScroll === "true";
+
+    // ❌ Kalau sectionscriptjs = false → STOP
+    if (!enableSectionScroll) return;
+    const scrollY = window.scrollY;
+
+    const navItems = document.querySelectorAll(".link-nav");
+
+    sections.forEach(section => {
+        const offsetTop = section.offsetTop - 100;
+        const height = section.offsetHeight;
+        const id = section.getAttribute("id");
+
+        if (scrollY >= offsetTop && scrollY < offsetTop + height) {
+            navItems.forEach(item => item.classList.remove("active"));
+
+            document.querySelectorAll(`.link-nav a[href="#${id}"]`)
+                .forEach(link => {
                     link.parentElement.classList.add("active");
-                }
-            })
+                });
         }
-    })
-}, {
-    root: null,
-    rootMargin: "0px",
-    threshold: 0.4
+    });
 });
-sections.forEach(section => observerNavScroll.observe(section));
-
-// const logoSupporting = [
-//     "/home/images/supporting/hotel1.png",
-//     "/home/images/supporting/hotel2.png",
-//     "/home/images/supporting/hotel3.png",
-//     "/home/images/supporting/hotel4.png",
-//     "/home/images/supporting/hotel5.png",
-//     "/home/images/supporting/hotel6.png",
-// ]
-
-// for(let i = 0; i < 3; i++) {
-//     logoSupporting.forEach((img) => {
-//         containerSupporting.innerHTML += `<div class="min-[990px]:w-37 w-30">
-//                         <img src="${img}" alt="Logo Supporting" class="grayscale brightness-50 dark:brightness-75 hover:brightness-20 dark:hover:brightness-100 transition" />
-//                     </div>`
-//     })
-// }
 
 const addClassNodeList = (list, c) => list.forEach(el => el.classList.add(c));
 const removeClassNodeList = (list, c) => list.forEach(el => el.classList.remove(c));

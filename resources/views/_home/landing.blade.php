@@ -1,48 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/_home/home-costum.css', 'resources/js/_home/landing.js'])
-    <title>Smart Sekolah | Beranda</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com" rel="preconnect">
-    <link rel="stylesheet" href="https://fonts.gstatic.com" rel="preconnect">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Parisienne&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="preconnect">
-  </head>
-  <body class="body-landingpage">
-    <header class="navbar-element">
-      <div class="content-nav">
-        <div class="image">
-          <a href="/">
-            <img src={{ asset("/home/images/smart-sekolah.png") }} alt="Logo" />
-          </a>
-        </div>
-            
-        <ul>
-          <li class="link-nav"><a href="#beranda">Beranda</a></li>
-          <li class="link-nav"><a href="#fitur">Fitur</a></li>
-          <li class="link-nav"><a href="#tentang">Tentang</a></li>
-          <li class="link-nav"><a href="#testimoni">Testimoni</a></li>
-          <li class="link-nav"><a href="#galeri">Galeri</a></li>
-        </ul>
-            
-        <a href="/koleksi.html" class="koleksi_btn">@include('_home.icons.book-open-check') Masuk & Belajar</a>
-            
-        <div class="hamburger-navbar">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      </div>
-    </header>
-    <div class="nav-link-mobile">
-      <li class="link-nav"><a href="#beranda">Beranda</a></li>
-      <li class="link-nav"><a href="#fitur">Fitur</a></li>
-      <li class="link-nav"><a href="#tentang">Tentang</a></li>
-      <li class="link-nav"><a href="#testimoni">Testimoni</a></li>
-      <li class="link-nav"><a href="#galeri">Galeri</a></li>
-      <li class="flex justify-center"><a href="/koleksi.html" class="koleksi_btn">@include('_home.icons.book-open-check') Masuk & Belajar</a></li>
-    </div>
+@extends('_home._layout.main')
+
+@section('title')
+    Beranda
+@endsection
+
+@section('content')
+    <x-home.navbar linkbtn="{{ route('login') }}"></x-home.navbar>
           
     <!-- HERO SECTION -->
     <section id="beranda" class="pt-30 overflow-hidden relative">
@@ -105,11 +68,11 @@
           <x-home.floating-mini-card text="Bersertifikat" class="right-[40%] min-[1040px]:right-[30%] bottom-[30%]">
             @include('_home.icons.trophy')
           </x-home.floating-mini-card>
-          <img src={{ asset("/home/images/gambar_home/1.png") }} class="w-[700px] relative top-0 z-5" alt="Hero Section Image" />
+          <img src={{ asset("/home/images/gambar_home/hero_section.png") }} class="w-[700px] relative top-0 z-5" alt="Hero Section Image" />
         </div>
       </div>
     </section>
-    <div class="md:my-0 my-10 relative px-5 min-[450px]:px-10 min-[700px]:px-20">
+    {{-- <div class="md:my-0 my-10 relative px-5 min-[450px]:px-10 min-[700px]:px-20">
         <div class="pointer-events-none absolute left-0 top-0 h-full w-5 min-[990px]:w-10 bg-linear-to-r from-gray-50 via-gray-50/80 to-transparent z-10"></div>
         <div class="pointer-events-none absolute right-0 top-0 h-full w-5 min-[990px]:w-10 bg-linear-to-l from-gray-50 via-gray-50/80 to-transparent z-10"></div>
         
@@ -118,10 +81,10 @@
             @include('components.home.logo-supporting-marquee')
           </div>
         </div>
-    </div>
+    </div> --}}
         
-    <!-- TERDEKAT SECTION -->
-    <section id="fitur" class="pt-10">
+    <!-- FITUR SECTION -->
+    <section id="fitur" class="pt-30">
       <div class="titleSectionHome">
         <div>
             <h4 class="font-latin subtitle">Fitur Terbaik Belajar</h4>
@@ -131,12 +94,198 @@
       </div>
 
       <div class="grid grid-cols-1 min-[900px]:grid-cols-2 min-[1260px]:grid-cols-3 justify-items-center 2xl:grid-cols-4 mt-30 gap-y-40">
-        <x-home.card-fiture img="home/images/penginapan/1.jpg" title="Menggunakan AI" text="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Unde, eaque enim nihil non sit iure voluptate maxime placeat dolor quis." href="/" hrefText="Selengkapnya" />
-        <x-home.card-fiture img="home/images/penginapan/1.jpg" title="Menggunakan AI" text="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Unde, eaque enim nihil non sit iure voluptate maxime placeat dolor quis." href="/" hrefText="Selengkapnya" />
-        <x-home.card-fiture img="home/images/penginapan/1.jpg" title="Menggunakan AI" text="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Unde, eaque enim nihil non sit iure voluptate maxime placeat dolor quis." href="/" hrefText="Selengkapnya" />
-        <x-home.card-fiture img="home/images/penginapan/1.jpg" title="Menggunakan AI" text="Lorem ipsum dolor sit, amet consectetur adipisicing elit. Unde, eaque enim nihil non sit iure voluptate maxime placeat dolor quis." href="/" hrefText="Selengkapnya" />
+        <x-home.card-fiture
+            img="home/images/gambar_home/management-guru.jpeg"
+            title="Management Data Guru"
+            text="Kelola data guru secara terstruktur, mulai dari profil, jadwal mengajar, hingga riwayat aktivitas untuk mendukung proses administrasi sekolah."
+            href="/"
+            hrefText="Selengkapnya"
+        />
+
+        <x-home.card-fiture
+            img="home/images/gambar_home/management-siswa.jpeg"
+            title="Management Data Siswa"
+            text="Atur dan pantau data siswa dengan mudah, mencakup identitas, kelas, perkembangan belajar, serta riwayat akademik secara terpusat."
+            href="/"
+            hrefText="Selengkapnya"
+        />
+
+        <x-home.card-fiture
+            img="home/images/gambar_home/management-materi.jpeg"
+            title="Kelola Materi Belajar"
+            text="Kelola dan susun materi pembelajaran secara rapi, mulai dari modul, video, hingga dokumen pendukung untuk proses belajar."
+            href="/"
+            hrefText="Selengkapnya"
+        />
+
+        <x-home.card-fiture
+            img="home/images/penginapan/1.jpg"
+            title="Generate Gambar & Materi"
+            text="Buat gambar dan materi pembelajaran secara otomatis menggunakan teknologi AI untuk mendukung kreativitas guru dan siswa."
+            href="/"
+            hrefText="Selengkapnya"
+        />
+
+        <x-home.card-fiture
+            img="home/images/penginapan/1.jpg"
+            title="Akses Materi Belajar"
+            text="Akses berbagai materi belajar kapan saja dan di mana saja untuk mendukung proses pembelajaran yang fleksibel dan efektif."
+            href="/"
+            hrefText="Selengkapnya"
+        />
+
+        <x-home.card-fiture
+            img="home/images/penginapan/1.jpg"
+            title="AI Summary"
+            text="Ringkas materi pembelajaran secara cepat dan akurat menggunakan AI agar lebih mudah dipahami dan dipelajari oleh siswa."
+            href="/"
+            hrefText="Selengkapnya"
+        />
+      </div>
+    </section> 
+
+    <!-- MATERI SECTION -->
+    <section id="materi" class="pt-30">
+      <div class="titleSectionHome">
+        <div>
+            <h4 class="font-latin subtitle">Kumpulan Materi Belajar</h4>
+            <h2 class="font-fredoka title">Materi Belajar Dari Guru</h2>
+        </div>
+        {{-- <a class="link linkhoveranimation text-[15px]" href='/wisata.html'>Terus Jelajahi <i class="fa-solid fa-arrow-right"></i></a> --}}
+      </div>
+
+      <div id="container_card_kategori" class="grid grid-cols-1 min-[768px]:grid-cols-2 min-[1000px]:grid-cols-3 min-[1300px]:grid-cols-4 min-[1500px]:grid-cols-5 min-[1700px]:grid-cols-6 mt-10 justify-items-center gap-10">
+        <x-home.materi-card image="home/images/gambar_home/sekolah_dasar.jpg" text="Sekolah Dasar" materi_count="10" kelas_count="6" link="kumpulan_materi" />
+        <x-home.materi-card image="home/images/gambar_home/madrasah_ibtidaiyah.jpg" text="Madrasah Ibtidaiyah" materi_count="10" kelas_count="6" link="kumpulan_materi" />
+        <x-home.materi-card image="home/images/gambar_home/sekolah_menengah_pertama.jpg" text="Sekolah Menengah Pertama" materi_count="10" kelas_count="6" link="kumpulan_materi" />
+        <x-home.materi-card image="home/images/gambar_home/madrasah_tsanawiyah.jpg" text="Madrasah Tsanawiyah" materi_count="10" kelas_count="6" link="kumpulan_materi" />
+        <x-home.materi-card image="home/images/gambar_home/sekolah_menengah_atas.jpg" text="Sekolah Menengah Atas" materi_count="10" kelas_count="6" link="kumpulan_materi" />
+        <x-home.materi-card image="home/images/gambar_home/madrasah_aliyah.jpg" text="Madrasah Aliyah" materi_count="10" kelas_count="6" link="kumpulan_materi" />
+        <x-home.materi-card image="home/images/gambar_home/sekolah_menengah_kejuruan.jpg" text="Sekolah Menengah Kejuruan" materi_count="10" kelas_count="6" link="kumpulan_materi" />
+        <x-home.materi-card image="home/images/gambar_home/umum.jpg" text="Umum" materi_count="10" kelas_count="6" link="kumpulan_materi" />
+      </div>
+    </section> 
+
+    <!-- TESTIMONI SECTION -->
+    <section id="testimoni" class="pt-30">
+      <div class="flex flex-col items-center">
+        <h5 class="text-center font-latin text-[20px] min-[475px]:text-xl min-[550px]:text-2xl text-blue-500 font-semibold">Testimoni Pengguna</h5>
+        <h3 class="text-center font-extrabold text-2xl min-[475px]:text-3xl min-[550px]:text-4xl font-fredoka tracking-widest -mt-1">APA KATA MEREKA ?</h3>
+        <p class="text-center text-[13px] min-[475px]:text-sm min-[550px]:text-[15px] mb-10 mt-3 w-full min-[750px]:w-[700px]">Platform ini membantu mempermudah proses belajar dan pengelolaan data sekolah. Fitur yang lengkap dan mudah digunakan membuat aktivitas belajar mengajar menjadi lebih efektif dan terorganisir.</p>
+      </div>
+
+      <div class="grid grid-cols-1 min-[875px]:grid-cols-2 min-[1250px]:grid-cols-3 gap-5">
+        <x-home.card-testimoni img="/home/images/avatar/1.png" name="Fahmy Bima Az Zukhruf" role="Siswa SMKN 8 JEMBER" message="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi nemo nostrum fugit. Numquam eos, perspiciatis adipisci doloribus ullam minus doloremque." />
+        <x-home.card-testimoni img="/home/images/avatar/2.png" name="Fahmy Bima Az Zukhruf" role="Siswa SMKN 8 JEMBER" message="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi nemo nostrum fugit. Numquam eos, perspiciatis adipisci doloribus ullam minus doloremque." />
+        <x-home.card-testimoni img="/home/images/avatar/3.png" name="Fahmy Bima Az Zukhruf" role="Siswa SMKN 8 JEMBER" message="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi nemo nostrum fugit. Numquam eos, perspiciatis adipisci doloribus ullam minus doloremque." />
+        <x-home.card-testimoni img="/home/images/avatar/3.png" name="Fahmy Bima Az Zukhruf" role="Siswa SMKN 8 JEMBER" message="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi nemo nostrum fugit. Numquam eos, perspiciatis adipisci doloribus ullam minus doloremque." />
+        <x-home.card-testimoni img="/home/images/avatar/3.png" name="Fahmy Bima Az Zukhruf" role="Siswa SMKN 8 JEMBER" message="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi nemo nostrum fugit. Numquam eos, perspiciatis adipisci doloribus ullam minus doloremque." />
+        <x-home.card-testimoni img="/home/images/avatar/3.png" name="Fahmy Bima Az Zukhruf" role="Siswa SMKN 8 JEMBER" message="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi nemo nostrum fugit. Numquam eos, perspiciatis adipisci doloribus ullam minus doloremque." />
       </div>
     </section>
+
+    <!-- GALERI SECTION -->
+    <section id="galeri" class="pt-30">
+      <div class="titleSectionHome">
+        <div>
+            <h4 class="font-latin subtitle">Galeri Smart Sekolah</h4>
+            <h2 class="font-fredoka title">Dokumentasi Perjalanan Kami</h2>
+        </div>
+        {{-- <a class="link linkhoveranimation text-[15px]" href='/wisata.html'>Terus Jelajahi <i class="fa-solid fa-arrow-right"></i></a> --}}
+      </div>
+
+      <div class="grid grid-cols-1 min-[780px]:grid-cols-2 min-[1090px]:grid-cols-3 min-[1390px]:grid-cols-4 min-[1700px]:grid-cols-4 gap-5 mt-10 justify-items-center">
+        <x-home.card-gallery
+            img="home/images/gallery/gallery1.jpg"
+            title="Promosi Smart Sekolah"
+            date="13 Agustus 2025"
+            deskripsi="Kegiatan promosi Smart Sekolah untuk memperkenalkan platform pembelajaran digital kepada siswa dan tenaga pendidik."
+        />
+
+        <x-home.card-gallery
+            img="home/images/gallery/gallery2.jpg"
+            title="MOU Oleh RPL SMKN 8 JEMBER"
+            date="13 Agustus 2025"
+            deskripsi="Penandatanganan nota kesepahaman sebagai bentuk kerja sama pengembangan pembelajaran digital berbasis industri."
+        />
+
+        <x-home.card-gallery
+            img="home/images/gallery/gallery3.jpg"
+            title="Demonstrasi Smart Sekolah"
+            date="22 Oktober 2025"
+            deskripsi="Sesi demonstrasi penggunaan platform Smart Sekolah untuk menunjukkan fitur dan manfaat sistem pembelajaran."
+        />
+
+        <x-home.card-gallery
+            img="home/images/gallery/gallery4.jpg"
+            title="Tim Developer Smart Sekolah"
+            date="20 November 2025"
+            deskripsi="Dokumentasi tim developer Smart Sekolah yang berperan dalam pengembangan dan inovasi platform."
+        />
+
+        <x-home.card-gallery
+            img="home/images/gallery/gallery5.jpg"
+            title="Demonstrasi Smart Sekolah"
+            date="11 Desember 2025"
+            deskripsi="Demonstrasi lanjutan platform Smart Sekolah dalam mendukung proses belajar mengajar yang lebih interaktif."
+        />
+
+        <x-home.card-gallery
+            img="home/images/gallery/gallery6.jpg"
+            title="Smart Sekolah Recruitment Magang"
+            date="01 Januari 2026"
+            deskripsi="Kegiatan rekrutmen program magang Smart Sekolah untuk menjaring talenta muda di bidang teknologi pendidikan."
+        />
+
+      </div>
+    </section>
+
+    <!-- Overlay -->
+    <div class="bgblur"></div>
+    <!-- Modal -->
+    <div id="detail_gallery_modal" class="fixed top-1/2 left-1/2 -translate-1/2 z-[100] w-[90%] max-w-4xl h-[600px] bg-white rounded-xl shadow-2xl overflow-auto transition duration-500 scale-0">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between px-5 py-4 border-b">
+            <h3 id="title_gallery_modal" class="text-lg font-semibold text-gray-800">
+                Judul Gambar
+            </h3>
+
+            <!-- Close Button -->
+            <button class="text-gray-500 hover:text-gray-800 text-xl font-bold cursor-pointer" id="close_detail_gallery_modal">
+                ✕
+            </button>
+        </div>
+
+        <!-- Content -->
+        <div class="grid grid-cols-1 md:grid-cols-3">
+
+            <!-- Preview Dokumen -->
+            <div class="md:col-span-2 px-4 pt-4">
+                <div class="w-full h-[500px] rounded-lg border flex justify-center items-center overflow-hidden">
+                    <img id="image_gallery_modal" src="{{ asset('/home/images/gambar_home/sekolah_dasar.jpg') }}" alt="Preview Dokumen" class="max-w-full max-h-[500px] h-auto"/>
+                </div>
+            </div>
+
+            <!-- Sidebar Info -->
+            <div class="p-4 border-l bg-gray-50 flex flex-col">
+                <h4 class="text-md font-semibold mb-2 text-gray-800">
+                  Deskripsi
+                </h4>
+
+                <p id="deskripsi_gallery_modal" class="text-sm text-gray-600 mb-4 leading-relaxed">hahahaha
+                </p>
+
+                <!-- Action -->
+                <button id="download-image" 
+                class="mt-4 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition">
+                ⬇ Download Gambar
+                </button>
+            </div>
+
+        </div>
+
+    </div>
 
     <!-- TENTANG KAMI SECTION -->
     <section id="tentang" class="pt-30">
@@ -144,23 +293,27 @@
         <div class="grid grid-cols-2 gap-2 min-[370px]:h-[250px] h-[300px] min-[485px]:h-[350px] min-[600px]:h-[450px] min-[901px]:h-[350px] min-[1060px]:h-[450px] 2xl:h-[550px] items-center justify-items-center">
           <div>
             <div class="w-[150px] h-[200px] min-[370px]:h-[230px] min-[404px]:w-[180px] min-[404px]:h-[250px] min-[485px]:w-[200px] min-[485px]:h-[300px] min-[600px]:w-[250px] min-[600px]:h-[360px] min-[901px]:w-[200px] min-[901px]:h-[300px] min-[1060px]:w-[250px] min-[1060px]:h-[360px] 2xl:w-[300px] 2xl:h-[400px] rounded-2xl shadow-xl overflow-hidden">
-              <img src="{{ asset('/home/images/wisata/1.jpg') }}"  alt="Image About 1" class="w-full h-full object-cover"/>
+              <img src="{{ asset('/home/images/gambar_home/about1.jpg') }}"  alt="Image About 1" class="w-full h-full object-cover"/>
             </div>
           </div>
           <div class="flex flex-col gap-5 justify-center">
             <div class="w-[120px] h-[100px] min-[370px]:w-[135px] min-[370px]:h-[120px] min-[404px]:w-[150px] min-[404px]:h-[130px] min-[485px]:w-[180px] min-[485px]:h-[180px] min-[600px]:w-[230px] min-[600px]:h-[230px] min-[901px]:w-[180px] min-[901px]:h-[180px] min-[1060px]:w-[230px] min-[1060px]:h-[230px] 2xl:w-[350px] 2xl:h-[250px] rounded-2xl shadow-xl overflow-hidden">
-              <img src="{{ asset('/home/images/wisata/2.jpg') }}"  alt="Image About 2" class="w-full h-full object-cover"/>
+              <img src="{{ asset('/home/images/gambar_home/about2.jpg') }}"  alt="Image About 2" class="w-full h-full object-cover"/>
             </div>
             <div class="w-[90px] h-20 min-[370px]:w-[100px] min-[370px]:h-[90px] min-[404px]:w-[120px] min-[404px]:h-[90px] min-[485px]:w-[180px] min-[485px]:h-[150px] 2xl:w-[280px] 2xl:h-60 rounded-2xl shadow-xl overflow-hidden">
-              <img src="{{ asset('/home/images/wisata/3.jpg') }}"  alt="Image About 3" class="w-full h-full object-cover"/>
+              <img src="{{ asset('/home/images/gambar_home/about3.jpg') }}"  alt="Image About 3" class="w-full h-full object-cover"/>
             </div>
           </div>
         </div>
         <div class="flex-1">
-          <h3 class="font-latin text-blue-500 text-[25px] xl:text-3xl 2xl:text-4xl -mb-3">Ayo Jelajahi Indonesia</h3>
-          <h1 class="font-fredoka text-2xl xl:text-3xl 2xl:text-4xl font-semibold">Kami Hadir Untuk Menginspirasi Perjalananmu</h1>
-          <p class="mt-5 text-sm xl:text-[15px] 2xl:text-[16px]">FK Travel adalah platform informasi pariwisata dan penginapan yang membantu traveler menemukan destinasi terbaik di Indonesia. Kami berkomitmen untuk menghadirkan pengalaman jelajah yang lebih mudah, akurat, dan menyenangkan mulai dari rekomendasi tempat wisata, penginapan, hingga panduan perjalanan yang kamu butuhkan.</p>
-          <p class="mt-3 text-sm xl:text-[15px] 2xl:text-[16px]">Didirikan oleh Fahmy Bima Az Zukhruf dan Kirania Kharisa Suyatno pada tahun 2025, platform ini dibangun untuk mendukung industri pariwisata lokal dengan informasi yang menarik, teknologi modern dan tampilan yang ramah pengguna.</p>
+          <h3 class="font-latin text-blue-500 text-[20px] xl:text-2xl 2xl:text-3xl -mb-3">
+            Jelajahi Potensi Belajarmu
+          </h3>
+          <h1 class="font-fredoka text-2xl xl:text-3xl 2xl:text-4xl font-semibold">
+            Inspirasi untuk Belajar Lebih Baik
+          </h1>
+          <p class="mt-5 text-sm xl:text-[15px] 2xl:text-[16px]">Smart Sekolah adalah platform pembelajaran digital yang membantu kamu membangun kompetensi nyata melalui materi yang terstruktur, berbasis praktik, dan dirancang sesuai dengan kebutuhan industri. Kami berkomitmen menghadirkan pengalaman belajar yang lebih mudah, relevan, dan efektif melalui akses materi, latihan, serta panduan pembelajaran yang kamu butuhkan.</p>
+          <p class="mt-3 text-sm xl:text-[15px] 2xl:text-[16px]">Didirikan oleh Tim Smartlogy pada tahun 2026, platform ini dibangun untuk mendukung transformasi pendidikan dengan menghadirkan konten berkualitas, teknologi modern, serta tampilan yang ramah pengguna.</p>
           
           <div class="visimisiswapperabout hidden xl:block">
             <div class="button-container">
@@ -170,16 +323,20 @@
             </div>
             <div class="content-text">
               <div id="contentBoxVisiMisi">
-                <p id="visicontent">Menjadi platform informasi wisata terdepan di Indonesia yang menginspirasi jutaan traveler untuk menjelajahi keindahan negeri, memperkenalkan pesona budaya lokal, serta mendukung pertumbuhan pariwisata berkelanjutan di seluruh nusantara.</p>
+                <p id="visicontent">
+                  Menjadi platform pembelajaran digital unggulan yang membantu menciptakan generasi
+                  kompeten, adaptif, dan siap menghadapi kebutuhan dunia industri melalui teknologi
+                  pendidikan yang inovatif.
+                </p>
                 <ol id="misicontent">
-                  <li>Menyediakan informasi destinasi dan penginapan yang akurat, menarik, dan mudah diakses.</li>
-                  <li>Mendukung pariwisata lokal dengan menampilkan potensi terbaik dari setiap daerah.</li>
-                        <li>Menghadirkan pengalaman digital yang modern dan menyenangkan bagi setiap pengguna.</li>
-                      </ol>
-                </div>
+                  <li>Materi pembelajaran terstruktur, relevan, dan berbasis praktik.</li>
+                  <li>Mendukung peningkatan kompetensi siswa dan tenaga pendidik sesuai kebutuhan industri.</li>
+                  <li>Menghadirkan pengalaman belajar digital yang mudah diakses, modern, dan menyenangkan.</li>
+                </ol>
               </div>
             </div>
           </div>
+        </div>
       </div>
 
       <div class="visimisiswapperabout block xl:hidden">
@@ -211,57 +368,56 @@
           <x-home.card-kontributor linkinstagram="#" linklinkedin="#" linkgithub="#" nama="Fahmy Bima Az Zukhruf" role="Frontend Developer" profileimage="/home/images/avatar/6.png" />
         </div>
       </div>
-    </section> 
-
-    <section id="testimoni" class="pt-30">
-      <div class="flex flex-col items-center">
-        <h5 class="text-center font-latin text-[22px] min-[475px]:text-2xl min-[550px]:text-3xl font-bold text-blue-500">Testimoni Pengguna</h5>
-        <h3 class="text-center font-extrabold text-2xl min-[475px]:text-3xl min-[550px]:text-4xl font-fredoka tracking-widest -mt-3">APA KATA MEREKA ?</h3>
-        <p class="text-center text-[13px] min-[475px]:text-sm min-[550px]:text-[15px] mb-10 mt-3 w-full min-[750px]:w-[700px]">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi nemo nostrum fugit. Numquam eos, perspiciatis adipisci doloribus ullam minus doloremque.</p>
-      </div>
-
-      <div class="grid grid-cols-1 min-[875px]:grid-cols-2 min-[1250px]:grid-cols-3 gap-5">
-        <x-home.card-testimoni img="/home/images/avatar/1.png" name="Fahmy Bima Az Zukhruf" role="Siswa SMKN 8 JEMBER" message="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi nemo nostrum fugit. Numquam eos, perspiciatis adipisci doloribus ullam minus doloremque." />
-        <x-home.card-testimoni img="/home/images/avatar/2.png" name="Fahmy Bima Az Zukhruf" role="Siswa SMKN 8 JEMBER" message="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi nemo nostrum fugit. Numquam eos, perspiciatis adipisci doloribus ullam minus doloremque." />
-        <x-home.card-testimoni img="/home/images/avatar/3.png" name="Fahmy Bima Az Zukhruf" role="Siswa SMKN 8 JEMBER" message="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi nemo nostrum fugit. Numquam eos, perspiciatis adipisci doloribus ullam minus doloremque." />
-        <x-home.card-testimoni img="/home/images/avatar/3.png" name="Fahmy Bima Az Zukhruf" role="Siswa SMKN 8 JEMBER" message="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi nemo nostrum fugit. Numquam eos, perspiciatis adipisci doloribus ullam minus doloremque." />
-        <x-home.card-testimoni img="/home/images/avatar/3.png" name="Fahmy Bima Az Zukhruf" role="Siswa SMKN 8 JEMBER" message="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi nemo nostrum fugit. Numquam eos, perspiciatis adipisci doloribus ullam minus doloremque." />
-        <x-home.card-testimoni img="/home/images/avatar/3.png" name="Fahmy Bima Az Zukhruf" role="Siswa SMKN 8 JEMBER" message="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi nemo nostrum fugit. Numquam eos, perspiciatis adipisci doloribus ullam minus doloremque." />
-      </div>
     </section>
 
-    <section id="galeri" class="pt-30">
-      <div class="titleSectionHome">
-        <div>
-            <h4 class="font-latin subtitle">Galeri Smart Sekolah</h4>
-            <h2 class="font-fredoka title">Dokumentasi Perjalanan Kami</h2>
-        </div>
-        {{-- <a class="link linkhoveranimation text-[15px]" href='/wisata.html'>Terus Jelajahi <i class="fa-solid fa-arrow-right"></i></a> --}}
-      </div>
+    <script>
+        const card_gallery = document.querySelectorAll('.card-gallery-home');
+        const bgblur = document.querySelector('.bgblur');
+        const close_detail_gallery_modal = document.querySelector('#close_detail_gallery_modal');
+        const detail_gallery_modal = document.querySelector('#detail_gallery_modal');
+        const title_gallery_modal = document.querySelector('#title_gallery_modal');
+        const image_gallery_modal = document.querySelector('#image_gallery_modal');
+        const deskripsi_gallery_modal = document.querySelector('#deskripsi_gallery_modal');
 
-      <div class="grid grid-cols-1 min-[780px]:grid-cols-2 min-[1090px]:grid-cols-3 min-[1390px]:grid-cols-4 min-[1700px]:grid-cols-4 gap-5 mt-10 justify-items-center">
-        <x-home.card-gallery img="home/images/penginapan/1.jpg" title="SMKN 8 Jember" date="22 Februari 2024" />
-        <x-home.card-gallery img="home/images/penginapan/1.jpg" title="SMKN 8 Jember" date="22 Februari 2024" />
-        <x-home.card-gallery img="home/images/penginapan/1.jpg" title="SMKN 8 Jember" date="22 Februari 2024" />
-        <x-home.card-gallery img="home/images/penginapan/1.jpg" title="SMKN 8 Jember" date="22 Februari 2024" />
-        <x-home.card-gallery img="home/images/penginapan/1.jpg" title="SMKN 8 Jember" date="22 Februari 2024" />
-        <x-home.card-gallery img="home/images/penginapan/1.jpg" title="SMKN 8 Jember" date="22 Februari 2024" />
-        <x-home.card-gallery img="home/images/penginapan/1.jpg" title="SMKN 8 Jember" date="22 Februari 2024" />
-        <x-home.card-gallery img="home/images/penginapan/1.jpg" title="SMKN 8 Jember" date="22 Februari 2024" />
-        <x-home.card-gallery img="home/images/penginapan/1.jpg" title="SMKN 8 Jember" date="22 Februari 2024" />
-        <x-home.card-gallery img="home/images/penginapan/1.jpg" title="SMKN 8 Jember" date="22 Februari 2024" />
-        <x-home.card-gallery img="home/images/penginapan/1.jpg" title="SMKN 8 Jember" date="22 Februari 2024" />
-        <x-home.card-gallery img="home/images/penginapan/1.jpg" title="SMKN 8 Jember" date="22 Februari 2024" />
-        <x-home.card-gallery img="home/images/penginapan/1.jpg" title="SMKN 8 Jember" date="22 Februari 2024" />
-        <x-home.card-gallery img="home/images/penginapan/1.jpg" title="SMKN 8 Jember" date="22 Februari 2024" />
-        <x-home.card-gallery img="home/images/penginapan/1.jpg" title="SMKN 8 Jember" date="22 Februari 2024" />
-        <x-home.card-gallery img="home/images/penginapan/1.jpg" title="SMKN 8 Jember" date="22 Februari 2024" />
-        <x-home.card-gallery img="home/images/penginapan/1.jpg" title="SMKN 8 Jember" date="22 Februari 2024" />
-        <x-home.card-gallery img="home/images/penginapan/1.jpg" title="SMKN 8 Jember" date="22 Februari 2024" />
-      </div>
-    </section>
-              
-    <!-- FOOTER SECTION -->
-    @include('_home._layout.footer')
-</body>
-</html>
+        card_gallery.forEach(card => {
+            card.querySelector('#maximize-gallery-card').addEventListener('click', () => {
+              const title = card.dataset.title;
+              const image = card.dataset.src;
+              const deskripsi = card.dataset.deskripsi;
+
+              title_gallery_modal.textContent = title;
+              image_gallery_modal.src = image;
+              deskripsi_gallery_modal.textContent = deskripsi;
+
+              detail_gallery_modal.classList.remove('scale-0');
+              bgblur.classList.add('active');
+            });
+        });
+
+        close_detail_gallery_modal.addEventListener('click', () => {
+            detail_gallery_modal.classList.add('scale-0');
+            bgblur.classList.remove('active');
+        });
+
+        document.querySelector('#download-image').addEventListener('click', async () => {
+          alert(1)
+            const imageUrl = document.querySelector('#image_gallery_modal').src;
+
+            const response = await fetch(imageUrl);
+            const blob = await response.blob();
+
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+
+            a.href = url;
+            a.download = 'gambar-gallery.jpg';
+
+            document.body.appendChild(a);
+            a.click();
+
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        });
+
+    </script>
+@endsection

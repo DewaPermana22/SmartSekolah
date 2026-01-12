@@ -13,7 +13,7 @@ html {
 @theme {
   --font-poppins: "Poppins", Arial, Helvetica, sans-serif;
   --font-fredoka: "Fredoka", cursive, Arial, Helvetica, sans-serif;
-  --font-latin: "Parisienne", cursive, Arial, Helvetica, sans-serif;
+  --font-latin: "Fredoka", cursive, Arial, Helvetica, sans-serif;
   --font-awesome: "Font Awesome 6 Free";
 }
 
@@ -174,7 +174,7 @@ body {
   @apply flex flex-col min-[1100px]:flex-row items-center justify-between;
 }
 .titleSectionHome .subtitle {
-  @apply min-[950px]:text-[33px] min-[768px]:text-[28px] text-[24px] -mb-4 text-blue-500 text-center min-[480px]:text-start;
+  @apply min-[950px]:text-[24px] min-[768px]:text-[22px] text-[20px] -mb-2 text-blue-500 text-center min-[480px]:text-start;
 }
 .titleSectionHome .title {
   @apply min-[950px]:text-4xl min-[480px]:text-3xl text-2xl font-semibold text-center min-[480px]:text-start;
@@ -355,7 +355,7 @@ body {
               @apply border border-gray-800 size-10 rounded-full flex justify-center items-center relative overflow-hidden 
               transition duration-300 delay-300;
 
-              i {
+              svg {
                 @apply z-2;
               }
             }
@@ -534,5 +534,72 @@ body {
         }
       }
     }
+  }
+
+  .cardkategoriberanda {
+    @apply cursor-pointer hover:scale-103 transition duration-500 w-full min-[325px]:w-[270px] h-[400px] relative rounded-2xl shadow-xl shadow-gray-900/30 overflow-hidden;
+  }
+
+  .searchingtext {
+    @apply flex flex-col w-full md:flex-row gap-y-5 md:gap-y-0 items-center justify-center mt-7 gap-x-7;
+
+    div {
+      @apply flex items-center gap-x-3 bg-gray-100 rounded-full px-7 py-3 w-full min-[570px]:w-[500px] md:w-[300px] xl:w-[400px] shadow-sm;
+
+      input {
+        @apply bg-transparent flex-1 placeholder:text-gray-400 text-[13px] min-[570px]:text-sm min-[785px]:text-[15px] border-none outline-none;
+        padding: 0px 0px !important;
+      }
+
+      input:focus {
+        box-shadow: none !important;
+      }
+    }
+
+    #searchlokasi {
+      @apply cursor-pointer;
+
+      p {
+        @apply text-gray-400 flex-1 text-[13px] min-[570px]:text-sm min-[785px]:text-[15px] text-nowrap overflow-hidden;
+      }
+    }
+
+    #btn_pencarian {
+      @apply hidden min-[1000px]:block;
+    }
+  }
+  .searchingtext.kategoripage {
+    @apply flex-row max-[480px]:gap-x-3;
+
+    div {
+      @apply flex-1 max-w-[600px];
+    }
+
+    button {
+      @apply bg-blue-500 border-none rounded-full text-[12px] min-[480px]:text-[13px] min-[520px]:text-sm xl:text-[15px] px-7 py-3 text-white font-semibold;
+
+      span {
+        @apply min-[940px]:inline hidden;
+      }
+    }
+  }
+
+  #btn_pencarian {
+    @apply bg-orange-400 border-none rounded-full text-sm xl:text-[15px] px-7 py-3 text-white font-semibold;
+  }
+
+  .badge-sort-class {
+    @apply bg-gray-200 text-gray-700 text-[13px] min-[480px]:text-sm px-4 py-2 rounded-full cursor-pointer transition duration-300 hover:bg-blue-500 hover:text-white;
+  }
+  .badge-sort-class.active {
+    @apply bg-blue-500 text-white text-[13px] min-[480px]:text-sm px-4 py-2 rounded-full cursor-pointer transition duration-300;
+  }
+
+  .bgblur {
+    @apply top-0 left-0 w-full h-screen fixed bg-gray-50/30 backdrop-blur-sm z-99 opacity-0 pointer-events-none transition duration-300;
+  }
+
+  .bgblur.active {
+    @apply opacity-100 pointer-events-auto;
   }
 }
