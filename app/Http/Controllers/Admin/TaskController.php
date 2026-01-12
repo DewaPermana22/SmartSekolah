@@ -16,7 +16,7 @@ class TaskController extends Controller
 {
     protected array $page = [
         'route' => 'tasks',
-        'title' => 'Manajemen Tugas',
+        'title' => 'Penugasan',
     ];
 
     protected string $baseRedirect;
