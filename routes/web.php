@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\ClassroomController;
 use App\Http\Controllers\Admin\SchoolController as AdminSchoolController;
 use App\Http\Controllers\Admin\StudentController;
@@ -7,6 +10,8 @@ use App\Http\Controllers\Admin\TaskCategoryController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\TaskCategoryController;
 use App\Http\Controllers\superAdmin\UserController as SuperAdminUserController;
 use App\Http\Controllers\superAdmin\DashboardController;
 use App\Http\Controllers\AuthController;
@@ -37,6 +42,11 @@ Route::get('/', function () {
         default => abort(403),
     };
 });
+
+// Landing Page
+Route::get('/', [HomeController::class, 'index'])->name('landing');
+Route::get('/kumpulan-materi', [HomeController::class, 'kumpulan_materi'])->name('kumpulan_materi');
+Route::get('/detail-materi', [HomeController::class, 'detail_materi'])->name('detail_materi');
 
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'doLogin'])->name('login.post');
