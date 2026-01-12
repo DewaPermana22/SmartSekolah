@@ -4,7 +4,7 @@ namespace App\Http\Controllers\superAdmin;
 
 use App\Constants\ResponseConst;
 use App\Http\Controllers\Controller;
-use App\Usecase\PromptImageUsecase;
+use App\Usecase\superAdmin\PromptImageUsecase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\View\View;

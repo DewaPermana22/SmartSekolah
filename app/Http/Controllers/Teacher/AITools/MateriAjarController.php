@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Teacher\AITools;
 
 use App\Http\Controllers\Controller;
-use App\Usecase\AiMateriAjarUsecase;
+use App\Usecase\Teacher\AiMateriAjarUsecase;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\RedirectResponse;

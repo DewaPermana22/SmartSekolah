@@ -63,6 +63,17 @@ Route::middleware(['auth', 'role:2', 'check.school'])->prefix('admin')->name('ad
         Route::delete('/delete/{id}', [TaskCategoryController::class, 'delete'])->name('delete');
     });
 
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::get('/add', [UserController::class, 'add'])->name('add');
+        Route::post('/create', [UserController::class, 'doCreate'])->name('create');
+        Route::get('/detail/{id}', [UserController::class, 'detail'])->name('detail');
+        Route::get('/update/{id}', [UserController::class, 'update'])->name('update');
+        Route::post('/update/{id}', [UserController::class, 'doUpdate'])->name('doUpdate');
+        Route::delete('/delete/{id}', [UserController::class, 'delete'])->name('delete');
+        Route::post('/reset-password/{id}', [UserController::class, 'resetPassword'])->name('resetPassword');
+    });
+
     Route::prefix('classrooms')->name('classrooms.')->group(function () {
         Route::get('/', [ClassroomController::class, 'index'])->name('index');
         Route::get('/add', [ClassroomController::class, 'add'])->name('add');
@@ -105,7 +116,7 @@ Route::middleware(['auth', 'role:2', 'check.school'])->prefix('admin')->name('ad
         Route::get('/update/{id}', [TextPromptController::class, 'edit'])->name('update');
         Route::post('/update/{id}', [TextPromptController::class, 'doUpdate'])->name('do_update');
         Route::delete('/delete/{id}', [TextPromptController::class, 'delete'])->name('delete');
-    });
+    }); 
 });
 
 Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->group(function () {
@@ -196,6 +207,9 @@ Route::middleware(['auth', 'role:1'])->prefix('superadmin')->name('superadmin.')
 });
 
 Route::middleware(['auth', 'role:4'])->prefix('student')->name('student.')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('_student.dashboard');
+    })->name('dashboard');
     Route::prefix('learning-modules')->name('learning_modules.')->group(function () {
         Route::get('/', [StudentLearningModulesController::class, 'index'])->name('index');
     });

@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Usecase;
+namespace App\Usecase\Teacher;
 
 use App\Constants\DatabaseConst;
 use App\Constants\ResponseConst;
 use App\Http\Presenter\Response;
+use App\Usecase\Usecase;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

@@ -6,7 +6,7 @@
 <div class="grid gap-3 md:flex md:justify-between md:items-center py-4">
     <x-page-title title="Data {{ $page['title'] }}" description="Kelola data tugas di kelas anda" />
     <div class="inline-flex gap-x-2">
-        <x-add-button :href="route('admin.tasks.add')" label="Tambah Data" />
+        <x-add-button :href="route('teacher.tasks.add')" label="Tambah Data" />
     </div>
 </div>
 <div class="flex flex-col">
@@ -15,7 +15,7 @@
             <div class="overflow-hidden">
 
                 <div class="px-2 pt-4">
-                    <form action="{{ route('admin.tasks.index') }}" method="GET" navigate-form
+                    <form action="{{ route('teacher.tasks.index') }}" method="GET" navigate-form
                         class="flex flex-col sm:flex-row gap-3">
                         <div class="sm:w-64">
                             <label for="keywords" class="sr-only">Search</label>
@@ -56,7 +56,7 @@
                             </button>
                             @if (!empty($keywords) || !empty($status) || !empty($category_id))
                             <a class="py-1 px-3 inline-flex items-center gap-x-1 text-sm font-semibold rounded-lg border border-blue-600 text-blue-600 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 disabled:opacity-50 disabled:pointer-events-none dark:border-blue-500 dark:text-blue-500 dark:hover:bg-blue-500/10 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 cursor-pointer"
-                                href="{{ route('admin.tasks.index') }}">
+                                href="{{ route('teacher.tasks.index') }}">
                                 @include('_admin._layout.icons.reset')
                                 Reset
                             </a>
@@ -146,7 +146,7 @@
                                     <div class="px-6 py-1.5 flex items-center gap-x-2 justify-end">
                                         <a navigate
                                             class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:bg-blue-800/30 dark:hover:bg-blue-800/20 dark:focus:bg-blue-800/20"
-                                            href="{{ route('admin.tasks.update', $d->id) }}">
+                                            href="{{ route('teacher.tasks.update', $d->id) }}">
                                             @include('_admin._layout.icons.pencil')
                                         </a>
                                         <button type="button"

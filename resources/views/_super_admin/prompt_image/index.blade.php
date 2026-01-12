@@ -34,7 +34,7 @@
                             </button>
                             @if (!empty($keywords))
                             <a class="py-1 px-3 inline-flex items-center gap-x-1 text-sm font-semibold rounded-lg border border-blue-600 text-blue-600 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 disabled:opacity-50 disabled:pointer-events-none dark:border-blue-500 dark:text-blue-500 dark:hover:bg-blue-500/10 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 cursor-pointer"
-                                href="{{ route('admin.image-prompts.index') }}">
+                                href="{{ route('superadmin.image-prompts.index') }}">
                                 @include('_admin._layout.icons.reset')
                                 Reset
                             </a>

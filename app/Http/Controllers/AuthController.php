@@ -88,7 +88,7 @@ class AuthController extends Controller
         switch ($user->access_type) {
             case UserConst::SUPER_ADMIN:
                 return redirect()->route('superadmin.dashboard');
-            case UserConst::ADMIN_SEKOLAH:
+            case UserConst::SUPER_ADMIN:
                 return redirect()->intended(route('admin.dashboard'));
             case UserConst::GURU:
                 return redirect()->route('teacher.dashboard');

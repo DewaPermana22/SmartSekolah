@@ -45,11 +45,18 @@ class IlustrationController extends Controller
         $this->baseRedirect = 'teacher/' . $this->page['route'];
     }
 
-    public function index(): View
+    public function index()
     {
-        $history = $this->historyIlustrationUsecase->getAll();
+        $promptImages = $this->usecase->getAll(['no_pagination' => true]);
+        $history = $this->historyIlustrationUsecase->getAll([
+            'image_style_id' => request()->get('image_style_id'),
+            'keywords' => request()->get('keywords'),
+        ]);
+        // return $promptImages['data']['list'] ?? [];
         return view('_teacher.ai_tools.ilustrasi.index', [
             'page' => $this->page,
+            'image_style_id' => request()->get('image_style_id'),
+            'promptImages' => $promptImages['data']['list'] ?? [],
             'data' => $history['data']['list'] ?? [],
         ]);
     }

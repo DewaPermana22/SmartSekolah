@@ -33,7 +33,7 @@ class UserController extends Controller
         ]);
         $data = $data['data']['list'] ?? [];
 
-        return view('_super_admin.users.index', [
+        return view('_admin.users.index ', [
             'data' => $data,
             'page' => $this->page,
             'keywords' => $request->get('keywords'),
@@ -43,7 +43,7 @@ class UserController extends Controller
 
     public function add(): View|Response
     {
-        return view('_super_admin.users.add', [
+        return view('_admin.users.add', [
             'page' => $this->page,
         ]);
     }
@@ -56,7 +56,7 @@ class UserController extends Controller
 
         if ($process['success']) {
             return redirect()
-                ->route('superadmin.users.index')
+                ->route('admin.users.index')
                 ->with('success', ResponseConst::SUCCESS_MESSAGE_CREATED);
         } else {
             return redirect()
@@ -77,7 +77,7 @@ class UserController extends Controller
         }
         $data = $data['data'] ?? [];
 
-        return view('_super_admin.users.detail', [
+        return view('_admin.users.detail', [
             'data' => (object) $data,
             'page' => $this->page,
         ]);
@@ -94,7 +94,7 @@ class UserController extends Controller
         }
         $data = $data['data'] ?? [];
 
-        return view('_super_admin.users.update', [
+        return view('_admin.users.update', [
             'data' => (object) $data,
             'userId' => $id,
             'page' => $this->page,
@@ -110,7 +110,7 @@ class UserController extends Controller
 
         if ($process['success']) {
             return redirect()
-                ->route('superadmin.users.index')
+                ->route('admin.users.index')
                 ->with('success', ResponseConst::SUCCESS_MESSAGE_UPDATED);
         } else {
             return redirect()
@@ -126,11 +126,11 @@ class UserController extends Controller
 
         if ($process['success']) {
             return redirect()
-                ->route('superadmin.users.index')
+                ->route('admin.users.index')
                 ->with('success', ResponseConst::SUCCESS_MESSAGE_DELETED);
         } else {
             return redirect()
-                ->route('superadmin.users.index')
+                ->route('admin.users.index')
                 ->with('error', $process['message'] ?? ResponseConst::DEFAULT_ERROR_MESSAGE);
         }
     }
@@ -141,11 +141,11 @@ class UserController extends Controller
 
         if ($resetProcess['success']) {
             return redirect()
-                ->route('superadmin.users.index')
+                ->route('admin.users.index')
                 ->with('success', ResponseConst::SUCCESS_MESSAGE_RESET_PASSWORD);
         } else {
             return redirect()
-                ->route('superadmin.users.index')
+                ->route('admin.users.index')
                 ->with('error', $resetProcess['message'] ?? ResponseConst::DEFAULT_ERROR_MESSAGE);
         }
     }

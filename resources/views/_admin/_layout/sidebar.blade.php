@@ -28,7 +28,7 @@ use App\Constants\UserConst;
             <nav class="hs-accordion-group p-3 w-full flex flex-col flex-wrap" data-hs-accordion-always-open>
                 <ul class="flex flex-col space-y-1">
 
-                    {{-- MENU DASHBOARD (Semua Role) --}}
+                    {{-- MENU DASHBOARD/BERANDA (Semua Role) --}}
                     <li>
                         @php
                         $dashboardRoute = match (Auth::user()->access_type) {
@@ -42,7 +42,7 @@ use App\Constants\UserConst;
                             class="flex items-center gap-x-3.5 py-2.5 px-3 {{ request()->routeIs($dashboardRoute) ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-white' }} text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 font-semibold"
                             href="{{ route($dashboardRoute) }}">
                             @include('_admin._layout.icons.sidebar.dashboard')
-                            Dashboard
+                            {{ Auth::user()->access_type == UserConst::SUPER_ADMIN ? 'Dashboard' : 'Beranda' }}
                         </a>
                     </li>
 
@@ -54,17 +54,6 @@ use App\Constants\UserConst;
                             href="{{ route('superadmin.schools.index') }}">
                             @include('_admin._layout.icons.sidebar.school')
                             Data Sekolah
-                        </a>
-                    </li>
-                    @endif
-
-                    @if(Auth::user()->access_type == UserConst::GURU && Auth::user()->school_id)
-                    <li>
-                        <a navigate
-                            class="flex items-center gap-x-3.5 py-2.5 px-3 {{ request()->routeIs('teacher.tasks.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-white' }} text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 font-semibold"
-                            href="{{ route('teacher.tasks.index') }}">
-                            @include('_admin._layout.icons.sidebar.task')
-                            Manajemen Tugas
                         </a>
                     </li>
                     @endif
@@ -93,7 +82,7 @@ use App\Constants\UserConst;
                     </li>
                     @endif
 
-                    {{-- MENU MODUL BELAJAR (GURU) --}}
+                    {{-- MENU MODUL BELAJAR (GURU & SISWA) --}}
                     @if(Auth::user()->access_type == UserConst::GURU)
                     <li>
                         <a navigate
@@ -103,8 +92,21 @@ use App\Constants\UserConst;
                             Modul Belajar
                         </a>
                     </li>
+                    @endif
+
+                    @if(Auth::user()->access_type == UserConst::SISWA)
+                    <li>
+                        <a navigate
+                            class="flex items-center gap-x-3.5 py-2.5 px-3 {{ request()->routeIs('student.learning_modules*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-white' }} text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 font-semibold"
+                            href="{{ route('student.learning_modules.index') }}">
+                            @include('_admin._layout.icons.sidebar.swatch_book')
+                            Modul Belajar
+                        </a>
+                    </li>
+                    @endif
 
                     {{-- MENU ALAT AI (GURU) --}}
+                    @if(Auth::user()->access_type == UserConst::GURU)
                     <li class="hs-accordion {{ request()->routeIs('teacher.ai.*') ? 'active' : '' }}"
                         id="projects-accordion">
                         <button type="button"
@@ -123,16 +125,16 @@ use App\Constants\UserConst;
                             <ul class="ps-8 pt-1 space-y-1">
                                 <li>
                                     <a navigate
-                                        class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('teacher.ai.materi_ajar.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
-                                        href="{{ route('teacher.ai.materi_ajar.index') }}">
-                                        Materi Ajar
+                                        class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('teacher.ai.ilustrasi.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
+                                        href="{{ route('teacher.ai.ilustrasi.index') }}">
+                                        Ilustrasi
                                     </a>
                                 </li>
                                 <li>
                                     <a navigate
-                                        class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('teacher.ai.ilustrasi.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
-                                        href="{{ route('teacher.ai.ilustrasi.index') }}">
-                                        Ilustrasi
+                                        class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('teacher.ai.materi_ajar.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
+                                        href="{{ route('teacher.ai.materi_ajar.index') }}">
+                                        Materi Ajar
                                     </a>
                                 </li>
                             </ul>
@@ -141,8 +143,8 @@ use App\Constants\UserConst;
                     @endif
 
                     {{-- MENU DATA MASTER (SUPER ADMIN & ADMIN SEKOLAH) --}}
-                    @if(Auth::user()->access_type == UserConst::SUPER_ADMIN || (Auth::user()->access_type == UserConst::ADMIN_SEKOLAH && Auth::user()->school_id))
-                    <li class="hs-accordion {{ request()->routeIs('admin.users.*') || request()->routeIs('superadmin.users.*') || request()->routeIs('admin.task_categories.*') || request()->routeIs('admin.classrooms.*') || request()->routeIs('admin.image-prompts.*') || request()->routeIs('superadmin.image-prompts.*') ? 'active' : '' }}"
+                    @if(Auth::user()->access_type == UserConst::SUPER_ADMIN || Auth::user()->access_type == UserConst::ADMIN_SEKOLAH)
+                    <li class="hs-accordion {{ request()->routeIs('admin.users.*') || request()->routeIs('superadmin.users.*') || request()->routeIs('admin.classrooms.*') || request()->routeIs('superadmin.image-prompts.*') || request()->routeIs('superadmin.subjects.*') ? 'active' : '' }}"
                         id="data-master-accordion">
                         <button type="button"
                             class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5  py-2.5 px-3 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200 cursor-pointer font-semibold"
@@ -155,36 +157,11 @@ use App\Constants\UserConst;
                         </button>
 
                         <div id="data-master-accordion-child"
-                            class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 {{ request()->routeIs('admin.users.*') || request()->routeIs('superadmin.users.*') || request()->routeIs('admin.task_categories.*') || request()->routeIs('admin.classrooms.*') || request()->routeIs('admin.image-prompts.*') || request()->routeIs('superadmin.image-prompts.*') ? 'block' : 'hidden' }}"
+                            class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 {{ request()->routeIs('admin.users.*') || request()->routeIs('superadmin.users.*') || request()->routeIs('admin.classrooms.*') || request()->routeIs('superadmin.image-prompts.*') || request()->routeIs('superadmin.subjects.*') ? 'block' : 'hidden' }}"
                             role="region" aria-labelledby="data-master-accordion">
                             <ul class="ps-8 pt-1 space-y-1">
-                                {{-- Menu untuk Admin Sekolah --}}
-                                @if(Auth::user()->access_type == UserConst::ADMIN_SEKOLAH)
-                                <li>
-                                    <a navigate
-                                        class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('admin.task_categories.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
-                                        href="{{ route('admin.task_categories.index') }}">
-                                        Kategori Tugas
-                                    </a>
-                                </li>
-                                <li>
-                                    <a navigate
-                                        class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('admin.classrooms.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
-                                        href="{{ route('admin.classrooms.index') }}">
-                                        Kelas
-                                    </a>
-                                </li>
-                                @endif
-
                                 {{-- Menu untuk Super Admin --}}
                                 @if(Auth::user()->access_type == UserConst::SUPER_ADMIN)
-                                <li>
-                                    <a navigate
-                                        class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('superadmin.users.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
-                                        href="{{ route('superadmin.users.index') }}">
-                                        Pengguna Aplikasi
-                                    </a>
-                                </li>
                                 <li>
                                     <a navigate
                                         class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('superadmin.subjects.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
@@ -194,9 +171,34 @@ use App\Constants\UserConst;
                                 </li>
                                 <li>
                                     <a navigate
+                                        class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('superadmin.users.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
+                                        href="{{ route('superadmin.users.index') }}">
+                                        Pengguna Aplikasi
+                                    </a>
+                                </li>
+                                <li>
+                                    <a navigate
                                         class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('superadmin.image-prompts.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
                                         href="{{ route('superadmin.image-prompts.index') }}">
                                         Gaya Gambar
+                                    </a>
+                                </li>
+                                @endif
+
+                                {{-- Menu untuk Admin Sekolah --}}
+                                @if(Auth::user()->access_type == UserConst::ADMIN_SEKOLAH)
+                                <li>
+                                    <a navigate
+                                        class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('admin.classrooms.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
+                                        href="{{ route('admin.classrooms.index') }}">
+                                        Kelas
+                                    </a>
+                                </li>
+                                <li>
+                                    <a navigate
+                                        class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('admin.users.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
+                                        href="{{ route('admin.users.index') }}">
+                                        Pengguna Aplikasi
                                     </a>
                                 </li>
                                 @endif

@@ -7,7 +7,7 @@
         <div
             class="bg-white overflow-hidden shadow-lg rounded-2xl dark:bg-neutral-800 border-2 border-gray-100 dark:border-neutral-700">
             <div class="px-6 py-4 border-b border-gray-200 dark:border-neutral-700 flex items-center">
-                <a navigate href="{{ route('admin.tasks.index') }}"
+                <a navigate href="{{ route('teacher.tasks.index') }}"
                     class="py-3 px-3 inline-flex items-center gap-x-2 text-xl rounded-xl border border-gray-200 bg-white text-gray-800 shadow-md hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 cursor-pointer">
                     <svg class="shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="90" height="90"
                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -23,7 +23,7 @@
                 </div>
             </div>
 
-            <form navigate-form action="{{ route('admin.tasks.do_update', $id) }}" method="POST" class="p-6">
+            <form navigate-form action="{{ route('teacher.tasks.do_update', $id) }}" method="POST" class="p-6">
                 @csrf
                 <div class="space-y-4">
                     <!-- Form Group -->
@@ -118,7 +118,7 @@
                 </div>
 
                 <div class="mt-4 flex justify-start gap-x-2">
-                    <a navigate href="{{ route('admin.tasks.index') }}"
+                    <a navigate href="{{ route('teacher.tasks.index') }}"
                         class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-50 dark:bg-transparent dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800">
                         Batal
                     </a>

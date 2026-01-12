@@ -176,8 +176,7 @@
 <script>
     function setDeleteData(id, name) {
         document.getElementById('delete-item-name').textContent = name;
-        document.getElementById('delete-form').action = '{{ url('
-        superadmin / subjects / delete ') }}/' + id;
+        document.getElementById('delete-form').action = '{{ url('superadmin/subjects/delete') }}/' + id;
     }
 </script>
 @endsection

@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Constants\ResponseConst;
 use App\Http\Controllers\Controller;
-use App\Usecase\ClassroomUsecase;
-use App\Usecase\SchoolUsecase;
+use App\Usecase\Admin\ClassroomUsecase;
+use App\Usecase\Admin\StudentUsecase as AdminStudentUsecase;
 use App\Usecase\StudentUsecase;
+use App\Usecase\superAdmin\SchoolUsecase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -113,7 +114,7 @@ class ClassroomController extends Controller
                 ->with('error', ResponseConst::DEFAULT_ERROR_MESSAGE);
         }
 
-        $studentUsecase = new StudentUsecase();
+        $studentUsecase = new AdminStudentUsecase();
         $studentsData = $studentUsecase->getAll([
             'classroom_id' => $id,
             'no_pagination' => true,

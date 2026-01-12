@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Validator;
 
 class UserUsecase extends Usecase
 {
-    private const DEFAULT_PASSWORD = 'default';
+    private const DEFAULT_PASSWORD = 'asdasd';
 
     public function __construct()
     {
@@ -162,9 +162,9 @@ class UserUsecase extends Usecase
             $accessType = $data->access_type ?? 2;
             $schoolId = Auth::user()->school_id;
 
-            if (Auth::user()->access_type == UserConst::ADMIN) {
+            if (Auth::user()->access_type == UserConst::SUPER_ADMIN) {
                 $accessType = $data->access_type;
-                $schoolId = ($accessType == UserConst::ADMIN) ? null : $data->school_id;
+                $schoolId = ($accessType == UserConst::SUPER_ADMIN) ? null : $data->school_id;
             }
 
             $userID = DB::table(DatabaseConst::USER)->insertGetId([
@@ -215,9 +215,9 @@ class UserUsecase extends Usecase
             'updated_at' => now(),
         ];
 
-        if (Auth::user()->access_type == UserConst::ADMIN) {
+        if (Auth::user()->access_type == UserConst::SUPER_ADMIN) {
             $update['access_type'] = $data['access_type'];
-            $update['school_id'] = ($data['access_type'] == UserConst::ADMIN) ? null : $data['school_id'];
+            $update['school_id'] = ($data['access_type'] == UserConst::SUPER_ADMIN) ? null : $data['school_id'];
         }
 
         DB::beginTransaction();

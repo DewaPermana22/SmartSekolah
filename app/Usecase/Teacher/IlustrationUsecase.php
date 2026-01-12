@@ -27,17 +27,22 @@ class IlustrationUsecase extends Usecase
             $query = DB::table(DatabaseConst::IMAGE_GENERATION_HISTORIES . ' as igh')
                 ->where('igh.created_by', $userId)
                 ->whereNull('igh.deleted_at')
+                ->join(DatabaseConst::PROMPT_IMAGE_GENERATION.' as pig', 'igh.image_style_id', '=', 'pig.id')
                 ->select(
                     'igh.id',
                     'igh.user_input',
                     'igh.image_style_id',
                     'igh.output_file_path',
+                    'pig.name as image_style_name',
                     'igh.created_at',
                 )
                 ->orderBy('igh.created_at', 'desc');
 
             if (!empty($filterData['keywords'])) {
                 $query->where('igh.user_input', 'like', '%' . $filterData['keywords'] . '%')->orWhere('igh.output_text', 'like', '%' . $filterData['keywords'] . '%');
+            }
+            if(!empty($filterData['image_style_id']) && $filterData['image_style_id'] != 'all'){ 
+                $query->where('igh.image_style_id', $filterData['image_style_id']);
             }
 
             $data = $query->paginate(20);
