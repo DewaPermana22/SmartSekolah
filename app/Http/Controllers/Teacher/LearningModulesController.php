@@ -35,11 +35,15 @@ class LearningModulesController extends Controller
         ]);
         $data = $data['data']['list'] ?? [];
 
+        $subject = $this->subjectUsecase->getAll(['no_pagination' => true]);
+        $subject = $subject['data']['list'] ?? [];
+
         return view('_teacher.learning_modules.index', [
             'data' => $data,
             'page' => $this->page,
             'keywords' => $request->get('keywords'),
             'subject_id' => $request->get('subject_id'),
+            'subjects' => $subject,
             'classroom' => $request->get('classroom'),
         ]);
     }

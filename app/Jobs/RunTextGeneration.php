@@ -2,11 +2,13 @@
 
 namespace App\Jobs;
 
+use App\Constants\DatabaseConst;
 use App\Usecase\TextGenerationtUsecase;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use RuntimeException;
@@ -47,6 +49,7 @@ class RunTextGeneration implements ShouldQueue
 
             $payload = [
                 'reference_id' => $this->referenceId,
+                'input' => $this->description,
                 'categories'   => $this->categories,
                 'generated_at' => now()->toDateTimeString(),
                 'content'      => $data['content'],

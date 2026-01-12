@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ClassroomController;
+use App\Http\Controllers\Admin\SchoolController as AdminSchoolController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\TaskCategoryController;
 use App\Http\Controllers\Admin\TaskController;
@@ -44,8 +45,8 @@ Route::get('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/register', [AuthController::class, 'doRegister'])->name('register.post');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/register-school', [SchoolController::class, 'add'])->name('school.register');
-    Route::post('/register-school', [SchoolController::class, 'doCreate'])->name('school.register.post');
+    Route::get('/register-school', [AdminSchoolController::class, 'add'])->name('school.register');
+    Route::post('/register-school', [AdminSchoolController::class, 'doCreate'])->name('school.register.post');
 });
 
 Route::middleware(['auth', 'role:2', 'check.school'])->prefix('admin')->name('admin.')->group(function () {
@@ -115,6 +116,9 @@ Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->grou
         Route::prefix('materi-ajar')->name('materi_ajar.')->group(function () {
             Route::get('/', [MateriAjarController::class, 'index'])->name('index');
             Route::get('/add', [MateriAjarController::class, 'create'])->name('add');
+            Route::delete('/delete/{id}', [MateriAjarController::class, 'delete'])->name('delete');
+            Route::delete('/delete/{id}', [MateriAjarController::class, 'delete'])->name('delete');
+            Route::get('/detail/{id}', [MateriAjarController::class, 'detail'])->name('detail');
         });
         Route::prefix('ilustrasi')->name('ilustrasi.')->group(function () {
             Route::get('/', [IlustrationController::class, 'index'])->name('index');
@@ -125,6 +129,7 @@ Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->grou
     });
 
     Route::post('api/ilustration/save-history', [ToolsController::class, 'saveHistory'])->name('save_ilustration_history');
+    Route::post('api/text-generation/save-history', [ToolsController::class, 'saveTextHistory'])->name('save_text_history');
 
     Route::prefix('learning-modules')->name('learning_modules.')->group(function () {
         Route::get('/', [LearningModulesController::class, 'index'])->name('index');

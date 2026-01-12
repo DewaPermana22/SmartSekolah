@@ -150,9 +150,10 @@
             let pollingInterval = null;
             let pollingAttempts = 0;
             let rawMarkdownContent = '';
+            let historySaved = false;
+            let currentReferenceId = null;
             const MAX_POLLING_ATTEMPTS = 120;
 
-            // Konfigurasi marked.js untuk hasil optimal
             marked.setOptions({
                 breaks: true,
                 gfm: true,
@@ -261,7 +262,7 @@
                     
                     return html;
                 } catch (e) {
-                    console.error('❌ Error parsing markdown:', e);
+                    console.error('Error parsing markdown:', e);
                     return `<div class="text-gray-700 dark:text-neutral-300 whitespace-pre-wrap font-mono text-sm bg-gray-50 dark:bg-neutral-900 p-4 rounded border border-gray-200 dark:border-neutral-700">${markdownContent}</div>`;
                 }
             }
@@ -300,12 +301,16 @@
 
                             rawMarkdownContent = response.data.content;
 
-                            // Parse dan tampilkan dengan styling enhanced
                             const formattedContent = formatMarkdownToHTML(response.data.content);
                             $('#resultContent').html(formattedContent);
 
+                            if (!historySaved && currentReferenceId) {
+                                historySaved = true;
+                                saveTextHistory(currentReferenceId);
+                            }
+
                             showSuccessNotification(
-                                `✨ Materi berhasil dibuat dalam ${pollingAttempts} detik`
+                                `Materi berhasil dibuat dalam ${pollingAttempts} detik`
                             );
 
                             // Enable button kembali
@@ -367,6 +372,27 @@
                 }, 3000);
             }
 
+            function saveTextHistory(referenceId) {
+                $.ajax({
+                    url: '/teacher/api/text-generation/save-history',
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    data: JSON.stringify({
+                        reference_id: referenceId
+                    }),
+                    success: function(response) {
+                        console.log('✅ Riwayat text generation berhasil disimpan!', response);
+                    },
+                    error: function(xhr) {
+                        console.error('❌ Failed to save text history:', xhr.responseJSON || xhr);
+                    }
+                });
+            }
+
             $('#materiForm').on('submit', function(e) {
                 e.preventDefault();
 
@@ -374,11 +400,13 @@
                 const description = $('#material_description').val();
 
                 if (!description.trim()) {
-                    alert('⚠️ Mohon isi deskripsi materi terlebih dahulu.');
+                    alert('Mohon isi deskripsi materi terlebih dahulu.');
                     return;
                 }
 
                 pollingAttempts = 0;
+                historySaved = false;
+                currentReferenceId = null;
                 if (pollingInterval) {
                     clearInterval(pollingInterval);
                 }
@@ -387,7 +415,6 @@
                 $('#resultArea').addClass('hidden');
                 $('#generateBtn').prop('disabled', true);
 
-                // 🎯 Mapping tipe materi ke categories
                 const categoryMap = {
                     'ppt': 'PPT',
                     'modul': 'MODULBELAJAR'
@@ -398,7 +425,6 @@
                     categories: categoryMap[materialType] || 'PPT'
                 };
 
-                console.log('📤 Sending request:', requestData);
 
                 $.ajax({
                     url: '/api/tools/materi',
@@ -410,7 +436,8 @@
                     },
                     success: function(response) {
                         if (response.success && response.data.status_url) {
-                            console.log('✅ Job queued! Reference ID:', response.data.reference_id);
+                            currentReferenceId = response.data.reference_id;
+                            console.log('✅ Job queued! Reference ID:', currentReferenceId);
 
                             pollingInterval = setInterval(function() {
                                 pollStatus(response.data.status_url);
@@ -438,7 +465,7 @@
 
                         showError(errorMessage);
 
-                        console.error('❌ Error details:', {
+                        console.error('Error details:', {
                             status: xhr.status,
                             response: xhr.responseJSON,
                             error: error
@@ -474,7 +501,7 @@
                 const content = rawMarkdownContent || $('#resultContent').text();
 
                 if (!content) {
-                    alert('⚠️ Tidak ada konten untuk disalin.');
+                    alert('Tidak ada konten untuk disalin.');
                     return;
                 }
 
@@ -488,7 +515,7 @@
                         $('#copyBtn').html(originalHtml);
                     }, 2000);
                 }).catch(function(err) {
-                    alert('❌ Gagal menyalin. Browser Anda mungkin tidak mendukung fitur ini.');
+                    alert('Gagal menyalin. Browser Anda mungkin tidak mendukung fitur ini.');
                     console.error('Copy failed:', err);
                 });
             });
