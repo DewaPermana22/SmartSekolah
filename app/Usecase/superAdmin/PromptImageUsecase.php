@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Usecase;
+namespace App\Usecase\superAdmin;
 
 use App\Constants\DatabaseConst;
 use App\Constants\ResponseConst;

@@ -13,11 +13,11 @@ use App\Http\Controllers\superAdmin\PromptImageController;
 use App\Http\Controllers\superAdmin\SchoolController;
 use App\Http\Controllers\superAdmin\SubjectController;
 use App\Http\Controllers\superAdmin\TextPromptController;
-use App\Http\Controllers\Teacher\AITools\IlustrasiController;
 use App\Http\Controllers\Teacher\AITools\MateriAjarController;
 use App\Http\Controllers\Teacher\LearningModulesController;
 use App\Http\Controllers\Teacher\ToolsController;
 use App\Http\Controllers\Student\LearningModulesController as studentLearningModulesController;
+use App\Http\Controllers\Teacher\AITools\IlustrationController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -117,10 +117,10 @@ Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->grou
             Route::get('/add', [MateriAjarController::class, 'create'])->name('add');
         });
         Route::prefix('ilustrasi')->name('ilustrasi.')->group(function () {
-            Route::get('/', [IlustrasiController::class, 'index'])->name('index');
-            Route::get('/add', [IlustrasiController::class, 'create'])->name('add');
-            Route::get('/status/{referenceId}', [IlustrasiController::class, 'JobImageStatus'])->name('job_status');
-            Route::post('/create', [IlustrasiController::class, 'doCreate'])->name('do_create');
+            Route::get('/', [IlustrationController::class, 'index'])->name('index');
+            Route::get('/add', [IlustrationController::class, 'create'])->name('add');
+            Route::get('/status/{referenceId}', [IlustrationController::class, 'JobImageStatus'])->name('job_status');
+            Route::post('/create', [IlustrationController::class, 'doCreate'])->name('do_create');
         });
     });
 

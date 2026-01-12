@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
 use App\Http\Presenter\Response;
-use App\Usecase\LearningModulesUsecase;
-use App\Usecase\SubjectUsecase;
+use App\Usecase\superAdmin\SubjectUsecase;
+use App\Usecase\Teacher\LearningModulesUsecase;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;

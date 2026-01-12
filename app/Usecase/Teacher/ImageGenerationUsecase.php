@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Usecase;
+namespace App\Usecase\Teacher;
 
 use App\Constants\AIConst;
 use App\Constants\DatabaseConst;
 use App\Constants\PromptConst;
 use App\Http\Presenter\Response;
+use App\Usecase\superAdmin\ToolsAiUsecase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -76,12 +77,6 @@ class ImageGenerationUsecase
                 'size_bytes' => strlen($decodedImage)
             ], 200, 'Image generated successfully');
         } catch (\Throwable $e) {
-            Log::error('Image generation failed', [
-                'reference_id' => $referenceId,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
             return Response::buildErrorService(
                 'Failed to generate image: ' . $e->getMessage()
             );
@@ -96,11 +91,6 @@ class ImageGenerationUsecase
         $finalUserId = $userId ?? Auth::id() ?? Auth::guard('web')->id();
 
         if (!$finalUserId) {
-            Log::error('Cannot save history: User not authenticated', [
-                'reference_id' => $referenceId,
-                'auth_check' => Auth::check(),
-                'guards' => config('auth.guards'),
-            ]);
             throw new \RuntimeException('User must be authenticated to save history');
         }
 
@@ -111,11 +101,6 @@ class ImageGenerationUsecase
             'output_file_path' => $imagePath,
             'created_at' => now(),
             'created_by' => $finalUserId,
-        ]);
-
-        Log::info('History saved successfully', [
-            'reference_id' => $referenceId,
-            'user_id' => $finalUserId,
         ]);
     }
 

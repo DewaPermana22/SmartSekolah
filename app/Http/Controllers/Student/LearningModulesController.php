@@ -3,12 +3,8 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
-use App\Http\Presenter\Response;
-use App\Usecase\LearningModulesUsecase;
-use App\Usecase\SubjectUsecase;
-use Illuminate\Http\RedirectResponse;
+use App\Usecase\Teacher\LearningModulesUsecase;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 
 class LearningModulesController extends Controller
 {

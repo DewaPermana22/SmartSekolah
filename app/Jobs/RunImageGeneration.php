@@ -2,8 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Agents\ImageGenerationAgent;
-use App\Usecase\ImageGenerationUsecase;
+use App\Usecase\Teacher\ImageGenerationUsecase;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -30,7 +29,7 @@ class RunImageGeneration implements ShouldQueue
     public function handle(): void
     {
         try {
-            $usecase = app(ImageGenerationUsecase::class);
+            $usecase = app(abstract: ImageGenerationUsecase::class);
             $result = $usecase->generateIlustration(
                 description: $this->description,
                 referenceId: $this->referenceId,
