@@ -24,22 +24,6 @@ use App\Http\Controllers\Teacher\AITools\IlustrationController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    $user = Auth::user();
-
-    if (!$user) {
-        return redirect()->route('login');
-    }
-
-    return match ($user->access_type) {
-        1 => redirect()->route('superadmin.dashboard'),
-        2 => redirect()->route('admin.dashboard'),
-        3 => redirect()->route('teacher.dashboard'),
-        4 => redirect()->route('student.dashboard'),
-        default => abort(403),
-    };
-});
-
 // Landing Page
 Route::get('/', [HomeController::class, 'index'])->name('landing');
 Route::get('/kumpulan-materi', [HomeController::class, 'kumpulan_materi'])->name('kumpulan_materi');
@@ -143,6 +127,8 @@ Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->grou
             Route::get('/add', [IlustrationController::class, 'create'])->name('add');
             Route::get('/status/{referenceId}', [IlustrationController::class, 'JobImageStatus'])->name('job_status');
             Route::post('/create', [IlustrationController::class, 'doCreate'])->name('do_create');
+            Route::delete('/delete/{id}', [IlustrationController::class, 'delete'])->name('delete');
+            Route::get('/detail/{id}', [IlustrationController::class, 'detail'])->name('detail');
         });
     });
 

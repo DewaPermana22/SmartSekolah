@@ -25,6 +25,12 @@ class RoleMiddleware
             return $next($request);
         }
 
-        abort(403, 'Akses tidak diizinkan.');
+        return match ($user->access_type) {
+            1 => redirect()->route('superadmin.dashboard'),
+            2 => redirect()->route('admin.dashboard'),
+            3 => redirect()->route('teacher.dashboard'),
+            4 => redirect()->route('student.dashboard'),
+            default => abort(403, 'Akses Tidak Diizinkan'),
+        };
     }
 }

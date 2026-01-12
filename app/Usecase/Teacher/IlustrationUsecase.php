@@ -45,7 +45,7 @@ class IlustrationUsecase extends Usecase
                 $query->where('igh.image_style_id', $filterData['image_style_id']);
             }
 
-            $data = $query->paginate(20);
+            $data = $query->paginate(8);
 
             return Response::buildSuccess(
                 ['list' => $data],
@@ -97,23 +97,24 @@ class IlustrationUsecase extends Usecase
     public function getById(int $id): array
     {
         try {
-            $data = DB::table(DatabaseConst::TEXT_GENERATION_HISTORY . ' as tgh')
-                ->join(DatabaseConst::USER . ' as u', 'tgh.created_by', '=', 'u.id')
-                ->where('tgh.id', $id)
-                ->whereNull('tgh.deleted_at')
+            $data = DB::table(DatabaseConst::IMAGE_GENERATION_HISTORIES . ' as igh')
+                ->join(DatabaseConst::USER . ' as u', 'igh.created_by', '=', 'u.id')
+                ->join(DatabaseConst::PROMPT_IMAGE_GENERATION.' as pig', 'igh.image_style_id', '=', 'pig.id')
+                ->where('igh.id', $id)
+                ->whereNull('igh.deleted_at')
                 ->select(
-                    'tgh.id',
-                    'tgh.user_input',
-                    'tgh.output_text',
-                    'tgh.output_file_path',
+                    'igh.id',
+                    'igh.user_input',
+                    'igh.output_file_path',
                     'u.name as created_by_name',
-                    'tgh.created_at',
-                    'tgh.updated_at',
+                    'pig.name as image_style_name',
+                    'igh.created_at',
+                    'igh.updated_at',
                 )
                 ->first();
 
             if (!$data) {
-                return Response::buildErrorNotFound('Data riwayat generasi teks tidak ditemukan');
+                return Response::buildErrorNotFound('Data riwayat generasi ilustrasi tidak ditemukan');
             }
 
             return Response::buildSuccess(

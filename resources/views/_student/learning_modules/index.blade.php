@@ -192,11 +192,12 @@
                             previewContainer.innerHTML = '';
 
                             const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'];
+                            const fileUrl = `${window.location.origin}/storage/${filePath}`;
 
                             if (ext === 'pdf') {
                                 previewContainer.innerHTML = `
                                     <div class="border border-gray-200 dark:border-neutral-700 rounded-lg overflow-hidden bg-gray-50 dark:bg-neutral-900">
-                                        <iframe src="/storage/${filePath}" class="w-full h-96" frameborder="0"></iframe>
+                                        <iframe src="https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true" class="w-full h-96" frameborder="0"></iframe>
                                     </div>
                                 `;
                             } else if (imageExtensions.includes(ext)) {
@@ -206,25 +207,9 @@
                                     </div>
                                 `;
                             } else if (['doc', 'docx', 'ppt', 'pptx'].includes(ext)) {
-                                const iconMap = {
-                                    'doc': 'text-blue-500',
-                                    'docx': 'text-blue-500',
-                                    'ppt': 'text-orange-500',
-                                    'pptx': 'text-orange-500'
-                                };
-
                                 previewContainer.innerHTML = `
-                                    <div class="p-6 bg-gray-50 dark:bg-neutral-900 rounded-lg border border-gray-200 dark:border-neutral-700 text-center">
-                                        <svg class="mx-auto size-16 ${iconMap[ext] || 'text-gray-400'} mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 2v6h6"/>
-                                        </svg>
-                                        <p class="text-sm text-gray-600 dark:text-neutral-400 mb-4 font-medium">
-                                            File ${ext.toUpperCase()} tidak dapat di-preview langsung di browser
-                                        </p>
-                                        <p class="text-xs text-gray-500 dark:text-neutral-500 mb-4">
-                                            Klik tombol Download di bawah untuk melihat file
-                                        </p>
+                                    <div class="border border-gray-200 dark:border-neutral-700 rounded-lg overflow-hidden bg-gray-50 dark:bg-neutral-900">
+                                        <iframe src="https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true" class="w-full h-96" frameborder="0"></iframe>
                                     </div>
                                 `;
                             } else {

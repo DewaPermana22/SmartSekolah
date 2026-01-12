@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Teacher\AITools;
 
+use App\Constants\ResponseConst;
 use App\Http\Controllers\Controller;
 use App\Http\Presenter\Response as PresenterResponse;
 use App\Jobs\RunImageGeneration;
@@ -69,5 +70,36 @@ class IlustrationController extends Controller
             'data' => $data['data']['list'] ?? [],
             'page' => $this->page,
         ]);
+    }
+
+    public function detail(int $id): View | RedirectResponse | Response
+    {
+        $data = $this->historyIlustrationUsecase->getByID($id);
+
+        if (empty($data['data'])) {
+            return redirect()
+                ->route('teacher.ai.ilustrasi.index')
+                ->with('error', 'Data tidak ditemukan');
+        }
+
+        return view('_teacher.ai_tools.ilustrasi.detail', [
+            'data' => $data['data']['data'] ?? [],
+            'page' => $this->page,
+        ]);
+    }
+
+    public function delete(int $id): RedirectResponse
+    {
+        $process = $this->historyIlustrationUsecase->delete($id);
+
+        if ($process['success']) {
+            return redirect()
+                ->route('teacher.ai.ilustrasi.index')
+                ->with('success', ResponseConst::SUCCESS_MESSAGE_DELETED);
+        }
+
+        return redirect()
+            ->back()
+            ->with('error', $process['message'] ?? ResponseConst::DEFAULT_ERROR_MESSAGE);
     }
 }

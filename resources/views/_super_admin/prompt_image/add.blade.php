@@ -68,7 +68,7 @@
                     {{-- Prompt --}}
                     <div>
                         <label class="block text-sm font-medium mb-2 dark:text-white">
-                            Teks Prompt <span class="text-red-500">*</span>
+                            Teks Prompt <span class="text-red-500">*</span> <span class="text-gray-500 text-xs">(Gunakan '@{{description}}' sebagai parameter untuk inputan user)</span>
                         </label>
                         <textarea name="prompt" rows="4" required placeholder="Contoh: Buat infografis dengan tema..."
                             class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm
