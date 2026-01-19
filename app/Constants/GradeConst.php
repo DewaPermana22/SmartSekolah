@@ -14,9 +14,9 @@ class GradeConst
     public static function getGrades()
     {
         return [
-            self::SD => 'SD',
-            self::SMP => 'SMP',
-            self::SMK => 'SMK',
+            self::SD => 'Sekolah Dasar',
+            self::SMP => 'Sekolah Menengah Pertama',
+            self::SMK => 'Sekolah Menengah Kejuruan',
         ];
     }
 }

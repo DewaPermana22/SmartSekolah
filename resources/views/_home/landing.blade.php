@@ -155,14 +155,25 @@
       </div>
 
       <div id="container_card_kategori" class="grid grid-cols-1 min-[768px]:grid-cols-2 min-[1000px]:grid-cols-3 min-[1300px]:grid-cols-4 min-[1500px]:grid-cols-5 min-[1700px]:grid-cols-6 mt-10 justify-items-center gap-10">
-        <x-home.materi-card image="home/images/gambar_home/sekolah_dasar.jpg" text="Sekolah Dasar" materi_count="10" kelas_count="6" link="kumpulan_materi" />
-        <x-home.materi-card image="home/images/gambar_home/madrasah_ibtidaiyah.jpg" text="Madrasah Ibtidaiyah" materi_count="10" kelas_count="6" link="kumpulan_materi" />
-        <x-home.materi-card image="home/images/gambar_home/sekolah_menengah_pertama.jpg" text="Sekolah Menengah Pertama" materi_count="10" kelas_count="6" link="kumpulan_materi" />
-        <x-home.materi-card image="home/images/gambar_home/madrasah_tsanawiyah.jpg" text="Madrasah Tsanawiyah" materi_count="10" kelas_count="6" link="kumpulan_materi" />
-        <x-home.materi-card image="home/images/gambar_home/sekolah_menengah_atas.jpg" text="Sekolah Menengah Atas" materi_count="10" kelas_count="6" link="kumpulan_materi" />
-        <x-home.materi-card image="home/images/gambar_home/madrasah_aliyah.jpg" text="Madrasah Aliyah" materi_count="10" kelas_count="6" link="kumpulan_materi" />
-        <x-home.materi-card image="home/images/gambar_home/sekolah_menengah_kejuruan.jpg" text="Sekolah Menengah Kejuruan" materi_count="10" kelas_count="6" link="kumpulan_materi" />
-        <x-home.materi-card image="home/images/gambar_home/umum.jpg" text="Umum" materi_count="10" kelas_count="6" link="kumpulan_materi" />
+        @php
+          use App\Constants\GradeConst;
+          $grades = GradeConst::getGrades();
+          $gradeImages = [
+            GradeConst::SD => 'home/images/gambar_home/sekolah_dasar.jpg',
+            GradeConst::SMP => 'home/images/gambar_home/sekolah_menengah_pertama.jpg',
+            GradeConst::SMK => 'home/images/gambar_home/sekolah_menengah_kejuruan.jpg',
+          ];
+        @endphp
+        
+        @foreach($grades as $gradeId => $gradeName)
+          <x-home.materi-card 
+            image="{{ $gradeImages[$gradeId] ?? 'home/images/gambar_home/umum.jpg' }}" 
+            text="{{ $gradeName }}" 
+            materi_count="10" 
+            sekolah_count="{{ $gradeData[$gradeId]['count'] ?? 0 }}" 
+            link="kumpulan_materi" 
+          />
+        @endforeach
       </div>
     </section> 
 
@@ -174,13 +185,56 @@
         <p class="text-center text-[13px] min-[475px]:text-sm min-[550px]:text-[15px] mb-10 mt-3 w-full min-[750px]:w-[700px]">Platform ini membantu mempermudah proses belajar dan pengelolaan data sekolah. Fitur yang lengkap dan mudah digunakan membuat aktivitas belajar mengajar menjadi lebih efektif dan terorganisir.</p>
       </div>
 
+      @php
+        $testimonials = [
+          [
+            'img' => '/home/images/avatar/1.png',
+            'name' => 'Fahmy Bima Az Zukhruf',
+            'role' => 'Siswa SMKN 8 JEMBER',
+            'message' => 'Platform Smart Sekolah sangat membantu saya dalam mengakses materi pembelajaran dengan mudah. Fitur-fiturnya lengkap dan mudah dipahami, membuat belajar jadi lebih menyenangkan.'
+          ],
+          [
+            'img' => '/home/images/avatar/2.png',
+            'name' => 'Siti Nurhaliza',
+            'role' => 'Guru SMP Negeri 5 Jember',
+            'message' => 'Dengan Smart Sekolah, mengelola materi dan tugas siswa menjadi jauh lebih efisien. Sistem yang terintegrasi memudahkan saya dalam memantau perkembangan belajar siswa.'
+          ],
+          [
+            'img' => '/home/images/avatar/3.png',
+            'name' => 'Ahmad Zainudin',
+            'role' => 'Kepala Sekolah SD Negeri 3 Jember',
+            'message' => 'Smart Sekolah memberikan solusi terbaik untuk digitalisasi sekolah kami. Administrasi menjadi lebih rapi dan proses pembelajaran lebih terstruktur.'
+          ],
+          [
+            'img' => '/home/images/avatar/4.png',
+            'name' => 'Dewi Kartika',
+            'role' => 'Siswa SMA Negeri 2 Jember',
+            'message' => 'Saya sangat terbantu dengan adanya fitur AI Summary yang bisa merangkum materi panjang menjadi lebih singkat. Sangat cocok untuk persiapan ujian!'
+          ],
+          [
+            'img' => '/home/images/avatar/5.png',
+            'name' => 'Bambang Sutrisno',
+            'role' => 'Guru SMK Negeri 1 Jember',
+            'message' => 'Fitur generate gambar dan materi dengan AI sangat inovatif. Membantu saya membuat konten pembelajaran yang lebih menarik dan interaktif untuk siswa.'
+          ],
+          [
+            'img' => '/home/images/avatar/6.png',
+            'name' => 'Rina Agustina',
+            'role' => 'Orang Tua Siswa',
+            'message' => 'Sebagai orang tua, saya merasa lebih tenang karena bisa memantau perkembangan belajar anak melalui platform ini. Sistemnya transparan dan mudah digunakan.'
+          ]
+        ];
+      @endphp
+
       <div class="grid grid-cols-1 min-[875px]:grid-cols-2 min-[1250px]:grid-cols-3 gap-5">
-        <x-home.card-testimoni img="/home/images/avatar/1.png" name="Fahmy Bima Az Zukhruf" role="Siswa SMKN 8 JEMBER" message="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi nemo nostrum fugit. Numquam eos, perspiciatis adipisci doloribus ullam minus doloremque." />
-        <x-home.card-testimoni img="/home/images/avatar/2.png" name="Fahmy Bima Az Zukhruf" role="Siswa SMKN 8 JEMBER" message="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi nemo nostrum fugit. Numquam eos, perspiciatis adipisci doloribus ullam minus doloremque." />
-        <x-home.card-testimoni img="/home/images/avatar/3.png" name="Fahmy Bima Az Zukhruf" role="Siswa SMKN 8 JEMBER" message="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi nemo nostrum fugit. Numquam eos, perspiciatis adipisci doloribus ullam minus doloremque." />
-        <x-home.card-testimoni img="/home/images/avatar/3.png" name="Fahmy Bima Az Zukhruf" role="Siswa SMKN 8 JEMBER" message="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi nemo nostrum fugit. Numquam eos, perspiciatis adipisci doloribus ullam minus doloremque." />
-        <x-home.card-testimoni img="/home/images/avatar/3.png" name="Fahmy Bima Az Zukhruf" role="Siswa SMKN 8 JEMBER" message="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi nemo nostrum fugit. Numquam eos, perspiciatis adipisci doloribus ullam minus doloremque." />
-        <x-home.card-testimoni img="/home/images/avatar/3.png" name="Fahmy Bima Az Zukhruf" role="Siswa SMKN 8 JEMBER" message="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi nemo nostrum fugit. Numquam eos, perspiciatis adipisci doloribus ullam minus doloremque." />
+        @foreach($testimonials as $testimonial)
+          <x-home.card-testimoni 
+            img="{{ $testimonial['img'] }}" 
+            name="{{ $testimonial['name'] }}" 
+            role="{{ $testimonial['role'] }}" 
+            message="{{ $testimonial['message'] }}" 
+          />
+        @endforeach
       </div>
     </section>
 
