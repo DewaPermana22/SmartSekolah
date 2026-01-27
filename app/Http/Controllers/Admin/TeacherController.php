@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Constants\ResponseConst;
 use App\Http\Controllers\Controller;
-use App\Usecase\TeacherUsecase;
+use App\Usecase\Admin\TeacherUsecase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;

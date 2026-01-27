@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
-use App\Http\Presenter\Response;
-use App\Usecase\LearningModulesUsecase;
-use App\Usecase\SubjectUsecase;
-use Illuminate\Http\RedirectResponse;
+use App\Usecase\superAdmin\SubjectUsecase;
+use App\Usecase\Teacher\LearningModulesUsecase;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -21,12 +19,16 @@ class LearningModulesController extends Controller
 
     public function __construct(
         protected LearningModulesUsecase $usecase,
+        protected SubjectUsecase $subjectUsecase
     ) {
         $this->baseRedirect = 'student/' . $this->page['route'];
     }
 
-    public function index(Request $request)
+    public function index(Request $request): View
     {
+        $subjects = $this->subjectUsecase->getAll(["no_pagination" => true]);
+        $subjectsData = $subjects['data']['list'] ?? [];
+
         $data = $this->usecase->getAll([
             'keywords' => $request->get('keywords'),
             'subject_id' => $request->get('subject_id'),
@@ -38,6 +40,7 @@ class LearningModulesController extends Controller
             'data' => $data,
             'page' => $this->page,
             'keywords' => $request->get('keywords'),
+            'subjects' => $subjectsData,
             'subject_id' => $request->get('subject_id'),
             'classroom' => $request->get('classroom'),
         ]);

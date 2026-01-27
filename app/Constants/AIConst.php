@@ -13,9 +13,6 @@ class AIConst
     const OPENAI_TEXT_MODEL = 'gpt-4o-mini';
     const DEEPSEEK_TEXT_MODEL = 'deepseek-chat';
 
-    // Base URLs
-        // $url = "https://generativelanguage.googleapis.com/v1beta/models/" . self::IMAGE_MODEL . ":generateContent?key={$apiKey}";
-
     const GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/';
     // const IMAGE_API_URL = 'https://api.generativeai.google.com/v1/images:generate';
     const OPENAI_API_URL = 'https://api.openai.com/v1/responses';

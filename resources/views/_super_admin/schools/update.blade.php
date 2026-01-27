@@ -1,4 +1,4 @@
-@extends('_super_admin._layout.app')
+@extends('_admin._layout.app')
 
 @section('title', 'Edit Sekolah')
 
@@ -40,7 +40,7 @@
                             <p class="text-xs text-red-600 mt-2" id="title-error">{{ $message }}</p>
                         @enderror
                     </div>
-                   
+
 
                     <div class="flex gap-4">
                         <!-- Form Group -->
@@ -57,8 +57,8 @@
                                 <p class="text-xs text-red-600 mt-2" id="mou_date-error">{{ $message }}</p>
                             @enderror
                         </div>
-                        
-                      
+
+
                     </div>
 
                     <div>
@@ -85,7 +85,7 @@
                 </div>
 
                 <div class="mt-4 flex justify-start gap-x-2">
-                    <a navigate href="{{ route('admin.tasks.index') }}"
+                    <a navigate href="{{ route('superadmin.schools.index') }}"
                         class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-50 dark:bg-transparent dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800">
                         Batal
                     </a>

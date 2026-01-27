@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
 use App\Http\Presenter\Response;
-use App\Usecase\LearningModulesUsecase;
-use App\Usecase\SubjectUsecase;
+use App\Usecase\superAdmin\SubjectUsecase;
+use App\Usecase\Teacher\LearningModulesUsecase;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -14,7 +14,7 @@ class LearningModulesController extends Controller
 {
     protected array $page = [
         'route' => 'learning-modules',
-        'title' => 'Learning Modules'
+        'title' => 'Modul Belajar'
     ];
 
     protected string $baseRedirect;
@@ -35,11 +35,15 @@ class LearningModulesController extends Controller
         ]);
         $data = $data['data']['list'] ?? [];
 
+        $subject = $this->subjectUsecase->getAll(['no_pagination' => true]);
+        $subject = $subject['data']['list'] ?? [];
+
         return view('_teacher.learning_modules.index', [
             'data' => $data,
             'page' => $this->page,
             'keywords' => $request->get('keywords'),
             'subject_id' => $request->get('subject_id'),
+            'subjects' => $subject,
             'classroom' => $request->get('classroom'),
         ]);
     }

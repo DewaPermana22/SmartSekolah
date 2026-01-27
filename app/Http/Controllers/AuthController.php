@@ -86,14 +86,14 @@ class AuthController extends Controller
     private function redirectByRole($user)
     {
         switch ($user->access_type) {
-            case UserConst::ADMIN:
-                return redirect()->route('superadmin.schools.index');
-            case UserConst::USER:
+            case UserConst::SUPER_ADMIN:
+                return redirect()->route('superadmin.dashboard');
+            case UserConst::SUPER_ADMIN:
                 return redirect()->intended(route('admin.dashboard'));
             case UserConst::GURU:
-                return redirect()->route('teacher.learning_modules.index');
+                return redirect()->route('teacher.dashboard');
             case UserConst::SISWA:
-                return redirect()->intended(route('student.learning_modules.index'));
+                return redirect()->intended(route('student.dashboard'));
             default:
                 return redirect()->intended(route('admin.dashboard'));
         }

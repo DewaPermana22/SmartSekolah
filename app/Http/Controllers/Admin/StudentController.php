@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Constants\ResponseConst;
 use App\Http\Controllers\Controller;
-use App\Usecase\StudentUsecase;
-use App\Usecase\ClassroomUsecase;
+use App\Usecase\Admin\ClassroomUsecase;
+use App\Usecase\Admin\StudentUsecase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,7 +16,7 @@ class StudentController extends Controller
 {
     protected array $page = [
         'route' => 'students',
-        'title' => 'Manajemen Siswa',
+        'title' => 'Akun Siswa',
     ];
 
     protected string $baseRedirect;

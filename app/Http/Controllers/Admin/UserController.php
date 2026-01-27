@@ -33,7 +33,7 @@ class UserController extends Controller
         ]);
         $data = $data['data']['list'] ?? [];
 
-        return view('_admin.users.index', [
+        return view('_admin.users.index ', [
             'data' => $data,
             'page' => $this->page,
             'keywords' => $request->get('keywords'),

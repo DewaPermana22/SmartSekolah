@@ -1,4 +1,4 @@
-@extends('_super_admin._layout.app')
+@extends('_admin._layout.app')
 
 @section('title', 'Update Pengguna')
 
@@ -7,7 +7,7 @@
 @endphp
 
 @section('content')
-    <div class="max-w-4xl mx-auto">
+    <div class="max-w-4xl">
         <!-- Breadcrumb & Title -->
         <div class="mb-6">
             <div class="flex items-center gap-x-3 mb-2">
