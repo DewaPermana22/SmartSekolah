@@ -25,6 +25,7 @@ class GradeConst
     public static function getGrades()
     {
         return [
+<<<<<<< HEAD
             self::SD => 'SD',
             self::MI => 'MI',
             self::SMP => 'SMP',
@@ -32,6 +33,11 @@ class GradeConst
             self::SMA => 'SMA',
             self::SMK => 'SMK',
             self::MA => 'MA',
+=======
+            self::SD => 'Sekolah Dasar',
+            self::SMP => 'Sekolah Menengah Pertama',
+            self::SMK => 'Sekolah Menengah Kejuruan',
+>>>>>>> b98b148a2601f276b06f5efcde57e47069533d1e
         ];
     }
 }

@@ -1,4 +1,4 @@
-@props(['text' => 'Sekolah Dasar', 'image' => 'home/images/wisata/2.jpg', 'materi_count' => 27, 'kelas_count' => 6, 'link' => 'kumpulan_materi', 'suffix' => 'Materi'])
+@props(['text' => 'Sekolah Dasar', 'image' => 'home/images/wisata/2.jpg', 'materi_count' => 27, 'sekolah_count' => 6, 'link' => 'kumpulan_materi', 'suffix' => 'Materi'])
 
 <div class="group cardkategoriberanda" onclick="window.location = '{{ route($link) }}'">
     <img src="{{ asset($image) }}"  alt="Materi Image" class="w-full h-full object-cover absolute z-1"/>
@@ -9,6 +9,6 @@
     <div class="bottom-0 left-0 p-5 pb-6 z-3 absolute text-white">
         <p class="text-sm font-medium">{{ $materi_count }}+ {{ $suffix }}</p>
         <h3 class="font-semibold text-xl my-1">{{ mb_strimwidth($text, 0, 18, '...') }}</h3>
-        <h6 class="font-fredoka">{{ $kelas_count }} Kelas</h6>
+        <h6 class="font-fredoka">{{ $sekolah_count }} Sekolah</h6>
     </div>
 </div>
