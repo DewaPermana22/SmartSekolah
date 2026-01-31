@@ -426,17 +426,26 @@ class TeacherQuizUsecase extends Usecase
     {
         try {
             $data = DB::table('quiz_attempts as qa')
+                ->join('quiz_results as qr', 'qa.id', '=', 'qr.quiz_attempt_id')
                 ->join('users as u', 'qa.student_id', '=', 'u.id')
                 ->select([
                     'qa.id',
                     'qa.student_id',
+                    'qa.quiz_id',
                     'qa.started_at',
                     'qa.finished_at',
-                    'qa.score',
-                    'u.name as student_name'
+                    'u.name as student_name',
+                    'qr.working_time',
+                    'qr.correct_answer',
+                    'qr.wrong_answer',
+                    'qr.score',
+                    DB::raw('qa.finished_at as completed_at'),
+                    DB::raw('(qr.correct_answer + qr.wrong_answer) as total_questions'),
+                    DB::raw('qr.correct_answer as correct_answers')
                 ])
                 ->where('qa.quiz_id', $quizId)
                 ->whereNull('qa.deleted_at')
+                ->whereNull('qr.deleted_at')
                 ->whereIn('qa.id', function ($query) use ($quizId) {
                     $query->select(DB::raw('MAX(id)'))
                         ->from('quiz_attempts')
