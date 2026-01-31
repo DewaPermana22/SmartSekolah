@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Usecase\Teacher;
-
 use App\Constants\DatabaseConst;
 use App\Constants\ResponseConst;
 use App\Http\Presenter\Response;

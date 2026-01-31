@@ -97,8 +97,8 @@ use App\Constants\UserConst;
                         <a navigate
                             class="flex items-center gap-x-3.5 py-2.5 px-3 {{ request()->routeIs('teacher.quiz*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-white' }} text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 font-semibold"
                             href="{{ route('teacher.quiz.index') }}">
-                            @include('_admin._layout.icons.sidebar.library')
-                            Kuis
+                            @include('_admin._layout.icons.sidebar.bolt')
+                            Kuis Interaktif
                         </a>
                     </li>
                     @endif
@@ -110,6 +110,14 @@ use App\Constants\UserConst;
                             href="{{ route('student.learning_modules.index') }}">
                             @include('_admin._layout.icons.sidebar.swatch_book')
                             Modul Belajar
+                        </a>
+                    </li>
+                    <li>
+                        <a navigate
+                            class="flex items-center gap-x-3.5 py-2.5 px-3 {{ request()->routeIs('student.quiz*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-white' }} text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 font-semibold"
+                            href="{{ route('student.quiz.index') }}">
+                            @include('_admin._layout.icons.sidebar.bolt')
+                            Kuis Interaktif
                         </a>
                     </li>
                     @endif
@@ -150,7 +158,7 @@ use App\Constants\UserConst;
                                     <a navigate
                                         class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('teacher.ai.quiz_generator.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
                                         href="{{ route('teacher.ai.quiz_generator.index') }}">
-                                        Quiz
+                                        Pembuat Kuis
                                     </a>
                                 </li>
                             </ul>

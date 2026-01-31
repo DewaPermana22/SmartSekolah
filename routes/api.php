@@ -13,6 +13,7 @@ Route::get('/user', function (Request $request) {
 Route::prefix('tools')->group(function () {
     Route::post('/ilustration', [ToolsController::class, 'doCreate'])->name('create_ilustration');
     Route::post('/materi', [ToolsController::class, 'doCreateMateri'])->name('create_materi');
+    Route::post('/quiz', [ToolsController::class, 'doCreateQuiz'])->name('create_quiz');
     Route::post('document/summarize', [SummarizeDocController::class, 'summarizeAsync'])->name('document_summarize_async');
 });
 

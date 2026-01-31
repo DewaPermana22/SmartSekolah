@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Constants\DatabaseConst;
+use App\Usecase\superAdmin\TextGenerationtUsecase as SuperAdminTextGenerationtUsecase;
 use App\Usecase\TextGenerationtUsecase;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -31,7 +32,7 @@ class RunTextGeneration implements ShouldQueue
     public function handle(): void
     {
         try {
-            $usecase = app(TextGenerationtUsecase::class);
+            $usecase = app(SuperAdminTextGenerationtUsecase::class);
 
             $result = $usecase->generateTextGemini(
                 description: $this->description,
@@ -43,7 +44,6 @@ class RunTextGeneration implements ShouldQueue
                     $result['message'] ?? 'Text generation failed'
                 );
             }
-
 
             $data = $result['data'];
 

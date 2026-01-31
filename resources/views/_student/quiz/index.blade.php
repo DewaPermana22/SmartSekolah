@@ -1,10 +1,11 @@
 @extends('_admin._layout.app');
 
-@section('title', 'Modul Belajar')
+@section('title', 'Kuis Interaktif')
 
 @section('content')
 <div class="grid gap-3 md:flex md:justify-between md:items-center py-4">
-    <x-page-title title="{{ $page['title'] }}" description="Modul belajar yang disediakan oleh guru" />
+    <x-page-title title="Daftar {{$page['title'] }}" description="Daftar kuis yang telah Anda kerjakan." />
+    <x-add-button :href="route('admin.students.add')" label="Gabung Kuis" />
 </div>
 
 <div class="flex flex-col">
@@ -13,7 +14,7 @@
             <div class="overflow-hidden">
 
                 <div class="px-2 py-2 pb-4">
-                    <form action="{{ route('student.learning_modules.index') }}" method="GET" navigate
+                    <form action="{{ route('student.quiz.index') }}" method="GET" navigate
                         class="flex flex-col sm:flex-row gap-3">
                         <div class="sm:w-64">
                             <label for="keywords" class="sr-only">Search</label>
