@@ -9,7 +9,7 @@ class AIConst
 
     // Models
     const IMAGE_MODEL = 'gemini-2.5-flash-image';
-    const GEMINI_TEXT_MODEL = 'gemini-2.0-flash-exp';
+    const GEMINI_TEXT_MODEL = 'gemini-3-flash-preview';
     const OPENAI_TEXT_MODEL = 'gpt-4o-mini';
     const DEEPSEEK_TEXT_MODEL = 'deepseek-chat';
 

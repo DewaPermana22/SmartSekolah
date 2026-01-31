@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\ClassroomController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\SchoolController as AdminSchoolController;
@@ -9,13 +10,14 @@ use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Student\IntractiveQuiz as StudentQuizController;
+use App\Http\Controllers\Student\LearningModulesController as StudentLearningModulesController;
 use App\Http\Controllers\superAdmin\UserController as SuperAdminUserController;
 use App\Http\Controllers\superAdmin\DashboardController;
 use App\Http\Controllers\superAdmin\PromptImageController;
 use App\Http\Controllers\superAdmin\SchoolController;
 use App\Http\Controllers\superAdmin\SubjectController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\superAdmin\TextPromptController;
-use App\Http\Controllers\superAdmin\UserController as SuperAdminUserController;
 use App\Http\Controllers\Teacher\AITools\IlustrationController;
 use App\Http\Controllers\Teacher\AITools\MateriAjarController;
 use App\Http\Controllers\Teacher\AITools\QuizGeneratorController;
@@ -29,6 +31,7 @@ Route::get('/', [HomeController::class, 'index'])->name('landing');
 Route::get('/kumpulan-materi', [HomeController::class, 'kumpulan_materi'])->name('kumpulan_materi');
 Route::get('/detail-materi', [HomeController::class, 'detail_materi'])->name('detail_materi');
 
+// Auth
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'doLogin'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -40,6 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/register-school', [AdminSchoolController::class, 'doCreate'])->name('school.register.post');
 });
 
+// Admin Group
 Route::middleware(['auth', 'role:2', 'check.school'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
@@ -68,7 +72,7 @@ Route::middleware(['auth', 'role:2', 'check.school'])->prefix('admin')->name('ad
         Route::get('/add', [ClassroomController::class, 'add'])->name('add');
         Route::post('/create', [ClassroomController::class, 'doCreate'])->name('create');
         Route::get('/update/{id}', [ClassroomController::class, 'update'])->name('update');
-        Route::post('/update/{id}', [ClassroomController::class, 'doUpdate'])->name('do_update');
+        Route::post('/update/{id}', [ClassroomController::class, 'do_update'])->name('do_update');
         Route::get('/detail/{id}', [ClassroomController::class, 'detail'])->name('detail');
         Route::delete('/delete/{id}', [ClassroomController::class, 'delete'])->name('delete');
     });
@@ -78,7 +82,7 @@ Route::middleware(['auth', 'role:2', 'check.school'])->prefix('admin')->name('ad
         Route::get('/add', [StudentController::class, 'add'])->name('add');
         Route::post('/create', [StudentController::class, 'doCreate'])->name('create');
         Route::get('/update/{id}', [StudentController::class, 'update'])->name('update');
-        Route::post('/update/{id}', [StudentController::class, 'doUpdate'])->name('do_update');
+        Route::post('/update/{id}', [StudentController::class, 'do_update'])->name('do_update');
         Route::post('/reset-password/{id}', [StudentController::class, 'doResetPassword'])->name('doResetPassword');
         Route::delete('/delete/{id}', [StudentController::class, 'delete'])->name('delete');
     });
@@ -88,7 +92,7 @@ Route::middleware(['auth', 'role:2', 'check.school'])->prefix('admin')->name('ad
         Route::get('/add', [TeacherController::class, 'add'])->name('add');
         Route::post('/create', [TeacherController::class, 'doCreate'])->name('create');
         Route::get('/update/{id}', [TeacherController::class, 'update'])->name('update');
-        Route::post('/update/{id}', [TeacherController::class, 'doUpdate'])->name('do_update');
+        Route::post('/update/{id}', [TeacherController::class, 'do_update'])->name('do_update');
         Route::post('/reset-password/{id}', [TeacherController::class, 'doResetPassword'])->name('doResetPassword');
         Route::delete('/delete/{id}', [TeacherController::class, 'delete'])->name('delete');
     });
@@ -103,21 +107,21 @@ Route::middleware(['auth', 'role:2', 'check.school'])->prefix('admin')->name('ad
         Route::get('/add', [TextPromptController::class, 'add'])->name('add');
         Route::post('/create', [TextPromptController::class, 'doCreate'])->name('create');
         Route::get('/update/{id}', [TextPromptController::class, 'edit'])->name('update');
-        Route::post('/update/{id}', [TextPromptController::class, 'doUpdate'])->name('do_update');
+        Route::post('/update/{id}', [TextPromptController::class, 'do_update'])->name('do_update');
         Route::delete('/delete/{id}', [TextPromptController::class, 'delete'])->name('delete');
     });
-    });
-});
+}); // End Admin Group
 
+// Teacher Group
 Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->group(function () {
     Route::get('/dashboard', function () {
         return view('_teacher.dashboard');
     })->name('dashboard');
+
     Route::prefix('ai-tools')->name('ai.')->group(function () {
         Route::prefix('materi-ajar')->name('materi_ajar.')->group(function () {
             Route::get('/', [MateriAjarController::class, 'index'])->name('index');
             Route::get('/add', [MateriAjarController::class, 'create'])->name('add');
-            Route::delete('/delete/{id}', [MateriAjarController::class, 'delete'])->name('delete');
             Route::delete('/delete/{id}', [MateriAjarController::class, 'delete'])->name('delete');
             Route::get('/detail/{id}', [MateriAjarController::class, 'detail'])->name('detail');
         });
@@ -132,7 +136,7 @@ Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->grou
         Route::prefix('quiz-generator')->name('quiz_generator.')->group(function () {
             Route::get('/', [QuizGeneratorController::class, 'index'])->name('index');
             Route::get('/add', [QuizGeneratorController::class, 'create'])->name('add');
-            Route::post('/create', [QuizGeneratorController::class, 'doCreate'])->name('do_create');
+            Route::post('/create', [ToolsController::class, 'doCreateQuiz'])->name('do_create');
             Route::delete('/delete/{id}', [QuizGeneratorController::class, 'delete'])->name('delete');
             Route::get('/detail/{id}', [QuizGeneratorController::class, 'detail'])->name('detail');
         });
@@ -146,7 +150,7 @@ Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->grou
         Route::get('/add', [LearningModulesController::class, 'add'])->name('add');
         Route::post('/create', [LearningModulesController::class, 'doCreate'])->name('create');
         Route::get('/update/{id}', [LearningModulesController::class, 'update'])->name('update');
-        Route::post('/update/{id}', [LearningModulesController::class, 'doUpdate'])->name('do_update');
+        Route::post('/update/{id}', [LearningModulesController::class, 'do_update'])->name('do_update');
         Route::get('/detail/{id}', [LearningModulesController::class, 'detail'])->name('detail');
         Route::delete('/delete/{id}', [LearningModulesController::class, 'delete'])->name('delete');
     });
@@ -156,7 +160,7 @@ Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->grou
         Route::get('/add', [TaskController::class, 'add'])->name('add');
         Route::post('/create', [TaskController::class, 'doCreate'])->name('do_create');
         Route::get('/update/{id}', [TaskController::class, 'update'])->name('update');
-        Route::post('/update/{id}', [TaskController::class, 'doUpdate'])->name('do_update');
+        Route::post('/update/{id}', [TaskController::class, 'do_update'])->name('do_update');
         Route::delete('/delete/{id}', [TaskController::class, 'delete'])->name('delete');
     });
 
@@ -170,6 +174,7 @@ Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->grou
     });
 });
 
+// Superadmin Group
 Route::middleware(['auth', 'role:1'])->prefix('superadmin')->name('superadmin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -189,7 +194,7 @@ Route::middleware(['auth', 'role:1'])->prefix('superadmin')->name('superadmin.')
         Route::get('/add', [SchoolController::class, 'add'])->name('add');
         Route::post('/create', [SchoolController::class, 'doCreate'])->name('create');
         Route::get('/update/{id}', [SchoolController::class, 'update'])->name('update');
-        Route::post('/update/{id}', [SchoolController::class, 'doUpdate'])->name('do_update');
+        Route::post('/update/{id}', [SchoolController::class, 'do_update'])->name('do_update');
         Route::delete('/delete/{id}', [SchoolController::class, 'delete'])->name('delete');
         Route::post('/restore/{id}', [SchoolController::class, 'restore'])->name('restore');
     });
@@ -199,7 +204,7 @@ Route::middleware(['auth', 'role:1'])->prefix('superadmin')->name('superadmin.')
         Route::get('/add', [PromptImageController::class, 'add'])->name('add');
         Route::post('/create', [PromptImageController::class, 'doCreate'])->name('create');
         Route::get('/update/{id}', [PromptImageController::class, 'edit'])->name('update');
-        Route::post('/update/{id}', [PromptImageController::class, 'doUpdate'])->name('do_update');
+        Route::post('/update/{id}', [PromptImageController::class, 'do_update'])->name('do_update');
         Route::delete('/delete/{id}', [PromptImageController::class, 'delete'])->name('delete');
     });
 
@@ -208,11 +213,12 @@ Route::middleware(['auth', 'role:1'])->prefix('superadmin')->name('superadmin.')
         Route::get('/add', [SubjectController::class, 'add'])->name('add');
         Route::post('/create', [SubjectController::class, 'doCreate'])->name('create');
         Route::get('/update/{id}', [SubjectController::class, 'update'])->name('update');
-        Route::post('/update/{id}', [SubjectController::class, 'doUpdate'])->name('do_update');
+        Route::post('/update/{id}', [SubjectController::class, 'do_update'])->name('do_update');
         Route::delete('/delete/{id}', [SubjectController::class, 'delete'])->name('delete');
     });
 });
 
+// Student Group
 Route::middleware(['auth', 'role:4'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', function () {
         return view('_student.dashboard');

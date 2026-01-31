@@ -45,7 +45,6 @@ class RunTextGeneration implements ShouldQueue
                 );
             }
 
-
             $data = $result['data'];
 
             $payload = [

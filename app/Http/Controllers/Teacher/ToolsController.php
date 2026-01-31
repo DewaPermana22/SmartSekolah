@@ -26,6 +26,7 @@ class ToolsController extends Controller
             'categories' => 'required|string|exists:prompt_text_generation,categories',
         ]);
 
+
         $referenceId = Str::uuid()->toString();
 
         RunTextGeneration::dispatch(
@@ -49,6 +50,9 @@ class ToolsController extends Controller
     public function doCreateQuiz(Request $request)
     {
         $request->validate([
+            'quiz_name'       => 'required|string|max:255',
+            'timer'           => 'required|string',
+            'description'     => 'nullable|string',
             'topic' => 'required|string|max:255',
             'total_questions' => 'required|integer|min:1|max:50',
             'education_level' => 'required|string|in:SD,SMP,SMA,SMK',
@@ -57,16 +61,21 @@ class ToolsController extends Controller
             'categories' => 'required|string|exists:prompt_text_generation,categories',
         ]);
 
+        $userId = Auth::id();
         $referenceId = Str::uuid()->toString();
 
         RunQuizGeneration::dispatch(
+            quizName: $request->quiz_name,
+            timer: $request->timer,
+            description: $request->description,
             topic: $request->topic,
             totalQuestions: (int) $request->total_questions,
+            userId: (int)$userId,
             educationLevel: $request->education_level,
             class: $request->class,
             optionsCount: (int) $request->options_count,
             categories: $request->categories,
-            referenceId: $referenceId
+            referenceId: $referenceId,
         );
 
         return response()->json(
@@ -80,8 +89,6 @@ class ToolsController extends Controller
             202
         );
     }
-
-
 
     public function doCreate(Request $request)
     {

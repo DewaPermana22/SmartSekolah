@@ -23,7 +23,7 @@ class IlustrationController extends Controller
 {
     protected array $page = [
         'route' => 'ai-tools/ilustrasi',
-        'title' => 'AI Tools - Ilustrasi'
+        'title' => 'Alat AI - Ilustrasi'
     ];
 
     protected string $baseRedirect;

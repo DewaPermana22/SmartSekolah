@@ -2,12 +2,14 @@
 
 namespace App\Jobs;
 
+use App\Constants\DatabaseConst;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Queue\Queueable;
-use App\Constants\DatabaseConst;
 use App\Usecase\superAdmin\TextGenerationtUsecase;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -19,19 +21,22 @@ class RunQuizGeneration implements ShouldQueue
     use Queueable, InteractsWithQueue, SerializesModels;
 
     public $tries = 3;
-    public $timeout = 180;
+    public $timeout = 300;
     public $backoff = 30;
 
     public function __construct(
         public string $topic,
         public int $totalQuestions,
+        public int $userId,
         public string $educationLevel,
         public string $class,
         public int $optionsCount,
         public string $categories,
         public string $referenceId,
+        public string $quizName,
+        public string $timer,
+        public ?string $description,
     ) {}
-
 
     public function handle(): void
     {
@@ -39,113 +44,86 @@ class RunQuizGeneration implements ShouldQueue
 
         try {
             $usecase = app(TextGenerationtUsecase::class);
-
-            // Ambil template prompt dari DB
-            $promptTemplate = DB::table('prompt_text_generation')
-                ->where('categories', $this->categories)
-                ->value('text_prompt');
-
-            if (!$promptTemplate) {
-                throw new RuntimeException('Prompt template not found');
-            }
-
-            // Replace parameter di prompt
-            $finalPrompt = str_replace(
-                [
-                    '{{TOPIC}}',
-                    '{{TOTAL_QUESTIONS}}',
-                    '{{EDUCATION_LEVEL}}',
-                    '{{CLASS}}',
-                    '{{OPTIONS_COUNT}}',
-                ],
-                [
-                    $this->topic,
-                    $this->totalQuestions,
-                    $this->educationLevel,
-                    $this->class,
-                    $this->optionsCount,
-                ],
-                $promptTemplate
-            );
-
-            // Panggil Gemini
-            $result = $usecase->generateTextGemini(
-                description: $finalPrompt,
-                categories: $this->categories
+            $formattedTime = Carbon::createFromFormat('H:i', $this->timer)->format('H:i:s');
+            $result = $usecase->generateQuizGemini(
+                topic: $this->topic,
+                total_question: $this->totalQuestions,
+                education_level: $this->educationLevel,
+                grade: $this->class,
+                option_count: $this->optionsCount,
+                categories: $this->categories,
             );
 
             if (!($result['success'] ?? false)) {
-                throw new RuntimeException(
-                    $result['message'] ?? 'Text generation failed'
-                );
+                throw new RuntimeException($result['message'] ?? 'Text generation failed');
             }
 
-            $data = $result['data'];
+            $rawContent = $result['data']['content'] ?? '';
 
-            // Bersihkan kemungkinan ```json
-            $cleanJson = trim($data['content']);
-            $cleanJson = preg_replace('/```json|```/', '', $cleanJson);
+            $cleanJson = trim($rawContent);
+            $cleanJson = preg_replace('/^```json\s*|```$/', '', $cleanJson);
+
+            Storage::disk('local')->put(
+                "generated-quiz/{$this->referenceId}.json",
+                $cleanJson
+            );
+
+            if (preg_match('/\[.*\]/s', $cleanJson, $matches)) {
+                $cleanJson = $matches[0];
+            }
 
             $questions = json_decode($cleanJson, true);
 
-            if (!is_array($questions)) {
-                throw new RuntimeException('Invalid JSON format from AI');
+            // Validasi JSON
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                Log::error('JSON Truncated or Invalid', [
+                    'reference_id' => $this->referenceId,
+                    'error' => json_last_error_msg(),
+                    'raw_tail' => substr($rawContent, -50)
+                ]);
+                throw new RuntimeException('AI JSON terpotong atau format salah.');
             }
 
-            // INSERT QUIZ
-            $quizId = DB::table('quizses')->insertGetId([
-                'quiz_name'   => 'Quiz ' . $this->topic,
-                'description' => 'Quiz tentang ' . $this->topic,
-                'quiz_code'   => $this->referenceId,
-                'quiz_time'   => 0,
+            $quizId = DB::table(DatabaseConst::QUIZZES)->insertGetId([
+                'quiz_name'   => $this->quizName,
+                'description' => $this->description,
+                'quiz_code'   => substr($this->referenceId, 0, 5),
+                'quiz_time'   => $formattedTime,
                 'created_at'  => now(),
-                'created_by'  => 1,
+                'created_by'  => $this->userId,
             ]);
 
-            // LOOP QUESTIONS
             foreach ($questions as $q) {
-                if (!isset($q['question'], $q['options'], $q['correct_answer'])) {
-                    throw new RuntimeException('Invalid question structure');
-                }
+                if (!isset($q['question'], $q['options'], $q['correct_answer'])) continue;
 
-                $questionId = DB::table('quiz_questions')->insertGetId([
+                $questionId = DB::table(DatabaseConst::QUIZ_QUETIONS)->insertGetId([
                     'quiz_id'    => $quizId,
                     'question'   => $q['question'],
                     'created_at' => now(),
-                    'created_by' => 1,
+                    'created_by' => $this->userId,
                 ]);
 
-                // LOOP OPTIONS
                 foreach ($q['options'] as $option) {
-                    DB::table('quiz_options')->insert([
+                    DB::table(DatabaseConst::QUIZ_OPTIONS)->insert([
                         'question_id' => $questionId,
                         'option_text' => $option,
-                        'is_correct'  => $option === $q['correct_answer'],
+                        'is_correct'  => (trim($option) === trim($q['correct_answer'])) ? 1 : 0,
                         'created_at'  => now(),
-                        'created_by'  => 1,
+                        'created_by'  => $this->userId,
                     ]);
                 }
             }
 
             DB::commit();
-
-            Log::info('Quiz generation completed', [
-                'reference_id' => $this->referenceId,
-                'quiz_id' => $quizId,
-            ]);
         } catch (Throwable $e) {
             DB::rollBack();
-
-            Log::error('RunQuizGeneration FAILED', [
+            Log::error('RunQuizGeneration Process Error', [
                 'reference_id' => $this->referenceId,
-                'error' => $e->getMessage()
+                'message' => $e->getMessage()
             ]);
-
             throw $e;
         }
     }
-
-
 
     public function failed(Throwable $exception): void
     {
@@ -153,16 +131,9 @@ class RunQuizGeneration implements ShouldQueue
             "failed-text-generations/{$this->referenceId}.json",
             json_encode([
                 'reference_id' => $this->referenceId,
-                'categories' => $this->categories,
                 'error' => $exception->getMessage(),
                 'timestamp' => now()->toDateTimeString(),
             ], JSON_PRETTY_PRINT)
         );
-
-        Log::error('Job definitively FAILED after all retries', [
-            'reference_id' => $this->referenceId,
-            'tries' => $this->attempts(),
-            'error' => $exception->getMessage()
-        ]);
     }
 }

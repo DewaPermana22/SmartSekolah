@@ -12,7 +12,7 @@ class MateriAjarController extends Controller
 {
     protected array $page = [
         'route' => 'ai-tools/materi-ajar',
-        'title' => 'AI Tools - Materi Ajar'
+        'title' => 'Alat AI - Materi Ajar'
     ];
 
     protected string $baseRedirect;
@@ -29,8 +29,8 @@ class MateriAjarController extends Controller
         $data = $this->usecase->getAll([
             'keywords' => $request->get('keywords'),
             'type' => $request->get('type'),
-        ]); 
-        
+        ]);
+
         $data = $data['data']['list'] ?? [];
         return view('_teacher.ai_tools.materi.index', [
             'page' => $this->page,

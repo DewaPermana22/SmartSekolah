@@ -32,7 +32,7 @@ class DatabaseConst
 
     const IMAGE_GENERATION_HISTORIES = 'image_generation_histories';
 
-    const QUIZZES = 'quiz';
+    const QUIZZES = 'quizzes';
     const QUIZ_OPTIONS = 'quiz_options';
     const QUIZ_QUETIONS = 'quiz_questions';
     const QUIZ_ATTEMPTS = 'quiz_attempts';
