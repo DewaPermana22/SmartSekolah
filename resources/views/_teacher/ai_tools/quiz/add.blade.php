@@ -34,15 +34,31 @@
                 </div>
             </div>
 
-            <div class="grid sm:grid-cols-3 gap-6 mb-6">
-                <div>
-                    <label for="total_questions" class="block text-sm font-medium mb-2 text-gray-800 dark:text-neutral-200">
-                        Jumlah Soal
-                    </label>
-                    <input type="number" id="total_questions" name="total_questions" min="1" max="50" value="5"
-                        class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400"
-                        required>
-                </div>
+                <div class="grid sm:grid-cols-2 gap-6 mb-6">
+                    <!-- Judul Kuis -->
+                    <div>
+                        <label for="quiz_name"
+                            class="block text-sm font-medium mb-2 text-gray-800 dark:text-neutral-200">
+                            Nama Kuis
+                        </label>
+                        <input type="text" id="quiz_name" name="question_count"
+                            class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+                            placeholder="Masukkan jumlah soal" required>
+                    </div>
+
+                    <!-- Jumlah Soal -->
+                    <div>
+                        <label for="question_count"
+                            class="block text-sm font-medium mb-2 text-gray-800 dark:text-neutral-200">
+                            Jumlah Soal
+                        </label>
+                        <input type="number" id="question_count" name="question_count" min="1" max="50" value="10"
+                            class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+                            placeholder="Masukkan jumlah soal" required>
+                        <p class="mt-2 text-xs text-gray-500 dark:text-neutral-400">
+                            Maksimal 50 soal per quiz
+                        </p>
+                    </div>
 
                 <div>
                     <label for="options_count" class="block text-sm font-medium mb-2 text-gray-800 dark:text-neutral-200">

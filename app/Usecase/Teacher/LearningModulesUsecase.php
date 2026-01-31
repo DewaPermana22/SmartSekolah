@@ -5,6 +5,7 @@ namespace App\Usecase\Teacher;
 use App\Constants\DatabaseConst;
 use App\Constants\ResponseConst;
 use App\Http\Presenter\Response;
+use App\Jobs\RunLearningModuleSummarizer;
 use App\Usecase\Usecase;
 use Exception;
 use Illuminate\Http\Request;
@@ -101,7 +102,7 @@ class LearningModulesUsecase extends Usecase
                 $fileName
             );
 
-            DB::table(DatabaseConst::LEARNING_MODULE)->insert([
+            $moduleId = DB::table(DatabaseConst::LEARNING_MODULE)->insertGetId([
                 'title' => $data->title,
                 'subject_id' => $data->subject_id,
                 'classroom' => $data->classroom,
@@ -113,6 +114,22 @@ class LearningModulesUsecase extends Usecase
             ]);
 
             DB::commit();
+
+            // Dispatch job queue for summarization
+            RunLearningModuleSummarizer::dispatch(
+                $filePath,
+                $file->getClientOriginalName(),
+                $file->getMimeType(),
+                $moduleId,
+                $userId
+            );
+
+            Log::info('Learning module created and summarization job dispatched', [
+                'module_id' => $moduleId,
+                'file' => $fileName,
+                'user_id' => $userId
+            ]);
+
             return Response::buildSuccessCreated();
         } catch (Exception $e) {
             DB::rollback();

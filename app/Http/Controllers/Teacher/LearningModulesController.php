@@ -68,7 +68,7 @@ class LearningModulesController extends Controller
         if ($process['success']) {
             return redirect()
                 ->route('teacher.learning_modules.index')
-                ->with('success', 'Modul belajar berhasil ditambahkan.');
+                ->with('success', 'Modul belajar berhasil ditambahkan. Ringkasan sedang diproses secara otomatis.');
         }
 
         return redirect()

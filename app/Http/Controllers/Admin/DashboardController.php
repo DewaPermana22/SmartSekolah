@@ -21,7 +21,6 @@ class DashboardController extends Controller
     {
         $data = $this->usecase->getDashboardStats();
         $stats = $data['data'] ?? [];
-
         $stats = array_merge([
             'total_teachers' => 0,
             'total_students' => 0,

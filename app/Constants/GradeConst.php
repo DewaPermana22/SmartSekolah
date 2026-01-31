@@ -18,6 +18,7 @@ class GradeConst
 
     const MA = 7;
 
+    // 1=SD, 2=MI, 3=SMP, 4=MTS, 5=SMA, 6=SMK, 7=MA
 
     public static function getGrades()
     {

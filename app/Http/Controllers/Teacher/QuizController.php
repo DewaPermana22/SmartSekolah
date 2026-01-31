@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
+use App\Usecase\Teacher\TeacherQuizUsecase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class QuizController extends Controller
 {
@@ -17,49 +17,18 @@ class QuizController extends Controller
 
     protected string $baseRedirect;
 
-    public function __construct()
-    {
+    public function __construct(
+        protected TeacherQuizUsecase $usecase
+    ) {
         $this->baseRedirect = 'teacher/' . $this->page['route'];
     }
 
-    public function index(Request $request): View
+    public function index(Request $request)
     {
-        $collection = collect([
-            (object) [
-                'id' => 1,
-                'name' => 'Kuis Matematika Bab 1',
-                'topic' => 'Aljabar Dasar',
-                'question_count' => 20,
-                'participants_count' => 15,
-                'grade' => 'SMP',
-                'class' => '7',
-                'created_at' => now()->subDays(5),
-            ],
-            (object) [
-                'id' => 2,
-                'name' => 'Kuis IPA - Sistem Pernapasan',
-                'topic' => 'Biologi',
-                'question_count' => 15,
-                'participants_count' => 18,
-                'grade' => 'SMP',
-                'class' => '8',
-                'created_at' => now()->subDays(3),
-            ],
+        $data = $this->usecase->getAll([
+            'keywords' => $request->get('keywords'),
         ]);
-
-        $perPage = 10;
-        $page = $request->get('page', 1);
-
-        $data = new LengthAwarePaginator(
-            $collection->forPage($page, $perPage),
-            $collection->count(),
-            $perPage,
-            $page,
-            [
-                'path' => $request->url(),
-                'query' => $request->query(),
-            ]
-        );
+        $data = $data['data']['list'] ?? [];
 
         return view('_teacher.quiz.index', [
             'page' => $this->page,
@@ -75,91 +44,135 @@ class QuizController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
-        // TODO: Implement quiz creation logic
+        $process = $this->usecase->create($request);
 
-        return redirect()->route('teacher.quiz.index')
-            ->with('success', 'Kuis berhasil dibuat');
+        if ($process['success']) {
+            $quizCode = $process['data']['quiz_code'];
+
+            return redirect()
+                ->route('teacher.quiz.index')
+                ->with('success', "Kuis berhasil dibuat dengan kode: {$quizCode}. Silakan tambahkan soal-soal.");
+        }
+
+        return redirect()
+            ->back()
+            ->withInput()
+            ->with('error', $process['message'] ?? 'Terjadi kesalahan saat membuat kuis.');
+    }
+
+    public function addQuestions(int $id): View|RedirectResponse
+    {
+        $result = $this->usecase->getById($id);
+
+        if (! $result['success']) {
+            return redirect()
+                ->route('teacher.quiz.index')
+                ->with('error', 'Quiz tidak ditemukan');
+        }
+
+        return view('_teacher.quiz.add_questions', [
+            'page' => $this->page,
+            'quiz' => $result['data']['data'],
+        ]);
+    }
+
+    public function storeQuestions(int $id, Request $request): RedirectResponse
+    {
+        $process = $this->usecase->addQuestions($request, $id);
+
+        if ($process['success']) {
+            return redirect()
+                ->route('teacher.quiz.questions.add', $id)
+                ->with('success', 'Soal berhas berhasil ditambahkan');
+        }
+
+        return redirect()
+            ->back()
+            ->withInput()
+            ->with('error', $process['message'] ?? 'Terjadi kesalahan saat menambahkan soal.');
     }
 
     public function detail(int $id): View|RedirectResponse
     {
-        // TODO: Implement logic to fetch quiz detail
-        $data = (object) [
-            'id' => $id,
-            'name' => 'Kuis Matematika Bab 1',
-            'topic' => 'Aljabar Dasar',
-            'description' => 'Kuis untuk menguji pemahaman aljabar dasar',
-            'question_count' => 20,
-            'duration' => 60,
-            'grade' => 'SMP',
-            'class' => '7',
-            'created_at' => now()->subDays(5),
-            'questions' => [],
-        ];
+        $data = $this->usecase->getById($id);
+
+        if (empty($data['data'])) {
+            return redirect()
+                ->intended($this->baseRedirect)
+                ->with('error', 'Kuis tidak ditemukan.');
+        }
 
         return view('_teacher.quiz.detail', [
             'page' => $this->page,
-            'data' => $data,
+            'data' => $data['data']['data'] ?? [],
         ]);
+    }
+
+    public function edit(int $id): View|RedirectResponse
+    {
+        $data = $this->usecase->getById($id);
+
+        if (empty($data['data'])) {
+            return redirect()
+                ->intended($this->baseRedirect)
+                ->with('error', 'Kuis tidak ditemukan.');
+        }
+
+        return view('_teacher.quiz.edit', [
+            'page' => $this->page,
+            'data' => $data['data']['data'] ?? [],
+        ]);
+    }
+
+    public function update(int $id, Request $request): RedirectResponse
+    {
+        $process = $this->usecase->update($request, $id);
+
+        if ($process['success']) {
+            return redirect()
+                ->route('teacher.quiz.index')
+                ->with('success', 'Kuis berhasil diperbarui');
+        }
+
+        return redirect()
+            ->back()
+            ->withInput()
+            ->with('error', $process['message'] ?? 'Terjadi kesalahan saat memperbarui kuis.');
     }
 
     public function scores(int $id): View|RedirectResponse
     {
-        $quiz = (object) [
-            'id' => $id,
-            'name' => 'Kuis Matematika Bab 1',
-            'topic' => 'Aljabar Dasar',
-        ];
+        $quiz = $this->usecase->getById($id);
 
-        $collection = collect([
-            (object) [
-                'id' => 1,
-                'student_name' => 'Ahmad Fauzi',
-                'student_nisn' => '0012345678',
-                'score' => 85,
-                'correct_answers' => 17,
-                'total_questions' => 20,
-                'completed_at' => now()->subHours(2),
-            ],
-            (object) [
-                'id' => 2,
-                'student_name' => 'Siti Nurhaliza',
-                'student_nisn' => '0012345679',
-                'score' => 90,
-                'correct_answers' => 18,
-                'total_questions' => 20,
-                'completed_at' => now()->subHours(3),
-            ],
-        ]);
+        if (empty($quiz['data'])) {
+            return redirect()
+                ->intended($this->baseRedirect)
+                ->with('error', 'Kuis tidak ditemukan.');
+        }
 
-        $perPage = 10;
-        $page = request()->get('page', 1);
-
-        $scores = new LengthAwarePaginator(
-            $collection->forPage($page, $perPage),
-            $collection->count(),
-            $perPage,
-            $page,
-            [
-                'path' => request()->url(),
-                'query' => request()->query(),
-            ]
-        );
+        $scores = [];
 
         return view('_teacher.quiz.scores', [
             'page' => $this->page,
-            'quiz' => $quiz,
+            'quiz' => $quiz['data']['data'] ?? [],
             'scores' => $scores,
         ]);
     }
 
     public function delete(int $id): RedirectResponse
     {
-        // TODO: Implement quiz deletion logic
+        $process = $this->usecase->delete($id);
 
-        return redirect()->route('teacher.quiz.index')
-            ->with('success', 'Kuis berhasil dihapus');
+        if ($process['success']) {
+            return redirect()
+                ->route('teacher.quiz.index')
+                ->with('success', 'Kuis berhasil dihapus');
+        }
+
+        return redirect()
+            ->back()
+            ->with('error', $process['message'] ?? 'Terjadi kesalahan saat menghapus kuis.');
     }
 }

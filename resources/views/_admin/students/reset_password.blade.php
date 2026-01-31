@@ -42,7 +42,6 @@
                     @csrf
 
                     <div class="space-y-4">
-                        {{-- New Password --}}
                         <div>
                             <label for="password" class="block text-sm font-medium mb-2 dark:text-white">Password Baru <span
                                     class="text-red-500">*</span></label>
@@ -54,7 +53,6 @@
                             @enderror
                         </div>
 
-                        {{-- Confirm New Password --}}
                         <div>
                             <label for="password_confirmation" class="block text-sm font-medium mb-2 dark:text-white">Ulangi
                                 Password Baru
@@ -65,7 +63,6 @@
                         </div>
                     </div>
 
-                    {{-- Footer --}}
                     <div class="mt-4 flex justify-start gap-x-2">
                         <button type="submit"
                             class="py-2.5 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-xl border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none transition-all shadow-md shadow-blue-500/20 active:scale-95 cursor-pointer">

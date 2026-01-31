@@ -9,6 +9,10 @@ use App\Http\Controllers\Admin\TaskCategoryController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Student\LearningModulesController as studentLearningModulesController;
+use App\Http\Controllers\superAdmin\DashboardController as SuperAdminDashboardController;
 use App\Http\Controllers\Student\IntractiveQuiz as StudentQuizController;
 use App\Http\Controllers\Student\LearningModulesController as StudentLearningModulesController;
 use App\Http\Controllers\superAdmin\UserController as SuperAdminUserController;
@@ -23,6 +27,7 @@ use App\Http\Controllers\Teacher\AITools\MateriAjarController;
 use App\Http\Controllers\Teacher\AITools\QuizGeneratorController;
 use App\Http\Controllers\Teacher\LearningModulesController;
 use App\Http\Controllers\Teacher\QuizController;
+use App\Http\Controllers\Teacher\DashboardController as TeacherDashboardController;
 use App\Http\Controllers\Teacher\ToolsController;
 use Illuminate\Support\Facades\Route;
 
@@ -43,8 +48,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/register-school', [AdminSchoolController::class, 'doCreate'])->name('school.register.post');
 });
 
-// Admin Group
-Route::middleware(['auth', 'role:2', 'check.school'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:2', 'check.school', 'check.school.status'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     Route::prefix('task-categories')->name('task_categories.')->group(function () {
@@ -112,12 +116,8 @@ Route::middleware(['auth', 'role:2', 'check.school'])->prefix('admin')->name('ad
     });
 }); // End Admin Group
 
-// Teacher Group
-Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('_teacher.dashboard');
-    })->name('dashboard');
-
+Route::middleware(['auth', 'role:3', 'check.school.status'])->prefix('teacher')->name('teacher.')->group(function () {
+    Route::get('/dashboard', [TeacherDashboardController::class, 'index'])->name('dashboard');
     Route::prefix('ai-tools')->name('ai.')->group(function () {
         Route::prefix('materi-ajar')->name('materi_ajar.')->group(function () {
             Route::get('/', [MateriAjarController::class, 'index'])->name('index');
@@ -169,6 +169,10 @@ Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->grou
         Route::get('/add', [QuizController::class, 'create'])->name('add');
         Route::post('/store', [QuizController::class, 'store'])->name('store');
         Route::get('/detail/{id}', [QuizController::class, 'detail'])->name('detail');
+        Route::get('/{id}/questions/add', [QuizController::class, 'addQuestions'])->name('questions.add');
+        Route::post('/{id}/questions/store', [QuizController::class, 'storeQuestions'])->name('questions.store');
+        Route::get('/edit/{id}', [QuizController::class, 'edit'])->name('edit');
+        Route::post('/update/{id}', [QuizController::class, 'update'])->name('update');
         Route::get('/scores/{id}', [QuizController::class, 'scores'])->name('scores');
         Route::delete('/delete/{id}', [QuizController::class, 'delete'])->name('delete');
     });
@@ -176,7 +180,7 @@ Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->grou
 
 // Superadmin Group
 Route::middleware(['auth', 'role:1'])->prefix('superadmin')->name('superadmin.')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [SuperAdminDashboardController::class, 'index'])->name('dashboard');
 
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [SuperAdminUserController::class, 'index'])->name('index');
@@ -218,14 +222,14 @@ Route::middleware(['auth', 'role:1'])->prefix('superadmin')->name('superadmin.')
     });
 });
 
-// Student Group
-Route::middleware(['auth', 'role:4'])->prefix('student')->name('student.')->group(function () {
+Route::middleware(['auth', 'role:4', 'check.school.status'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', function () {
         return view('_student.dashboard');
     })->name('dashboard');
 
     Route::prefix('learning-modules')->name('learning_modules.')->group(function () {
         Route::get('/', [StudentLearningModulesController::class, 'index'])->name('index');
+        Route::get('/download/{id}', [studentLearningModulesController::class, 'download'])->middleware(['throttle:1,1'])->name('download');
     });
 
     Route::prefix('quiz')->name('quiz.')->group(function () {

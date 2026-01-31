@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UseCases\Teacher;
+namespace App\Usecase\Teacher;
 
 use App\Usecase\superAdmin\ToolsAiUsecase;
 use Illuminate\Http\UploadedFile;

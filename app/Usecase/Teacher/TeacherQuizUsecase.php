@@ -1,115 +1,421 @@
 <?php
 
-namespace App\UseCase\Teacher;
-
+namespace App\Usecase\Teacher;
 use App\Constants\DatabaseConst;
 use App\Constants\ResponseConst;
 use App\Http\Presenter\Response;
+use App\Usecase\Usecase;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
-class TeacherQuizUsecase
+class TeacherQuizUsecase extends Usecase
 {
-    public function getAll(array $filterData = [])
+    public function getAll(array $filterData = []): array
     {
         try {
-            $userId = Auth::id();
+            $user = Auth::user();
+            if (! $user) {
+                throw new Exception('User not authenticated');
+            }
 
-            $data = DB::table(DatabaseConst::QUIZZES . ' as q')
-                ->select([
+            $query = DB::table(DatabaseConst::QUIZ.' as q')
+                ->join(DatabaseConst::USER.' as u', 'q.created_by', '=', 'u.id')
+                ->whereNull('q.deleted_at')
+                ->select(
                     'q.id',
                     'q.quiz_name',
                     'q.description',
                     'q.quiz_code',
                     'q.quiz_time',
                     'q.created_at',
-                    DB::raw('(SELECT COUNT(*) FROM ' . DatabaseConst::QUIZ_QUETIONS . ' WHERE quiz_id = q.id) as total_soal'),
-                    DB::raw('(SELECT COUNT(DISTINCT student_id) FROM quiz_attempts 
-                          WHERE quiz_id = q.id 
-                          AND deleted_at IS NULL) as total_students_count')
-                ])
-                ->where('q.created_by', $userId)
-                ->whereNull('q.deleted_at')
-                ->orderBy('q.created_at', 'desc')
-                ->paginate(20);
+                    'u.name as created_by_name'
+                )
+                ->selectSub(
+                    DB::table(DatabaseConst::QUIZ_ATTEMPT.' as qa')
+                        ->selectRaw('COUNT(DISTINCT qa.student_id)')
+                        ->whereColumn('qa.quiz_id', 'q.id')
+                        ->whereNull('qa.deleted_at'),
+                    'participants_count'
+                )
+                ->orderBy('q.created_at', 'desc');
 
-            return Response::buildSuccess(['list' => $data], ResponseConst::HTTP_SUCCESS);
-        } catch (Exception $e) {
-            Log::error($e->getMessage());
-            return Response::buildErrorService($e->getMessage());
-        }
-    }
-
-
-    public function getById(int $id)
-    {
-        try {
-            $userId = Auth::id();
-
-            $quiz = DB::table(DatabaseConst::QUIZZES)
-                ->where('id', $id)
-                ->where('created_by', $userId)
-                ->whereNull('deleted_at')
-                ->first();
-
-            if (!$quiz) {
-                return Response::buildErrorNotFound('Kuis tidak ditemukan atau Anda tidak memiliki akses.');
+            // Filter by school_id for multi-tenancy
+            if ($user->access_type == 4) {
+                $query->where('q.school_id', $user->school_id);
+            } else {
+                $query->where('q.created_by', $user->id);
             }
 
-            $questions = DB::table(DatabaseConst::QUIZ_QUETIONS)
-                ->where('quiz_id', $quiz->id)
-                ->get();
-
-            foreach ($questions as $question) {
-                $question->options = DB::table(DatabaseConst::QUIZ_OPTIONS)
-                    ->where('question_id', $question->id)
-                    ->get();
+            // Search filter
+            if (! empty($filterData['keywords'])) {
+                $query->where('q.quiz_name', 'like', '%'.$filterData['keywords'].'%');
             }
+
+            // Count questions for each quiz
+            $data = $query->paginate(20);
+
+            // Add question count to each quiz
+            $data->getCollection()->transform(function ($quiz) {
+                $quiz->question_count = DB::table(DatabaseConst::QUIZ_QUESTION)
+                    ->where('quiz_id', $quiz->id)
+                    ->whereNull('deleted_at')
+                    ->count();
+
+                return $quiz;
+            });
 
             return Response::buildSuccess(
-                ['data' => [
-                    'quiz' => $quiz,
-                    'questions' => $questions
-                ]],
+                ['list' => $data],
                 ResponseConst::HTTP_SUCCESS
             );
         } catch (Exception $e) {
-            $this->logError($e, __METHOD__);
+            Log::error($e->getMessage(), ['method' => __METHOD__]);
+
             return Response::buildErrorService($e->getMessage());
         }
     }
 
-    public function delete(int $id)
+    public function create(Request $data): array
     {
+        $validator = Validator::make($data->all(), [
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'duration' => 'required|date_format:H:i:s',
+        ]);
+
+        $validator->validate();
+
+        DB::beginTransaction();
         try {
-            $userId = Auth::id();
+            $userId = Auth::user()?->id;
+            $schoolId = Auth::user()?->school_id;
 
-            $deleted = DB::table(DatabaseConst::QUIZZES)
-                ->where('id', $id)
-                ->where('created_by', $userId) // Keamanan: Hanya pembuat yang bisa hapus
-                ->update([
-                    'deleted_at' => now(),
-                    'deleted_by' => $userId,
-                ]);
-
-            if (!$deleted) {
-                return Response::buildErrorNotFound('Gagal menghapus kuis. Data tidak ditemukan.');
+            if (! $userId) {
+                throw new Exception('User not authenticated');
             }
 
-            return Response::buildSuccess([], ResponseConst::HTTP_SUCCESS);
+            // Generate unique 5-digit quiz code
+            do {
+                $quizCode = str_pad(rand(0, 99999), 5, '0', STR_PAD_LEFT);
+                $exists = DB::table(DatabaseConst::QUIZ)
+                    ->where('quiz_code', $quizCode)
+                    ->exists();
+            } while ($exists);
+
+            // Insert quiz
+            $quizId = DB::table(DatabaseConst::QUIZ)->insertGetId([
+                'quiz_name' => $data->name,
+                'description' => $data->description,
+                'quiz_code' => $quizCode,
+                'quiz_time' => $data->duration,
+                'created_by' => $userId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::commit();
+
+            return Response::buildSuccess(
+                ['quiz_id' => $quizId, 'quiz_code' => $quizCode],
+                ResponseConst::HTTP_SUCCESS
+            );
         } catch (Exception $e) {
-            $this->logError($e, __METHOD__);
+            DB::rollback();
+            Log::error($e->getMessage(), ['method' => __METHOD__]);
+
             return Response::buildErrorService($e->getMessage());
         }
     }
 
-    private function logError(Exception $e, string $method)
+    public function addQuestions(Request $data, int $quizId): array
     {
-        Log::error($e->getMessage(), [
-            'method' => $method,
-            'user_id' => Auth::id()
+        $validator = Validator::make($data->all(), [
+            'questions' => 'required|array|min:1',
+            'questions.*.question' => 'required|string',
+            'questions.*.correct_answer' => 'required|in:A,B,C,D,E',
         ]);
+
+        $validator->validate();
+
+        DB::beginTransaction();
+        try {
+            $userId = Auth::user()?->id;
+
+            if (! $userId) {
+                throw new Exception('User not authenticated');
+            }
+
+            // Verify quiz exists and user has permission
+            $quiz = DB::table(DatabaseConst::QUIZ)
+                ->where('id', $quizId)
+                ->whereNull('deleted_at')
+                ->first();
+
+            if (! $quiz) {
+                throw new Exception('Quiz not found');
+            }
+
+            // Insert questions and options
+            foreach ($data->questions as $questionData) {
+                $questionId = DB::table(DatabaseConst::QUIZ_QUESTION)->insertGetId([
+                    'quiz_id' => $quizId,
+                    'question' => $questionData['question'],
+                    'created_by' => $userId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                // Insert options (A-E)
+                $options = ['A', 'B', 'C', 'D', 'E'];
+                foreach ($options as $option) {
+                    $optionKey = 'option_'.strtolower($option);
+
+                    // Only insert if option text is provided
+                    if (! empty($questionData[$optionKey])) {
+                        DB::table(DatabaseConst::QUIZ_OPTION)->insert([
+                            'question_id' => $questionId,
+                            'option_text' => $questionData[$optionKey],
+                            'is_correct' => $questionData['correct_answer'] === $option ? 1 : 0,
+                            'created_by' => $userId,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                    }
+                }
+            }
+
+            DB::commit();
+
+            return Response::buildSuccessCreated();
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::error($e->getMessage(), ['method' => __METHOD__]);
+
+            return Response::buildErrorService($e->getMessage());
+        }
+    }
+
+    public function getById(int $id): array
+    {
+        try {
+            $user = Auth::user();
+            if (! $user) {
+                throw new Exception('User not authenticated');
+            }
+
+            // Get quiz
+            $quiz = DB::table(DatabaseConst::QUIZ.' as q')
+                ->join(DatabaseConst::USER.' as u', 'q.created_by', '=', 'u.id')
+                ->where('q.id', $id)
+                ->whereNull('q.deleted_at')
+                ->select(
+                    'q.*',
+                    'u.name as created_by_name'
+                )
+                ->first();
+
+            if (! $quiz) {
+                return Response::buildErrorNotFound('Data kuis tidak ditemukan');
+            }
+
+            // Get questions with options
+            $questions = DB::table(DatabaseConst::QUIZ_QUESTION.' as qq')
+                ->where('qq.quiz_id', $id)
+                ->whereNull('qq.deleted_at')
+                ->select('qq.*')
+                ->orderBy('qq.id')
+                ->get();
+
+            // Get options for each question
+            foreach ($questions as $question) {
+                $options = DB::table(DatabaseConst::QUIZ_OPTION)
+                    ->where('question_id', $question->id)
+                    ->whereNull('deleted_at')
+                    ->orderBy('id')
+                    ->get();
+
+                $question->options = $options;
+            }
+
+            $quiz->questions = $questions;
+
+            return Response::buildSuccess(
+                ['data' => $quiz],
+                ResponseConst::HTTP_SUCCESS
+            );
+        } catch (Exception $e) {
+            Log::error($e->getMessage(), ['method' => __METHOD__]);
+
+            return Response::buildErrorService($e->getMessage());
+        }
+    }
+
+    public function update(Request $data, int $id): array
+    {
+        $validator = Validator::make($data->all(), [
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'duration' => 'nullable|integer|min:1',
+            'questions' => 'required|array|min:1',
+            'questions.*.question' => 'required|string',
+            'questions.*.correct_answer' => 'required|in:A,B,C,D,E',
+        ]);
+
+        $validator->validate();
+
+        DB::beginTransaction();
+        try {
+            $userId = Auth::user()?->id;
+            if (! $userId) {
+                throw new Exception('User not authenticated');
+            }
+
+            // Check if quiz exists
+            $quiz = DB::table(DatabaseConst::QUIZ)
+                ->where('id', $id)
+                ->whereNull('deleted_at')
+                ->first();
+
+            if (! $quiz) {
+                throw new Exception('Data kuis tidak ditemukan');
+            }
+
+            // 1. Update quiz
+            DB::table(DatabaseConst::QUIZ)
+                ->where('id', $id)
+                ->update([
+                    'quiz_name' => $data->name,
+                    'description' => $data->description,
+                    'quiz_time' => $data->duration ?? 60,
+                    'updated_by' => $userId,
+                    'updated_at' => now(),
+                ]);
+
+            // 2. Soft delete existing questions and options
+            DB::table(DatabaseConst::QUIZ_QUESTION)
+                ->where('quiz_id', $id)
+                ->update([
+                    'deleted_by' => $userId,
+                    'deleted_at' => now(),
+                ]);
+
+            $existingQuestionIds = DB::table(DatabaseConst::QUIZ_QUESTION)
+                ->where('quiz_id', $id)
+                ->pluck('id');
+
+            if ($existingQuestionIds->isNotEmpty()) {
+                DB::table(DatabaseConst::QUIZ_OPTION)
+                    ->whereIn('question_id', $existingQuestionIds)
+                    ->update([
+                        'deleted_by' => $userId,
+                        'deleted_at' => now(),
+                    ]);
+            }
+
+            // 3. Insert new questions and options
+            foreach ($data->questions as $questionData) {
+                $questionId = DB::table(DatabaseConst::QUIZ_QUESTION)->insertGetId([
+                    'quiz_id' => $id,
+                    'question' => $questionData['question'],
+                    'created_by' => $userId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                // Insert options
+                $options = ['A', 'B', 'C', 'D', 'E'];
+                foreach ($options as $option) {
+                    $optionKey = 'option_'.strtolower($option);
+
+                    if (! empty($questionData[$optionKey])) {
+                        DB::table(DatabaseConst::QUIZ_OPTION)->insert([
+                            'question_id' => $questionId,
+                            'option_text' => $questionData[$optionKey],
+                            'is_correct' => $questionData['correct_answer'] === $option ? 1 : 0,
+                            'created_by' => $userId,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+                    }
+                }
+            }
+
+            DB::commit();
+
+            return Response::buildSuccess(
+                message: ResponseConst::SUCCESS_MESSAGE_UPDATED
+            );
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::error($e->getMessage(), ['method' => __METHOD__]);
+
+            return Response::buildErrorService($e->getMessage());
+        }
+    }
+
+    public function delete(int $id): array
+    {
+        DB::beginTransaction();
+        try {
+            $userId = Auth::user()?->id;
+            if (! $userId) {
+                throw new Exception('User not authenticated');
+            }
+
+            // Check if quiz exists
+            $quiz = DB::table(DatabaseConst::QUIZ)
+                ->where('id', $id)
+                ->whereNull('deleted_at')
+                ->first();
+
+            if (! $quiz) {
+                throw new Exception('Data kuis tidak ditemukan');
+            }
+
+            // 1. Soft delete quiz
+            DB::table(DatabaseConst::QUIZ)
+                ->where('id', $id)
+                ->update([
+                    'deleted_by' => $userId,
+                    'deleted_at' => now(),
+                ]);
+
+            // 2. Soft delete questions
+            DB::table(DatabaseConst::QUIZ_QUESTION)
+                ->where('quiz_id', $id)
+                ->update([
+                    'deleted_by' => $userId,
+                    'deleted_at' => now(),
+                ]);
+
+            // 3. Soft delete options
+            $questionIds = DB::table(DatabaseConst::QUIZ_QUESTION)
+                ->where('quiz_id', $id)
+                ->pluck('id');
+
+            if ($questionIds->isNotEmpty()) {
+                DB::table(DatabaseConst::QUIZ_OPTION)
+                    ->whereIn('question_id', $questionIds)
+                    ->update([
+                        'deleted_by' => $userId,
+                        'deleted_at' => now(),
+                    ]);
+            }
+
+            DB::commit();
+
+            return Response::buildSuccess(
+                message: ResponseConst::SUCCESS_MESSAGE_DELETED
+            );
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::error($e->getMessage(), ['method' => __METHOD__]);
+
+            return Response::buildErrorService($e->getMessage());
+        }
     }
 }

@@ -40,12 +40,10 @@ class DashboardUsecase extends Usecase
                 ->whereNull('deleted_at')
                 ->count();
 
-            // Count learning modules where the teacher belongs to this school
+            // Count learning modules where school_id matches
             $totalLearningModules = DB::table(DatabaseConst::LEARNING_MODULE)
-                ->join(DatabaseConst::TEACHER, DatabaseConst::LEARNING_MODULE.'.teacher_id', '=', DatabaseConst::TEACHER.'.id')
-                ->where(DatabaseConst::TEACHER.'.school_id', $schoolId)
-                ->whereNull(DatabaseConst::LEARNING_MODULE.'.deleted_at')
-                ->whereNull(DatabaseConst::TEACHER.'.deleted_at')
+                ->where('school_id', $schoolId)
+                ->whereNull('deleted_at')
                 ->count();
 
             $chartData = $this->getMonthlyRegistrationStats($schoolId);
@@ -75,43 +73,69 @@ class DashboardUsecase extends Usecase
     public function getMonthlyRegistrationStats(int $schoolId): array
     {
         try {
-            $currentYear = Carbon::now()->year;
+            // Get data from current month only (daily stats)
+            $now = Carbon::now();
+            $currentYear = $now->year;
+            $currentMonth = $now->month;
+            $daysInMonth = $now->daysInMonth;
 
-            // Create categories for all 12 months
+            $startOfMonth = Carbon::create($currentYear, $currentMonth, 1)->startOfDay();
+            $endOfMonth = Carbon::create($currentYear, $currentMonth, $daysInMonth)->endOfDay();
+
+            // Get teacher registrations by day
+            $teacherRegistrations = DB::table(DatabaseConst::USER)
+                ->join(DatabaseConst::TEACHER, DatabaseConst::USER.'.id', '=', DatabaseConst::TEACHER.'.user_id')
+                ->select(
+                    DB::raw('DATE('.DatabaseConst::USER.'.created_at) as date'),
+                    DB::raw('COUNT(*) as count')
+                )
+                ->where(DatabaseConst::TEACHER.'.school_id', $schoolId)
+                ->whereBetween(DatabaseConst::USER.'.created_at', [$startOfMonth, $endOfMonth])
+                ->whereNull(DatabaseConst::USER.'.deleted_at')
+                ->whereNull(DatabaseConst::TEACHER.'.deleted_at')
+                ->groupBy('date')
+                ->orderBy('date')
+                ->get();
+
+            // Get student registrations by day
+            $studentRegistrations = DB::table(DatabaseConst::USER)
+                ->join(DatabaseConst::STUDENT, DatabaseConst::USER.'.id', '=', DatabaseConst::STUDENT.'.user_id')
+                ->select(
+                    DB::raw('DATE('.DatabaseConst::USER.'.created_at) as date'),
+                    DB::raw('COUNT(*) as count')
+                )
+                ->where(DatabaseConst::STUDENT.'.school_id', $schoolId)
+                ->whereBetween(DatabaseConst::USER.'.created_at', [$startOfMonth, $endOfMonth])
+                ->whereNull(DatabaseConst::USER.'.deleted_at')
+                ->whereNull(DatabaseConst::STUDENT.'.deleted_at')
+                ->groupBy('date')
+                ->orderBy('date')
+                ->get();
+
+            // Create categories for all days in current month
             $categories = [];
-            for ($month = 1; $month <= 12; $month++) {
-                $date = Carbon::create($currentYear, $month, 1);
-                $categories[] = $date->format('M Y');
+            for ($day = 1; $day <= $daysInMonth; $day++) {
+                $date = Carbon::create($currentYear, $currentMonth, $day);
+                $categories[] = $date->format('Y-m-d');
             }
 
             // Initialize data arrays with zeros
-            $teacherData = array_fill(0, 12, 0);
-            $studentData = array_fill(0, 12, 0);
+            $teacherData = array_fill(0, $daysInMonth, 0);
+            $studentData = array_fill(0, $daysInMonth, 0);
 
-            // Calculate cumulative totals for each month
-            for ($month = 1; $month <= 12; $month++) {
-                $endOfMonth = Carbon::create($currentYear, $month, 1)->endOfMonth();
+            // Fill in the actual data
+            foreach ($teacherRegistrations as $registration) {
+                $dateIndex = array_search($registration->date, $categories);
+                if ($dateIndex !== false) {
+                    $teacherData[$dateIndex] = $registration->count;
+                }
+            }
 
-                // Count teachers registered up to end of this month
-                $teacherCount = DB::table(DatabaseConst::TEACHER)
-                    ->join(DatabaseConst::USER, DatabaseConst::TEACHER.'.user_id', '=', DatabaseConst::USER.'.id')
-                    ->where(DatabaseConst::TEACHER.'.school_id', $schoolId)
-                    ->where(DatabaseConst::USER.'.created_at', '<=', $endOfMonth)
-                    ->whereNull(DatabaseConst::USER.'.deleted_at')
-                    ->whereNull(DatabaseConst::TEACHER.'.deleted_at')
-                    ->count();
-
-                // Count students registered up to end of this month
-                $studentCount = DB::table(DatabaseConst::STUDENT)
-                    ->join(DatabaseConst::USER, DatabaseConst::STUDENT.'.user_id', '=', DatabaseConst::USER.'.id')
-                    ->where(DatabaseConst::STUDENT.'.school_id', $schoolId)
-                    ->where(DatabaseConst::USER.'.created_at', '<=', $endOfMonth)
-                    ->whereNull(DatabaseConst::USER.'.deleted_at')
-                    ->whereNull(DatabaseConst::STUDENT.'.deleted_at')
-                    ->count();
-
-                $teacherData[$month - 1] = $teacherCount;
-                $studentData[$month - 1] = $studentCount;
+            foreach ($studentRegistrations as $registration) {
+                $dateIndex = array_search($registration->date, $categories);
+                if ($dateIndex !== false) {
+                    $studentData[$dateIndex] = $registration->count;
+                }
             }
 
             // Format for ApexCharts
