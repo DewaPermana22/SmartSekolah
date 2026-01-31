@@ -7,8 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Queue\Queueable;
-use App\Usecase\superAdmin\TextGenerationtUsecase;
-use App\Usecase\SuperAdmin\TextGenerationUsecase;
+use App\Usecase\superAdmin\TextGenerationUsecase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -84,7 +83,7 @@ class RunQuizGeneration implements ShouldQueue
                 throw new RuntimeException('AI JSON terpotong atau format salah.');
             }
 
-            $quizId = DB::table(DatabaseConst::QUIZZES)->insertGetId([
+            $quizId = DB::table(DatabaseConst::QUIZ)->insertGetId([
                 'quiz_name'   => $this->quizName,
                 'description' => $this->description,
                 'quiz_code'   => substr($this->referenceId, 0, 5),
@@ -96,7 +95,7 @@ class RunQuizGeneration implements ShouldQueue
             foreach ($questions as $q) {
                 if (!isset($q['question'], $q['options'], $q['correct_answer'])) continue;
 
-                $questionId = DB::table(DatabaseConst::QUIZ_QUETIONS)->insertGetId([
+                $questionId = DB::table(DatabaseConst::QUIZ_QUESTION)->insertGetId([
                     'quiz_id'    => $quizId,
                     'question'   => $q['question'],
                     'created_at' => now(),
@@ -104,7 +103,7 @@ class RunQuizGeneration implements ShouldQueue
                 ]);
 
                 foreach ($q['options'] as $option) {
-                    DB::table(DatabaseConst::QUIZ_OPTIONS)->insert([
+                    DB::table(DatabaseConst::QUIZ_OPTION)->insert([
                         'question_id' => $questionId,
                         'option_text' => $option,
                         'is_correct'  => (trim($option) === trim($q['correct_answer'])) ? 1 : 0,

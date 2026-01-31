@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Usecase\Teacher\TeacherQuizUsecase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class QuizController extends Controller
@@ -180,5 +181,46 @@ class QuizController extends Controller
         return redirect()
             ->back()
             ->with('error', $process['message'] ?? 'Terjadi kesalahan saat menghapus kuis.');
+    }
+
+    public function updateQuestion(Request $request, int $id): JsonResponse
+    {
+        $request->validate([
+            'question' => 'required|string',
+            'options' => 'required|array',
+            'correct_answer' => 'required|integer',
+        ]);
+
+        $process = $this->usecase->updateQuestion($id, $request->all());
+
+        if ($process['success']) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Soal berhasil diperbarui',
+                'data' => $process['data'] ?? null,
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => $process['message'] ?? 'Terjadi kesalahan saat memperbarui soal',
+        ], 400);
+    }
+
+    public function deleteQuestion(int $id): JsonResponse
+    {
+        $process = $this->usecase->deleteQuestion($id);
+
+        if ($process['success']) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Soal berhasil dihapus',
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => $process['message'] ?? 'Terjadi kesalahan saat menghapus soal',
+        ], 400);
     }
 }

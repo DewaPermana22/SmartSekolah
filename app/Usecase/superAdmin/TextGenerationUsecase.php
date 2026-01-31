@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Usecase\SuperAdmin;
+namespace App\Usecase\superAdmin;
 
 use App\Constants\AIConst;
 use App\Constants\DatabaseConst;
@@ -65,6 +65,8 @@ class TextGenerationUsecase
             ]
         );
 
+        Log::info('prompt tekssss:::     ' . $prompt);
+
         $apiKey = $this->aiToolsUsecase->getApikeys('gemini');
         $url = AIConst::getUrlTextGeneration(
             AIConst::GEMINI_TEXT_MODEL,
@@ -82,7 +84,7 @@ class TextGenerationUsecase
             ],
             "generationConfig" => [
                 "temperature" => 0.7,
-                "responseMimeType" => "application/json",
+                // "responseMimeType" => "application/json",
                 "maxOutputTokens" => 4096,
             ]
         ];

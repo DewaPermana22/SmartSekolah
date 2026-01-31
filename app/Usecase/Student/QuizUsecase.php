@@ -21,35 +21,47 @@ class QuizUsecase extends Usecase
         try {
             $user = Auth::user();
             if (!$user) {
-                throw new Exception('User not authenticated');
+                throw new Exception('User tidak terautentikasi');
             }
 
             $query = DB::table(DatabaseConst::QUIZ_RESULT . ' as qr')
-                ->join(DatabaseConst::SUBJECT . ' as s', 'lm.subject_id', '=', 's.id')
-                ->whereNull('lm.deleted_at')
+                // Join ke Attempt untuk mengunci kepemilikan data (student_id)
+                ->join(DatabaseConst::QUIZ_ATTEMPT . ' as qa', 'qr.quiz_attempt_id', '=', 'qa.id')
+                // Join ke Master Kuis untuk informasi judul
+                ->join(DatabaseConst::QUIZ . ' as q', 'qa.quiz_id', '=', 'q.id')
+                // Join ke Mata Pelajaran
+                ->join(DatabaseConst::SUBJECT . ' as s', 'q.subject_id', '=', 's.id')
+
+                // Filter Utama: Hanya data milik siswa yang sedang login
+                ->where('qa.student_id', $user->id)
+                ->whereNull('qr.deleted_at')
+                ->whereNull('qa.deleted_at')
+
                 ->select(
-                    'lm.id',
-                    'lm.title',
-                    'lm.classroom',
-                    'lm.file_path',
-                    'lm.summary',
+                    'qr.id',
+                    'q.title as quiz_title',
                     's.name as subject_name',
-                    'lm.created_at',
+                    'qr.working_time',   // Durasi pengerjaan
+                    'qr.correct_answer', // Jumlah benar
+                    'qr.wrong_answer',   // Jumlah salah
+                    'qr.score',          // Nilai akhir
+                    'qa.started_at',     // Waktu mulai
+                    'qa.finished_at',    // Waktu selesai
+                    'qr.created_at'      // Tanggal submit
                 )
-                ->orderBy('lm.created_at', 'desc');
+                ->orderBy('qr.created_at', 'desc');
 
-            if ($user->access_type == 4) {
-                $query->where('lm.school_id', $user->school_id);
-            } else {
-                $query->where('lm.created_by', $user->id);
-            }
-
+            // Filter Pencarian berdasarkan Judul Kuis atau Mapel
             if (!empty($filterData['keywords'])) {
-                $query->where('lm.title', 'like', '%' . $filterData['keywords'] . '%')->orWhere('s.name', 'like', '%' . $filterData['keywords'] . '%');
+                $query->where(function ($q) use ($filterData) {
+                    $q->where('q.title', 'like', '%' . $filterData['keywords'] . '%')
+                        ->orWhere('s.name', 'like', '%' . $filterData['keywords'] . '%');
+                });
             }
 
-            if(!empty($filterData['subject_id']) && $filterData['subject_id'] != 'all') {
-                $query->where('lm.subject_id', $filterData['subject_id']);
+            // Filter per Mata Pelajaran (jika ada dropdown filter di UI)
+            if (!empty($filterData['subject_id']) && $filterData['subject_id'] != 'all') {
+                $query->where('q.subject_id', $filterData['subject_id']);
             }
 
             $data = $query->paginate(20);
@@ -60,7 +72,7 @@ class QuizUsecase extends Usecase
             );
         } catch (Exception $e) {
             Log::error($e->getMessage(), ['method' => __METHOD__]);
-            return Response::buildErrorService($e->getMessage());
+            return Response::buildErrorService('Gagal memuat data riwayat kuis.');
         }
     }
 
@@ -209,5 +221,216 @@ class QuizUsecase extends Usecase
             Log::error($e->getMessage(), ['method' => __METHOD__]);
             return Response::buildErrorService($e->getMessage());
         }
+    }
+
+    public function getQuizForSoalByQuizId(string $code): array
+    {
+        try {
+            // 1️⃣ Ambil quiz
+            $quiz = DB::table(DatabaseConst::QUIZ)
+                ->where('quiz_code', $code)
+                ->whereNull('deleted_at')
+                ->first();
+
+            if (! $quiz) {
+                return [
+                    'success' => false,
+                    'message' => 'Quiz tidak ditemukan',
+                    'data'    => null
+                ];
+            }
+
+            $quizId = $quiz->id;
+
+            // 2️⃣ Ambil questions
+            $questions = DB::table(DatabaseConst::QUIZ_QUESTION)
+                ->where('quiz_id', $quizId)
+                ->whereNull('deleted_at')
+                ->get();
+
+            if ($questions->isEmpty()) {
+                return [
+                    'success' => true,
+                    'message' => 'Quiz tanpa soal',
+                    'data'    => [
+                        'quiz' => $quiz,
+                        'questions' => []
+                    ]
+                ];
+            }
+
+            // 3️⃣ Ambil options berdasarkan question_id
+            $questionIds = $questions->pluck('id')->toArray();
+
+            $options = DB::table(DatabaseConst::QUIZ_OPTION)
+                ->whereIn('question_id', $questionIds)
+                ->whereNull('deleted_at')
+                ->get()
+                ->groupBy('question_id');
+
+            // 4️⃣ Gabungkan question + options
+            $formattedQuestions = $questions->map(function ($question) use ($options) {
+                return [
+                    'id'       => $question->id,
+                    'question' => $question->question,
+                    'options'  => $options[$question->id] ?? []
+                ];
+            });
+
+            return [
+                'success' => true,
+                'message' => 'Berhasil mengambil data quiz',
+                'data'    => [
+                    'quiz'      => $quiz,
+                    'questions' => $formattedQuestions
+                ]
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data'    => null
+            ];
+        }
+    }
+
+    public function getQuizByQuizId(int $quizId): array
+    {
+        try {
+            // 1️⃣ Ambil quiz
+            $quiz = DB::table(DatabaseConst::QUIZ)
+                ->where('id', $quizId)
+                ->whereNull('deleted_at')
+                ->first();
+
+            if (! $quiz) {
+                return [
+                    'success' => false,
+                    'message' => 'Quiz tidak ditemukan',
+                    'data'    => null
+                ];
+            }
+
+            return [
+                'success' => true,
+                'message' => 'Berhasil mengambil data quiz',
+                'data'    => $quiz
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data'    => null
+            ];
+        }
+    }
+
+    public function getByQuizCode(string $quizCode): array
+    {
+        try {
+            // 1️⃣ Ambil quiz
+            $quiz = DB::table(DatabaseConst::QUIZ)
+                ->where('quiz_code', $quizCode)
+                ->whereNull('deleted_at')
+                ->first();
+
+            if (! $quiz) {
+                return [
+                    'success' => false,
+                    'message' => 'Quiz tidak ditemukan',
+                    'data'    => null
+                ];
+            }
+
+            // 2️⃣ Hitung jumlah soal
+            $totalSoal = DB::table(DatabaseConst::QUIZ_QUESTION)
+                ->where('quiz_id', $quiz->id)
+                ->whereNull('deleted_at')
+                ->count();
+
+            // 3️⃣ Tambahkan info ke response
+            $quiz->total_soal = $totalSoal;
+            $quiz->has_soal   = $totalSoal > 0;
+
+            return [
+                'success' => true,
+                'message' => 'Berhasil mengambil data quiz',
+                'data'    => $quiz
+            ];
+
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+                'data'    => null
+            ];
+        }
+    }
+
+
+    public function checkQuizResult(int $quizId, array $results): array
+    {
+        return DB::transaction(function () use ($quizId, $results) {
+
+            $totalSoal  = count($results);
+            $benar      = 0;
+            $salah      = 0;
+            $detail     = [];
+
+            foreach ($results as $result) {
+
+                $questionId = $result['question_id'] ?? null;
+                $optionId   = $result['selected_option_id'] ?? null;
+
+                if (!$questionId || !$optionId) {
+                    continue;
+                }
+
+                /**
+                 * 1. Validasi question milik quiz
+                 */
+                $questionExists = DB::table('quiz_questions')
+                    ->where('id', $questionId)
+                    ->where('quiz_id', $quizId)
+                    ->exists();
+
+                if (!$questionExists) {
+                    continue;
+                }
+
+                /**
+                 * 2. Ambil opsi jawaban
+                 */
+                $option = DB::table('quiz_options')
+                    ->where('id', $optionId)
+                    ->where('question_id', $questionId) // 🔥 relasi ke quiz_questions
+                    ->first();
+
+                $isCorrect = ($option && $option->is_correct == 1);
+
+                if ($isCorrect) {
+                    $benar++;
+                } else {
+                    $salah++;
+                }
+
+                $detail[] = [
+                    'question_id' => $questionId,
+                    'selected_option_id' => $optionId,
+                    'is_correct' => $isCorrect,
+                    'is_uncertain' => $result['is_uncertain'] ?? false,
+                ];
+            }
+
+            return [
+                'total' => $totalSoal,
+                'benar' => $benar,
+                'salah' => $salah,
+                'nilai' => $totalSoal > 0
+                    ? round(($benar / $totalSoal) * 100)
+                    : 0,
+                'detail' => $detail,
+            ];
+        });
     }
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\TaskCategoryController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Student\LearningModulesController as studentLearningModulesController;
 use App\Http\Controllers\superAdmin\DashboardController as SuperAdminDashboardController;
 use App\Http\Controllers\Student\IntractiveQuiz as StudentQuizController;
@@ -17,7 +18,6 @@ use App\Http\Controllers\Student\DashboardController as StudentDashboardControll
 use App\Http\Controllers\superAdmin\PromptImageController;
 use App\Http\Controllers\superAdmin\SchoolController;
 use App\Http\Controllers\superAdmin\SubjectController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\superAdmin\TextPromptController;
 use App\Http\Controllers\Teacher\AITools\IlustrationController;
 use App\Http\Controllers\Teacher\AITools\MateriAjarController;
@@ -30,8 +30,8 @@ use Illuminate\Support\Facades\Route;
 
 // Landing Page
 Route::get('/', [HomeController::class, 'index'])->name('landing');
-Route::get('/kumpulan-materi', [HomeController::class, 'kumpulan_materi'])->name('kumpulan_materi');
-Route::get('/detail-materi', [HomeController::class, 'detail_materi'])->name('detail_materi');
+Route::get('/get-materi/{jenjang}/{kelas}/{mapel}', [HomeController::class, 'get_materi'])->name('get_materi');
+Route::get('/download/{id}', [HomeController::class, 'materi_download'])->name('materi_download');
 
 // Auth
 Route::get('/login', [AuthController::class, 'login'])->name('login');
@@ -169,6 +169,8 @@ Route::middleware(['auth', 'role:3', 'check.school.status'])->prefix('teacher')-
         Route::get('/detail/{id}', [QuizController::class, 'detail'])->name('detail');
         Route::get('/{id}/questions/add', [QuizController::class, 'addQuestions'])->name('questions.add');
         Route::post('/{id}/questions/store', [QuizController::class, 'storeQuestions'])->name('questions.store');
+        Route::post('/questions/{id}/update', [QuizController::class, 'updateQuestion'])->name('questions.update');
+        Route::delete('/questions/{id}/delete', [QuizController::class, 'deleteQuestion'])->name('questions.delete');
         Route::get('/edit/{id}', [QuizController::class, 'edit'])->name('edit');
         Route::post('/update/{id}', [QuizController::class, 'update'])->name('update');
         Route::get('/scores/{id}', [QuizController::class, 'scores'])->name('scores');
@@ -230,5 +232,8 @@ Route::middleware(['auth', 'role:4', 'check.school.status'])->prefix('student')-
 
     Route::prefix('quiz')->name('quiz.')->group(function () {
         Route::get('/', [StudentQuizController::class, 'index'])->name('index');
+        Route::get('/start', [StudentQuizController::class, 'start'])->name('start');
+        Route::get('/quizsoal/{code}', [StudentQuizController::class, 'quizsoal'])->name('quizsoal');
+        Route::post('/hasilquiz', [StudentQuizController::class, 'hasilquiz'])->name('hasilquiz');
     });
 });

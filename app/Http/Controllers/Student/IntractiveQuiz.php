@@ -121,4 +121,85 @@ class IntractiveQuiz extends Controller
             ->back()
             ->with('error', $process['message'] ?? 'Terjadi kesalahan saat menghapus modul belajar.');
     }
+
+    public function start(Request $request) {
+        if($request->has('quiz_code')) {
+            $quiz = $this->usecase->getByQuizCode($request->get('quiz_code'));
+            if(!$quiz['success'] || empty($quiz['data'])) {
+                return redirect()->back()->with('error', 'Kuis dengan kode tersebut tidak ditemukan.');
+            }
+
+            $time = $quiz['data']->quiz_time; // HH:MM:SS
+
+            list($jam, $menit, $detik) = explode(":", $time);
+
+            // total detik
+            $totalDetik = ($jam * 3600) + ($menit * 60) + $detik;
+
+            if ($totalDetik < 60) {
+                $hasil = $totalDetik . " detik";
+            } elseif ($totalDetik < 3600) {
+                $hasil = ($totalDetik / 60) . " menit";
+            } else {
+                $hasil = ($totalDetik / 3600) . " jam";
+            }
+
+            return view('_student.quiz.start', [
+                'quiz' => $quiz['data'],
+                'time' => $hasil,
+            ]);
+
+        } else {
+            return redirect()->back()->with('error', 'Kode kuis wajib diisi.');
+        }
+    }
+
+    public function quizsoal(string $code) {
+        $soal = $this->usecase->getQuizForSoalByQuizId($code);
+        $quiz = $soal['data']['quiz'];
+
+        $time = $quiz->quiz_time;
+        [$jam, $menit, $detik] = array_map('intval', explode(':', $time));
+
+        $totalDetik = ($jam * 3600) + ($menit * 60) + $detik;
+        
+        return view('_home.quiz.soal', [
+            'quiz' => $quiz,
+            'time' => $totalDetik,
+            'soal' => $soal['data']['questions']
+        ]);
+    }
+
+    public function hasilquiz(Request $request) {
+        $time = $request->time;
+        $quizId  = $request->quiz_id;
+        $results = json_decode($request->results, true); // 🔥 penting
+
+        if (!is_array($results)) {
+            return redirect()->back()->with('error', 'Data jawaban tidak valid');
+        }
+
+        $time = (int) $request->time;
+
+        $hasilTime = null;
+        if ($time < 60) {
+            $hasilTime = $time . ' detik';
+        } else {
+            $menit = floor($time / 60);
+            $detik = $time % 60;
+
+            $hasilTime = $detik > 0
+                ? $menit . ' menit ' . $detik . ' detik'
+                : $menit . ' menit';
+        }
+
+        $data = $this->usecase->checkQuizResult($quizId, $results);
+        $quiz = $this->usecase->getQuizByQuizId($quizId);
+
+        return view('_home.quiz.hasil', [
+            'data' => $data,
+            'quiz' => $quiz['data'],
+            'time' => $hasilTime
+        ]);
+    }
 }

@@ -56,8 +56,6 @@ class MateriAjarController extends Controller
                 ->with('error', $result['message'] ?? 'Data tidak ditemukan');
         }
 
-        // return $result['data'] ?? [];
-
         return view('_teacher.ai_tools.materi.detail', [
             'page' => $this->page,
             'data' => $result['data']['data'] ?? [],

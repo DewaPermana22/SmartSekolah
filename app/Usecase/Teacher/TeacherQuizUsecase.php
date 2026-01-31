@@ -460,4 +460,125 @@ class TeacherQuizUsecase extends Usecase
             return Response::buildErrorService($e->getMessage());
         }
     }
+
+    public function updateQuestion(int $questionId, array $data): array
+    {
+        DB::beginTransaction();
+        try {
+            $userId = Auth::user()?->id;
+            if (! $userId) {
+                throw new Exception('User not authenticated');
+            }
+
+            // Find question
+            $question = DB::table(DatabaseConst::QUIZ_QUESTION)
+                ->where('id', $questionId)
+                ->whereNull('deleted_at')
+                ->first();
+
+            if (! $question) {
+                throw new Exception('Soal tidak ditemukan');
+            }
+
+            // Update question text
+            DB::table(DatabaseConst::QUIZ_QUESTION)
+                ->where('id', $questionId)
+                ->update([
+                    'question' => $data['question'] ?? $question->question,
+                    'updated_by' => $userId,
+                    'updated_at' => now(),
+                ]);
+
+            // Update options text
+            if (! empty($data['options']) && is_array($data['options'])) {
+                foreach ($data['options'] as $optionId => $optionText) {
+                    DB::table(DatabaseConst::QUIZ_OPTION)
+                        ->where('id', (int) $optionId)
+                        ->where('question_id', $questionId)
+                        ->whereNull('deleted_at')
+                        ->update([
+                            'option_text' => $optionText,
+                            'updated_by' => $userId,
+                            'updated_at' => now(),
+                        ]);
+                }
+            }
+
+            // Reset all is_correct, then set selected as correct
+            DB::table(DatabaseConst::QUIZ_OPTION)
+                ->where('question_id', $questionId)
+                ->whereNull('deleted_at')
+                ->update([
+                    'is_correct' => 0,
+                    'updated_by' => $userId,
+                    'updated_at' => now(),
+                ]);
+
+            if (! empty($data['correct_answer'])) {
+                DB::table(DatabaseConst::QUIZ_OPTION)
+                    ->where('id', (int) $data['correct_answer'])
+                    ->where('question_id', $questionId)
+                    ->whereNull('deleted_at')
+                    ->update([
+                        'is_correct' => 1,
+                        'updated_by' => $userId,
+                        'updated_at' => now(),
+                    ]);
+            }
+
+            DB::commit();
+
+            return Response::buildSuccess(message: ResponseConst::SUCCESS_MESSAGE_UPDATED);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::error($e->getMessage(), ['method' => __METHOD__]);
+            return Response::buildErrorService($e->getMessage());
+        }
+    }
+
+    public function deleteQuestion(int $questionId): array
+    {
+        DB::beginTransaction();
+        try {
+            $userId = Auth::user()?->id;
+            if (! $userId) {
+                throw new Exception('User not authenticated');
+            }
+
+            // Find question
+            $question = DB::table(DatabaseConst::QUIZ_QUESTION)
+                ->where('id', $questionId)
+                ->whereNull('deleted_at')
+                ->first();
+
+            if (! $question) {
+                throw new Exception('Soal tidak ditemukan');
+            }
+
+            // Soft delete question
+            DB::table(DatabaseConst::QUIZ_QUESTION)
+                ->where('id', $questionId)
+                ->update([
+                    'deleted_by' => $userId,
+                    'deleted_at' => now(),
+                ]);
+
+            // Soft delete options
+            DB::table(DatabaseConst::QUIZ_OPTION)
+                ->where('question_id', $questionId)
+                ->whereNull('deleted_at')
+                ->update([
+                    'deleted_by' => $userId,
+                    'deleted_at' => now(),
+                ]);
+
+            DB::commit();
+
+            return Response::buildSuccess(message: ResponseConst::SUCCESS_MESSAGE_DELETED);
+        } catch (Exception $e) {
+            DB::rollback();
+            Log::error($e->getMessage(), ['method' => __METHOD__]);
+            return Response::buildErrorService($e->getMessage());
+        }
+    }
 }

@@ -1,477 +1,706 @@
-@extends('_home._layout.main')
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Sekolah | @yield('title', 'Beranda')</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/_home/home-costum.css'])
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Lexend:wght@100..900&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body class="bg-lightBg dark:bg-darkBg text-slate-800 dark:text-slate-100 transition-colors duration-300">
 
-@section('title')
-    Beranda
-@endsection
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 top-0 glass border-0 border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-10 min-[1000px]:px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <img src="{{ asset('home/images/smart-sekolah.png') }}" alt="Logo" class="w-60">
+            </div>
+            
+            <div class="hidden min-[1000px]:flex items-center gap-8 text-sm font-medium">
+                <a href="#beranda" class="nav-link transition-colors">Beranda</a>
+                <a href="#tentang" class="nav-link transition-colors">Tentang</a>
+                <a href="#fitur" class="nav-link transition-colors">Fitur</a>
+                <a href="#materi" class="nav-link transition-colors">Materi</a>
+                <button onclick="toggleDarkMode()" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-all">
+                    <div class="w-5 h-5 hidden dark:block">
+                        @include('_home.icons.moon')
+                    </div>
+                    <div class="w-5 h-5 block dark:hidden">
+                        @include('_home.icons.sun')
+                    </div>
+                </button>
+                <a href="{{ route('login') }}" class="bg-primary text-white px-6 py-2.5 rounded-full hover:bg-secondary transition-all shadow-lg shadow-indigo-500/20">Mulai Sekarang</a>
+            </div>
 
-@section('content')
-    <x-home.navbar linkbtn="{{ route('login') }}"></x-home.navbar>
-          
-    <!-- HERO SECTION -->
-    <section id="beranda" class="pt-30 overflow-hidden relative">
-      <div class="h-full w-full absolute top-0 left-0 -z-1">
-        <svg class="-rotate-180 top-0 absolute" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-          <path class="fill-gray-100" fill-opacity="1" d="M0,128L60,112C120,96,240,64,360,74.7C480,85,600,139,720,149.3C840,160,960,128,1080,144C1200,160,1320,224,1380,256L1440,288L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path>
-        </svg>
-        <div class="bg-transparent size-20 absolute top-100 left-50 rounded-full border-5 border-blue-500/20"></div>
-        <div class="bg-transparent size-10 absolute bottom-70 left-150 rounded-full border-5 border-blue-500/20"></div>
-        <div class="bg-transparent size-15 absolute bottom-20 left-50 rounded-full border-5 border-blue-500/20"></div>
-      </div>
-      <div class="flex flex-col-reverse min-[990px]:flex-row items-center justify-between gap-x-20 overflow-hidden px-5 min-[450px]:px-10 min-[700px]:px-20">
-        <div class="flex-1 mt-15 min-[990px]:mt-0">
-          <p class="px-5 inline-block text-[12px] min-[750px]:text-[13px] min-[1040px]:text-[14px] py-2 bg-gray-200 text-blue-500 font-semibold rounded-full">Ayo Belajar Bersama</p>
-          <h1 class="font-fredoka text-[30px] min-[475px]:text-[35px] min-[670px]:text-[30px] min-[750px]:text-[35px] min-[1120px]:text-[43px] min-[1250px]:text-[50px] min-[1270px]:text-[55px] 2xl:text-7xl font-semibold leading-15 min-[1120px]:leading-20 2xl:leading-24 min-[1120px]:mt-2 mb-3 flex items-start min-[670px]:items-center min-[990px]:items-start flex-col min-[670px]:flex-row min-[990px]:flex-col">
-            <div>
-              Platform Pembelajaran Digital untuk 
-              <span class="slidetexthero">
-                  <span class="wrapper">
-                      <span>Membangun</span>
-                      <span>Mencetak</span>
-                      <span>Mewujudkan</span>
-                  </span>
-              </span>
-            </div>
-          Kompetensi Nyata</h1>
-        <p class="text-sm min-[1120px]:text-[15px] min-[1270px]:text-[16px]">Platform pembelajaran digital yang membantu kamu membangun kompetensi nyata melalui materi terstruktur, berbasis praktik, dan sesuai kebutuhan industri.</p>
-        <div class="flex flex-col gap-y-5 min-[510px]:gap-y-0 min-[510px]:flex-row gap-x-8 items-center mt-8">
-          <a href="#terdekat" class="linkhoveranimation text-[13px] min-[1030px]:text-sm min-[1120px]:text-[15px] filled">@include('_home.icons.rocket') Mulai Pembelajaran</a>
-          <a href="#populer" class="linkhoveranimation text-[13px] min-[1030px]:text-sm min-[1120px]:text-[15px]">Eksplore Program @include('_home.icons.book-search')</a>
-        </div>
-        <div class="grid grid-cols-2 min-[560px]:grid-cols-4 mt-10 min-[1040px]:mt-15 gap-x-20 gap-y-10 min-[560px]:gap-y-0">
-            <div class="statistikhero">
-                <h1>1,2K+</h1>
-                <p>Pengguna Terdaftar</p>
-            </div>
-            <div class="statistikhero">
-              <h1>12+</h1>
-              <p>Partner Sekolah</p>
-            </div>
-            <div class="statistikhero">
-              <h1>100+</h1>
-              <p>Modul Interaktif</p>
-            </div>
-            <div class="statistikhero">
-              <h1>5+</h1>
-              <p>Tahun Bergerak</p>
+            <div class="hamburger-navbar">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
         </div>
-        </div>
-        <div class="w-[300px] min-[480px]:w-[350px] min-[540px]:w-[400px] min-[590px]:w-[450px] min-[990px]:w-[320px] min-[1040px]:w-[350px] min-[1090px]:w-[400px] min-[1170px]:w-[450px] 2xl:w-[700px] relative font-fredoka">
-          <div class="absolute top-1/2 -left-10 size-30 bg-blue-500/20 z-1"></div>
-          <div class="absolute top-1/3 -right-10 size-30 bg-blue-500/10 z-1"></div>
-          <x-home.floating-mini-card text="Profesional" class="right-[40%] top-14">
-            @include('_home.icons.star')
-          </x-home.floating-mini-card>
-          <x-home.floating-mini-card text="Berkualitas" class="left-[20%] top-[40%]">
-            @include('_home.icons.badge-check')
-          </x-home.floating-mini-card>
-          <x-home.floating-mini-card text="Bersertifikat" class="right-[40%] min-[1040px]:right-[30%] bottom-[30%]">
-            @include('_home.icons.trophy')
-          </x-home.floating-mini-card>
-          <img src={{ asset("/home/images/gambar_home/hero_section.png") }} class="w-[700px] relative top-0 z-5" alt="Hero Section Image" />
-        </div>
-      </div>
-    </section>
-    {{-- <div class="md:my-0 my-10 relative px-5 min-[450px]:px-10 min-[700px]:px-20">
-        <div class="pointer-events-none absolute left-0 top-0 h-full w-5 min-[990px]:w-10 bg-linear-to-r from-gray-50 via-gray-50/80 to-transparent z-10"></div>
-        <div class="pointer-events-none absolute right-0 top-0 h-full w-5 min-[990px]:w-10 bg-linear-to-l from-gray-50 via-gray-50/80 to-transparent z-10"></div>
-        
-        <div class="w-full overflow-hidden relative h-52">
-          <div class="supportinglogomarqueehero">
-            @include('components.home.logo-supporting-marquee')
-          </div>
-        </div>
-    </div> --}}
-        
-    <!-- FITUR SECTION -->
-    <section id="fitur" class="pt-30">
-      <div class="titleSectionHome">
-        <div>
-            <h4 class="font-latin subtitle">Fitur Terbaik Belajar</h4>
-            <h2 class="font-fredoka title">Eksplorasi Fitur Membantu Belajar</h2>
-        </div>
-        {{-- <a class="link linkhoveranimation text-[15px]" href='/wisata.html'>Terus Jelajahi <i class="fa-solid fa-arrow-right"></i></a> --}}
-      </div>
+    </nav>
 
-      <div class="grid grid-cols-1 min-[900px]:grid-cols-2 min-[1260px]:grid-cols-3 justify-items-center 2xl:grid-cols-4 mt-30 gap-y-40">
-        <x-home.card-fiture
-            img="home/images/gambar_home/management-guru.jpeg"
-            title="Management Data Guru"
-            text="Kelola data guru secara terstruktur, mulai dari profil, jadwal mengajar, hingga riwayat aktivitas untuk mendukung proses administrasi sekolah."
-            href="/"
-            hrefText="Selengkapnya"
-        />
-
-        <x-home.card-fiture
-            img="home/images/gambar_home/management-siswa.jpeg"
-            title="Management Data Siswa"
-            text="Atur dan pantau data siswa dengan mudah, mencakup identitas, kelas, perkembangan belajar, serta riwayat akademik secara terpusat."
-            href="/"
-            hrefText="Selengkapnya"
-        />
-
-        <x-home.card-fiture
-            img="home/images/gambar_home/management-materi.jpeg"
-            title="Kelola Materi Belajar"
-            text="Kelola dan susun materi pembelajaran secara rapi, mulai dari modul, video, hingga dokumen pendukung untuk proses belajar."
-            href="/"
-            hrefText="Selengkapnya"
-        />
-
-        <x-home.card-fiture
-            img="home/images/penginapan/1.jpg"
-            title="Generate Gambar & Materi"
-            text="Buat gambar dan materi pembelajaran secara otomatis menggunakan teknologi AI untuk mendukung kreativitas guru dan siswa."
-            href="/"
-            hrefText="Selengkapnya"
-        />
-
-        <x-home.card-fiture
-            img="home/images/penginapan/1.jpg"
-            title="Akses Materi Belajar"
-            text="Akses berbagai materi belajar kapan saja dan di mana saja untuk mendukung proses pembelajaran yang fleksibel dan efektif."
-            href="/"
-            hrefText="Selengkapnya"
-        />
-
-        <x-home.card-fiture
-            img="home/images/penginapan/1.jpg"
-            title="AI Summary"
-            text="Ringkas materi pembelajaran secara cepat dan akurat menggunakan AI agar lebih mudah dipahami dan dipelajari oleh siswa."
-            href="/"
-            hrefText="Selengkapnya"
-        />
-      </div>
-    </section> 
-
-    <!-- MATERI SECTION -->
-    <section id="materi" class="pt-30">
-      <div class="titleSectionHome">
-        <div>
-            <h4 class="font-latin subtitle">Kumpulan Materi Belajar</h4>
-            <h2 class="font-fredoka title">Materi Belajar Dari Guru</h2>
-        </div>
-        {{-- <a class="link linkhoveranimation text-[15px]" href='/wisata.html'>Terus Jelajahi <i class="fa-solid fa-arrow-right"></i></a> --}}
-      </div>
-
-      <div id="container_card_kategori" class="grid grid-cols-1 min-[768px]:grid-cols-2 min-[1000px]:grid-cols-3 min-[1300px]:grid-cols-4 min-[1500px]:grid-cols-5 min-[1700px]:grid-cols-6 mt-10 justify-items-center gap-10">
-        @php
-          use App\Constants\GradeConst;
-          $grades = GradeConst::getGrades();
-          $gradeImages = [
-            GradeConst::SD => 'home/images/gambar_home/sekolah_dasar.jpg',
-            GradeConst::SMP => 'home/images/gambar_home/sekolah_menengah_pertama.jpg',
-            GradeConst::SMK => 'home/images/gambar_home/sekolah_menengah_kejuruan.jpg',
-          ];
-        @endphp
-        
-        @foreach($grades as $gradeId => $gradeName)
-          <x-home.materi-card 
-            image="{{ $gradeImages[$gradeId] ?? 'home/images/gambar_home/umum.jpg' }}" 
-            text="{{ $gradeName }}" 
-            materi_count="10" 
-            sekolah_count="{{ $gradeData[$gradeId]['count'] ?? 0 }}" 
-            link="kumpulan_materi" 
-          />
-        @endforeach
-      </div>
-    </section> 
-
-    <!-- TESTIMONI SECTION -->
-    <section id="testimoni" class="pt-30">
-      <div class="flex flex-col items-center">
-        <h5 class="text-center font-latin text-[20px] min-[475px]:text-xl min-[550px]:text-2xl text-blue-500 font-semibold">Testimoni Pengguna</h5>
-        <h3 class="text-center font-extrabold text-2xl min-[475px]:text-3xl min-[550px]:text-4xl font-fredoka tracking-widest -mt-1">APA KATA MEREKA ?</h3>
-        <p class="text-center text-[13px] min-[475px]:text-sm min-[550px]:text-[15px] mb-10 mt-3 w-full min-[750px]:w-[700px]">Platform ini membantu mempermudah proses belajar dan pengelolaan data sekolah. Fitur yang lengkap dan mudah digunakan membuat aktivitas belajar mengajar menjadi lebih efektif dan terorganisir.</p>
-      </div>
-
-      @php
-        $testimonials = [
-          [
-            'img' => '/home/images/avatar/1.png',
-            'name' => 'Fahmy Bima Az Zukhruf',
-            'role' => 'Siswa SMKN 8 JEMBER',
-            'message' => 'Platform Smart Sekolah sangat membantu saya dalam mengakses materi pembelajaran dengan mudah. Fitur-fiturnya lengkap dan mudah dipahami, membuat belajar jadi lebih menyenangkan.'
-          ],
-          [
-            'img' => '/home/images/avatar/2.png',
-            'name' => 'Siti Nurhaliza',
-            'role' => 'Guru SMP Negeri 5 Jember',
-            'message' => 'Dengan Smart Sekolah, mengelola materi dan tugas siswa menjadi jauh lebih efisien. Sistem yang terintegrasi memudahkan saya dalam memantau perkembangan belajar siswa.'
-          ],
-          [
-            'img' => '/home/images/avatar/3.png',
-            'name' => 'Ahmad Zainudin',
-            'role' => 'Kepala Sekolah SD Negeri 3 Jember',
-            'message' => 'Smart Sekolah memberikan solusi terbaik untuk digitalisasi sekolah kami. Administrasi menjadi lebih rapi dan proses pembelajaran lebih terstruktur.'
-          ],
-          [
-            'img' => '/home/images/avatar/4.png',
-            'name' => 'Dewi Kartika',
-            'role' => 'Siswa SMA Negeri 2 Jember',
-            'message' => 'Saya sangat terbantu dengan adanya fitur AI Summary yang bisa merangkum materi panjang menjadi lebih singkat. Sangat cocok untuk persiapan ujian!'
-          ],
-          [
-            'img' => '/home/images/avatar/5.png',
-            'name' => 'Bambang Sutrisno',
-            'role' => 'Guru SMK Negeri 1 Jember',
-            'message' => 'Fitur generate gambar dan materi dengan AI sangat inovatif. Membantu saya membuat konten pembelajaran yang lebih menarik dan interaktif untuk siswa.'
-          ],
-          [
-            'img' => '/home/images/avatar/6.png',
-            'name' => 'Rina Agustina',
-            'role' => 'Orang Tua Siswa',
-            'message' => 'Sebagai orang tua, saya merasa lebih tenang karena bisa memantau perkembangan belajar anak melalui platform ini. Sistemnya transparan dan mudah digunakan.'
-          ]
-        ];
-      @endphp
-
-      <div class="grid grid-cols-1 min-[875px]:grid-cols-2 min-[1250px]:grid-cols-3 gap-5">
-        @foreach($testimonials as $testimonial)
-          <x-home.card-testimoni 
-            img="{{ $testimonial['img'] }}" 
-            name="{{ $testimonial['name'] }}" 
-            role="{{ $testimonial['role'] }}" 
-            message="{{ $testimonial['message'] }}" 
-          />
-        @endforeach
-      </div>
-    </section>
-
-    <!-- GALERI SECTION -->
-    <section id="galeri" class="pt-30">
-      <div class="titleSectionHome">
-        <div>
-            <h4 class="font-latin subtitle">Galeri Smart Sekolah</h4>
-            <h2 class="font-fredoka title">Dokumentasi Perjalanan Kami</h2>
-        </div>
-        {{-- <a class="link linkhoveranimation text-[15px]" href='/wisata.html'>Terus Jelajahi <i class="fa-solid fa-arrow-right"></i></a> --}}
-      </div>
-
-      <div class="grid grid-cols-1 min-[780px]:grid-cols-2 min-[1090px]:grid-cols-3 min-[1390px]:grid-cols-4 min-[1700px]:grid-cols-4 gap-5 mt-10 justify-items-center">
-        <x-home.card-gallery
-            img="home/images/gallery/gallery1.jpg"
-            title="Promosi Smart Sekolah"
-            date="13 Agustus 2025"
-            deskripsi="Kegiatan promosi Smart Sekolah untuk memperkenalkan platform pembelajaran digital kepada siswa dan tenaga pendidik."
-        />
-
-        <x-home.card-gallery
-            img="home/images/gallery/gallery2.jpg"
-            title="MOU Oleh RPL SMKN 8 JEMBER"
-            date="13 Agustus 2025"
-            deskripsi="Penandatanganan nota kesepahaman sebagai bentuk kerja sama pengembangan pembelajaran digital berbasis industri."
-        />
-
-        <x-home.card-gallery
-            img="home/images/gallery/gallery3.jpg"
-            title="Demonstrasi Smart Sekolah"
-            date="22 Oktober 2025"
-            deskripsi="Sesi demonstrasi penggunaan platform Smart Sekolah untuk menunjukkan fitur dan manfaat sistem pembelajaran."
-        />
-
-        <x-home.card-gallery
-            img="home/images/gallery/gallery4.jpg"
-            title="Tim Developer Smart Sekolah"
-            date="20 November 2025"
-            deskripsi="Dokumentasi tim developer Smart Sekolah yang berperan dalam pengembangan dan inovasi platform."
-        />
-
-        <x-home.card-gallery
-            img="home/images/gallery/gallery5.jpg"
-            title="Demonstrasi Smart Sekolah"
-            date="11 Desember 2025"
-            deskripsi="Demonstrasi lanjutan platform Smart Sekolah dalam mendukung proses belajar mengajar yang lebih interaktif."
-        />
-
-        <x-home.card-gallery
-            img="home/images/gallery/gallery6.jpg"
-            title="Smart Sekolah Recruitment Magang"
-            date="01 Januari 2026"
-            deskripsi="Kegiatan rekrutmen program magang Smart Sekolah untuk menjaring talenta muda di bidang teknologi pendidikan."
-        />
-
-      </div>
-    </section>
-
-    <!-- Overlay -->
-    <div class="bgblur"></div>
-    <!-- Modal -->
-    <div id="detail_gallery_modal" class="fixed top-1/2 left-1/2 -translate-1/2 z-[100] w-[90%] max-w-4xl h-[600px] bg-white rounded-xl shadow-2xl overflow-auto transition duration-500 scale-0">
-
-        <!-- Header -->
-        <div class="flex items-center justify-between px-5 py-4 border-b">
-            <h3 id="title_gallery_modal" class="text-lg font-semibold text-gray-800">
-                Judul Gambar
-            </h3>
-
-            <!-- Close Button -->
-            <button class="text-gray-500 hover:text-gray-800 text-xl font-bold cursor-pointer" id="close_detail_gallery_modal">
-                ✕
+    <div id="mobile-menu" class="glass">
+        <a href="#beranda" class="nav-link">Beranda</a>
+        <a href="#tentang" class="nav-link">Tentang</a>
+        <a href="#fitur" class="nav-link">Fitur</a>
+        <a href="#materi" class="nav-link">Materi</a>
+        <div class="flex items-center gap-4 pt-4">
+            <button onclick="toggleDarkMode()" class="p-4 rounded-full bg-slate-100 dark:bg-slate-800 transition-all">
+                <div class="w-5 h-5 hidden dark:block">
+                        @include('_home.icons.moon')
+                </div>
+                <div class="w-5 h-5 block dark:hidden">
+                    @include('_home.icons.sun')
+                </div>
             </button>
+            <a href="{{ route('login') }}" class="bg-primary text-white px-8 py-3 rounded-full">Mulai Sekarang</a>
         </div>
+    </div>
 
-        <!-- Content -->
-        <div class="grid grid-cols-1 md:grid-cols-3">
+    <!-- Hero Banner -->
+    <section id="beranda" class="pt-32 pb-20 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col min-[1000px]:flex-row items-center justify-between gap-12">
+            <div class="space-y-8 w-full min-[1000px]:w-[55%]">
+                <div class="inline-flex items-center gap-2 bg-indigo-50 dark:bg-indigo-900/30 text-primary px-4 py-2 rounded-full text-xs font-semibold tracking-wider uppercase">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                    </span>
+                    Revolusi Digital Pendidikan
+                </div>
+                <h1 class="text-5xl min-[1120px]:text-[68px] font-bold leading-tight">
+                    Belajar Lebih <span class="text-primary">Cerdas</span>, Mengajar Lebih Efisien.
+                </h1>
+                <p class="text-slate-500 dark:text-slate-400 text-base max-w-lg">
+                    Platform ekosistem pendidikan terpadu untuk menghubungkan guru, murid, dan orang tua dalam satu harmoni digital yang modern.
+                </p>
+                <div class="flex flex-col min-[500px]:flex-row gap-4">
+                    <a href="{{ route('login') }}" class="bg-primary text-white justify-center text-sm min-[1090px]:text-base px-4 min-[1090px]:px-8 py-2 min-[1090px]:py-4 rounded-2xl font-bold hover:bg-secondary transition-all flex items-center gap-2">
+                        @include('_home.icons.rocket') Mulai Sekarang
+                    </a>
+                    <a class="flex items-center gap-2 border px-4 justify-center text-sm min-[1090px]:text-base min-[1090px]:px-8 py-2 min-[1090px]:py-4 border-slate-300 dark:border-slate-700 rounded-2xl font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                        Eksplore Program @include('_home.icons.book-search')
+                    </a>
+                </div>
+            </div>
+            <div class="relative w-full min-[500px]:w-[80%] min-[750px]:w-[60%] min-[1000px]:w-[45%]">
+                <div class="absolute -top-10 -left-10 w-64 h-64 bg-primary/20 rounded-full blur-3xl"></div>
+                <div class="absolute -bottom-10 -right-10 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl"></div>
+                <img src="{{ asset('home/images/hero_section.png') }}" alt="Students learning" class="z-10 w-full object-cover">
+                <div class="absolute bottom-0 -left-6 bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-xl z-20 hidden md:block border border-slate-100 dark:border-slate-700">
+                    <div class="flex items-center gap-4">
+                        <div class="p-3 bg-green-100 dark:bg-green-900/30 rounded-full">
+                            @include('_home.icons.circle-check')
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400">Aktif Digunakan</p>
+                            <p class="font-bold">500+ Sekolah</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            <!-- Preview Dokumen -->
-            <div class="md:col-span-2 px-4 pt-4">
-                <div class="w-full h-[500px] rounded-lg border flex justify-center items-center overflow-hidden">
-                    <img id="image_gallery_modal" src="{{ asset('/home/images/gambar_home/sekolah_dasar.jpg') }}" alt="Preview Dokumen" class="max-w-full max-h-[500px] h-auto"/>
+    <!-- Tentang SmartSekolah -->
+    <section id="tentang" class="py-24 bg-white dark:bg-slate-900/50 transition-colors">
+        <div class="max-w-7xl mx-auto px-6 md:px-16">
+            <div class="grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
+                
+                <div class="order-2 md:order-1 grid grid-cols-2 gap-3">
+                    <img src="{{ asset('home/images/learn1.jpg') }}" 
+                        class="w-full aspect-[3/4] object-cover rounded-2xl shadow-sm hover:scale-105 transition-transform duration-500 mt-6" 
+                        alt="Learning 1">
+
+                    <img src="{{ asset('home/images/learn2.jpg') }}" 
+                        class="w-full aspect-[3/4] object-cover rounded-2xl shadow-sm hover:scale-105 transition-transform duration-500" 
+                        alt="Learning 2">
+                </div>
+
+                <div class="space-y-8 order-1 md:order-2">
+                    <div class="space-y-3">
+                        <h2 class="text-xs font-bold text-primary tracking-widest uppercase italic italic">Tentang Kami</h2>
+                        <h3 class="text-4xl font-extrabold leading-tight dark:text-white">
+                            Membangun Masa Depan Pendidikan yang <span class="text-primary">Inklusif</span>
+                        </h3>
+                        <p class="text-slate-600 dark:text-slate-400">
+                            <strong>SmartSekolah</strong> hadir untuk memutus rantai krisis pembelajaran. Kami fokus menyederhanakan materi kompleks dan menghapus batasan geografis demi kesetaraan kualitas pendidikan di seluruh Indonesia.
+                        </p>
+                    </div>
+
+                    <div class="grid gap-6">
+                        <div class="flex gap-4">
+                            <div class="shrink-0 w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+                                @include('_home.icons.sparkles')
+                            </div>
+                            <div>
+                                <h4 class="font-bold dark:text-white">Penyederhanaan Konsep</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Materi akademik berat kini lebih visual dan interaktif.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <div class="shrink-0 w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+                                @include('_home.icons.users')
+                            </div>
+                            <div>
+                                <h4 class="font-bold dark:text-white">Kesetaraan Akses</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Menghubungkan pelosok dengan standar pendidikan nasional.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Fitur -->
+    <section id="fitur" class="py-24 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-16 space-y-4">
+                <h2 class="text-4xl font-bold">Kenapa Memilih Kami?</h2>
+                <p class="text-slate-500">Fitur yang dirancang khusus untuk memenuhi kebutuhan ekosistem pendidikan Indonesia.</p>
+            </div>
+            <div class="min-[965px]:grid min-[965px]:grid-cols-3 flex flex-row justify-center flex-wrap gap-8">
+                <!-- Fitur 1 -->
+                <div class="p-8 w-[300px] min-[965px]:w-full rounded-[2rem] border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-800/50 hover:border-primary transition-all group">
+                    <div class="w-14 h-14 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        @include('_home.icons.bot')
+                    </div>
+                    <h4 class="text-xl font-bold mb-4">AI Creator Studio</h4>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
+                        merancang struktur materi, mencari referensi pendukung, hingga menyusun strategi penyampaian materi yang sesuai dengan tingkat kognitif siswa.
+                    </p>
+
+                </div>
+                <!-- Fitur 2 -->
+                <div class="p-8 w-[300px] min-[965px]:w-full rounded-[2rem] border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-800/50 hover:border-primary transition-all group">
+                    <div class="w-14 h-14 bg-purple-100 dark:bg-purple-900/30 text-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        @include('_home.icons.layout-list')
+                    </div>
+                    <h4 class="text-xl font-bold mb-4">AI Auto Summary</h4>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
+                        AI akan mengekstraksi poin-poin esensial dari materi pembelajaran dan menyusunnya menjadi ringkasan terstruktur yang mudah dicerna dan dipahami.
+                    </p>
+
+                </div>
+                <!-- Fitur 3-->
+                <div class="p-8 w-[300px] min-[965px]:w-full rounded-[2rem] border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-800/50 hover:border-primary transition-all group">
+                    <div class="w-14 h-14 bg-amber-100 dark:bg-amber-900/30 text-amber-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        @include('_home.icons.puzzle')
+                    </div>
+                    <h4 class="text-xl font-bold mb-4">Kuis Interaktif</h4>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
+                    Kuis interaktif yang dirancang untuk menguji pemahaman siswa secara aktif dan menyenangkan.
+                    </p>
+
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Materi Ajar Section -->
+    <section id="materi" class="py-24 bg-slate-100 dark:bg-slate-900/80">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+                <div class="space-y-4">
+                    <h2 class="text-4xl font-bold tracking-tight">Eksplorasi Materi Ajar</h2>
+                    <p class="text-slate-500">Temukan ribuan materi berkualitas yang disusun oleh ahli di bidangnya.</p>
                 </div>
             </div>
 
-            <!-- Sidebar Info -->
-            <div class="p-4 border-l bg-gray-50 flex flex-col">
-                <h4 class="text-md font-semibold mb-2 text-gray-800">
-                  Deskripsi
-                </h4>
+            <!-- Filter Controls -->
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 mb-10">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- Searchable Select: Jenjang -->
+                    <div class="custom-select-wrapper" id="select-jenjang">
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Pilih Jenjang</label>
+                        <div class="relative">
+                            <!-- Trigger Button -->
+                            <button class="select-trigger w-full flex items-center justify-between bg-slate-50 dark:bg-slate-900 border-2 border-transparent hover:border-blue-400 rounded-xl px-4 py-3 outline-none transition-all">
+                                <span class="selected-text text-slate-700 dark:text-slate-200">Sekolah Dasar (SD)</span>
+                                <svg class="w-4 h-4 text-slate-400 transition-transform arrow-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            
+                            <!-- Dropdown Content -->
+                            <div class="dropdown-menu absolute z-50 w-full mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl overflow-hidden">
+                                <div class="p-2 border-b border-slate-100 dark:border-slate-700">
+                                    <input type="text" class="search-input w-full bg-slate-50 dark:bg-slate-900 text-sm border-none rounded-lg px-3 py-2 focus:ring-1 focus:ring-blue-500 outline-none text-slate-700 dark:text-slate-200" placeholder="Cari jenjang...">
+                                </div>
+                                <ul id="opsi-jenjang" class="option-list max-h-60 overflow-y-auto custom-scrollbar py-1">
+                                    
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
 
-                <p id="deskripsi_gallery_modal" class="text-sm text-gray-600 mb-4 leading-relaxed">hahahaha
-                </p>
+                    <!-- Searchable Select: Kelas -->
+                    <div class="custom-select-wrapper" id="select-kelas">
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Pilih Kelas</label>
+                        <div class="relative">
+                            <button id="button-kelas-opsi" class="select-trigger w-full flex items-center justify-between bg-slate-50 dark:bg-slate-900 border-2 border-transparent hover:border-blue-400 rounded-xl px-4 py-3 outline-none transition-all">
+                                <span class="selected-text text-slate-700 dark:text-slate-200">1</span>
+                                <svg class="w-4 h-4 text-slate-400 transition-transform arrow-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div class="dropdown-menu absolute z-50 w-full mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl overflow-hidden">
+                                <div class="p-2 border-b border-slate-100 dark:border-slate-700">
+                                    <input type="text" class="search-input w-full bg-slate-50 dark:bg-slate-900 text-sm border-none rounded-lg px-3 py-2 focus:ring-1 focus:ring-blue-500 outline-none text-slate-700 dark:text-slate-200" placeholder="Cari kelas...">
+                                </div>
+                                <ul id="opsi-kelas" class="option-list max-h-60 overflow-y-auto custom-scrollbar py-1">
+                                    
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
 
-                <!-- Action -->
-                <button id="download-image" 
-                class="mt-4 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition">
-                ⬇ Download Gambar
-                </button>
+                    <!-- Searchable Select: Mata Pelajaran -->
+                    <div class="custom-select-wrapper" id="select-mapel">
+                        <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Mata Pelajaran</label>
+                        <div class="relative">
+                            <button class="select-trigger w-full flex items-center justify-between bg-slate-50 dark:bg-slate-900 border-2 border-transparent hover:border-blue-400 rounded-xl px-4 py-3 outline-none transition-all">
+                                <span class="selected-text text-slate-700 dark:text-slate-200">Semua Mata Pelajaran</span>
+                                <svg class="w-4 h-4 text-slate-400 transition-transform arrow-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                            <div class="dropdown-menu absolute z-50 w-full mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl overflow-hidden">
+                                <div class="p-2 border-b border-slate-100 dark:border-slate-700">
+                                    <input type="text" class="search-input w-full bg-slate-50 dark:bg-slate-900 text-sm border-none rounded-lg px-3 py-2 focus:ring-1 focus:ring-blue-500 outline-none text-slate-700 dark:text-slate-200" placeholder="Cari mata pelajaran...">
+                                </div>
+                                <ul id="opsi-mapel" class="option-list max-h-60 overflow-y-auto custom-scrollbar py-1">
+                                    <li class="option px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors" data-value="semua">Semua Mata Pelajaran</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
 
-        </div>
+            <h1 id="materi_error_text" class="text-center font-semibold mt-8 text-lg hidden">Materi Tidak Ditemukan</h1>
+            <div id="materi_error_loading" class="mt-8 flex flex-col items-center hidden">
+                <span class="text-lg font-semibold text-slate-800 tracking-tight">Menyiapkan Data Materi</span>
+                <div class="flex space-x-1 mt-2">
+                    <div class="w-1.5 h-1.5 bg-blue-600 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                    <div class="w-1.5 h-1.5 bg-blue-600 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                    <div class="w-1.5 h-1.5 bg-blue-600 rounded-full animate-bounce" style="animation-delay: 0.3s"></div>
+                </div>
+            </div>
+            <div id="materi_card_container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 
-    </div>
-
-    <!-- TENTANG KAMI SECTION -->
-    <section id="tentang" class="pt-30">
-      <div class="flex flex-col min-[901px]:flex-row justify-between gap-7 min-[950px]:gap-15 2xl:gap-25 items-center">
-        <div class="grid grid-cols-2 gap-2 min-[370px]:h-[250px] h-[300px] min-[485px]:h-[350px] min-[600px]:h-[450px] min-[901px]:h-[350px] min-[1060px]:h-[450px] 2xl:h-[550px] items-center justify-items-center">
-          <div>
-            <div class="w-[150px] h-[200px] min-[370px]:h-[230px] min-[404px]:w-[180px] min-[404px]:h-[250px] min-[485px]:w-[200px] min-[485px]:h-[300px] min-[600px]:w-[250px] min-[600px]:h-[360px] min-[901px]:w-[200px] min-[901px]:h-[300px] min-[1060px]:w-[250px] min-[1060px]:h-[360px] 2xl:w-[300px] 2xl:h-[400px] rounded-2xl shadow-xl overflow-hidden">
-              <img src="{{ asset('/home/images/gambar_home/about1.jpg') }}"  alt="Image About 1" class="w-full h-full object-cover"/>
+                
             </div>
-          </div>
-          <div class="flex flex-col gap-5 justify-center">
-            <div class="w-[120px] h-[100px] min-[370px]:w-[135px] min-[370px]:h-[120px] min-[404px]:w-[150px] min-[404px]:h-[130px] min-[485px]:w-[180px] min-[485px]:h-[180px] min-[600px]:w-[230px] min-[600px]:h-[230px] min-[901px]:w-[180px] min-[901px]:h-[180px] min-[1060px]:w-[230px] min-[1060px]:h-[230px] 2xl:w-[350px] 2xl:h-[250px] rounded-2xl shadow-xl overflow-hidden">
-              <img src="{{ asset('/home/images/gambar_home/about2.jpg') }}"  alt="Image About 2" class="w-full h-full object-cover"/>
-            </div>
-            <div class="w-[90px] h-20 min-[370px]:w-[100px] min-[370px]:h-[90px] min-[404px]:w-[120px] min-[404px]:h-[90px] min-[485px]:w-[180px] min-[485px]:h-[150px] 2xl:w-[280px] 2xl:h-60 rounded-2xl shadow-xl overflow-hidden">
-              <img src="{{ asset('/home/images/gambar_home/about3.jpg') }}"  alt="Image About 3" class="w-full h-full object-cover"/>
-            </div>
-          </div>
         </div>
-        <div class="flex-1">
-          <h3 class="font-latin text-blue-500 text-[20px] xl:text-2xl 2xl:text-3xl -mb-3">
-            Jelajahi Potensi Belajarmu
-          </h3>
-          <h1 class="font-fredoka text-2xl xl:text-3xl 2xl:text-4xl font-semibold">
-            Inspirasi untuk Belajar Lebih Baik
-          </h1>
-          <p class="mt-5 text-sm xl:text-[15px] 2xl:text-[16px]">Smart Sekolah adalah platform pembelajaran digital yang membantu kamu membangun kompetensi nyata melalui materi yang terstruktur, berbasis praktik, dan dirancang sesuai dengan kebutuhan industri. Kami berkomitmen menghadirkan pengalaman belajar yang lebih mudah, relevan, dan efektif melalui akses materi, latihan, serta panduan pembelajaran yang kamu butuhkan.</p>
-          <p class="mt-3 text-sm xl:text-[15px] 2xl:text-[16px]">Didirikan oleh Tim Smartlogy pada tahun 2026, platform ini dibangun untuk mendukung transformasi pendidikan dengan menghadirkan konten berkualitas, teknologi modern, serta tampilan yang ramah pengguna.</p>
-          
-          <div class="visimisiswapperabout hidden xl:block">
-            <div class="button-container">
-              <button id="visibtn">VISI</button>
-              <button id="misibtn">MISI</button>
-              <div id="visimisiindicator"></div>
-            </div>
-            <div class="content-text">
-              <div id="contentBoxVisiMisi">
-                <p id="visicontent">
-                  Menjadi platform pembelajaran digital unggulan yang membantu menciptakan generasi
-                  kompeten, adaptif, dan siap menghadapi kebutuhan dunia industri melalui teknologi
-                  pendidikan yang inovatif.
-                </p>
-                <ol id="misicontent">
-                  <li>Materi pembelajaran terstruktur, relevan, dan berbasis praktik.</li>
-                  <li>Mendukung peningkatan kompetensi siswa dan tenaga pendidik sesuai kebutuhan industri.</li>
-                  <li>Menghadirkan pengalaman belajar digital yang mudah diakses, modern, dan menyenangkan.</li>
-                </ol>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="visimisiswapperabout block xl:hidden">
-        <div class="button-container">
-          <button id="visibtn">VISI</button>
-          <button id="misibtn">MISI</button>
-          <div id="visimisiindicator"></div>
-        </div>
-        <div class="content-text">
-          <div id="contentBoxVisiMisi">
-            <p id="visicontent">Menjadi platform informasi wisata terdepan di Indonesia yang menginspirasi jutaan traveler untuk menjelajahi keindahan negeri, memperkenalkan pesona budaya lokal, serta mendukung pertumbuhan pariwisata berkelanjutan di seluruh nusantara.</p>
-            <ol id="misicontent">
-              <li>Menyediakan informasi destinasi dan penginapan yang akurat, menarik, dan mudah diakses.</li>
-              <li>Mendukung pariwisata lokal dengan menampilkan potensi terbaik dari setiap daerah.</li>
-              <li>Menghadirkan pengalaman digital yang modern dan menyenangkan bagi setiap pengguna.</li>
-            </ol>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <h2 class="font-bold font-fredoka text-[22px] min-[475px]:text-2xl my-10 text-center">KONTRIBUTOR</h2>
-        <div class="grid grid-cols-1 min-[575px]:grid-cols-2 min-[875px]:grid-cols-3 min-[1600px]:grid-cols-4 min-[1600px]:grid-cols-6 gap-5 justify-items-center">
-          <x-home.card-kontributor linkinstagram="#" linklinkedin="#" linkgithub="#" nama="Fahmy Bima Az Zukhruf" role="Frontend Developer" profileimage="/home/images/avatar/1.png" />
-          <x-home.card-kontributor linkinstagram="#" linklinkedin="#" linkgithub="#" nama="Fahmy Bima Az Zukhruf" role="Frontend Developer" profileimage="/home/images/avatar/2.png" />
-          <x-home.card-kontributor linkinstagram="#" linklinkedin="#" linkgithub="#" nama="Fahmy Bima Az Zukhruf" role="Frontend Developer" profileimage="/home/images/avatar/3.png" />
-          <x-home.card-kontributor linkinstagram="#" linklinkedin="#" linkgithub="#" nama="Fahmy Bima Az Zukhruf" role="Frontend Developer" profileimage="/home/images/avatar/4.png" />
-          <x-home.card-kontributor linkinstagram="#" linklinkedin="#" linkgithub="#" nama="Fahmy Bima Az Zukhruf" role="Frontend Developer" profileimage="/home/images/avatar/5.png" />
-          <x-home.card-kontributor linkinstagram="#" linklinkedin="#" linkgithub="#" nama="Fahmy Bima Az Zukhruf" role="Frontend Developer" profileimage="/home/images/avatar/6.png" />
-        </div>
-      </div>
     </section>
 
+    <!-- Gabung Section -->
+    <section id="gabung" class="py-24 px-6 overflow-hidden">
+        <div class="max-w-5xl mx-auto relative">
+            <div class="bg-primary rounded-[3rem] px-8 py-16 md:p-20 text-center text-white relative z-10 overflow-hidden shadow-2xl">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+                <div class="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+                
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">Siap Memulai Transformasi?</h2>
+                <p class="text-indigo-100 text-lg mb-10 max-w-xl mx-auto">
+                    Bergabunglah dengan ribuan pengajar dan siswa yang telah merasakan kemudahan belajar di ekosistem SmartSekolah.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="{{ route('register') }}" class="bg-white text-primary px-10 py-4 rounded-2xl font-bold hover:bg-indigo-50 transition-all shadow-xl">
+                        Daftarkan Sekolah Anda
+                    </a>
+                    <a href="https://wa.me/6285648793646" class="bg-primary border-2 border-white/30 text-white px-10 py-4 rounded-2xl font-bold hover:bg-white/10 transition-all">
+                        Hubungi Sales
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-16 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-6">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-4 gap-12">
+            <div class="space-y-6">
+                <div class="flex items-center gap-2">
+                    <img src="{{ asset('home/images/smart-sekolah.png') }}" alt="Logo" class="w-60">
+                </div>
+                <p class="text-slate-500 text-sm">Tuntaskan kesenjangan pendidikan bersama SmartSekolah, platform pembelajaran modern berbasis AI</p>
+                <div class="flex gap-4">
+                    <a href="#" class="text-slate-400 hover:text-primary transition-colors"><i data-lucide="instagram"></i></a>
+                    <a href="#" class="text-slate-400 hover:text-primary transition-colors"><i data-lucide="twitter"></i></a>
+                    <a href="#" class="text-slate-400 hover:text-primary transition-colors"><i data-lucide="linkedin"></i></a>
+                </div>
+            </div>
+            <div>
+                <h5 class="font-bold mb-6">Beranda Link</h5>
+                <ul class="space-y-4 text-slate-500 text-sm">
+                    <li><a href="#" class="hover:text-primary" href="{{ route('landing') }}#beranda">Beranda</a></li>
+                    <li><a href="#" class="hover:text-primary" href="{{ route('landing') }}#tentang">Tentang</a></li>
+                    <li><a href="#" class="hover:text-primary" href="{{ route('landing') }}#fitur">Fitur</a></li>
+                    <li><a href="#" class="hover:text-primary" href="{{ route('landing') }}#materi">Materi</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="font-bold mb-6">Link Cepat</h5>
+                <ul class="space-y-4 text-slate-500 text-sm">
+                    <li><a href="#" class="hover:text-primary">Tentang Kami</a></li>
+                    <li><a href="#" class="hover:text-primary">Karir</a></li>
+                    <li><a href="#" class="hover:text-primary">Blog Pendidikan</a></li>
+                    <li><a href="#" class="hover:text-primary">Kebijakan Privasi</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="font-bold mb-6">Kontak</h5>
+                <ul class="space-y-4 text-slate-500 text-sm">
+                    <li class="flex items-center gap-3">
+                        @include('_home.icons.mail') smartsekolah@gmail.id
+                    </li>
+                    <li class="flex items-center gap-3">
+                        @include('_home.icons.phone') +62 (21) 4567 890
+                    </li>
+                    <li class="flex items-start gap-3">
+                        @include('_home.icons.map-pin') Jakarta, Indonesia
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-16 pt-8 border-t border-slate-100 dark:border-slate-800 text-center text-slate-400 text-xs">
+            <p>&copy; 2026 SmartSekolah. Seluruh hak cipta dilindungi.</p>
+        </div>
+    </footer>
     <script>
-        const card_gallery = document.querySelectorAll('.card-gallery-home');
-        const bgblur = document.querySelector('.bgblur');
-        const close_detail_gallery_modal = document.querySelector('#close_detail_gallery_modal');
-        const detail_gallery_modal = document.querySelector('#detail_gallery_modal');
-        const title_gallery_modal = document.querySelector('#title_gallery_modal');
-        const image_gallery_modal = document.querySelector('#image_gallery_modal');
-        const deskripsi_gallery_modal = document.querySelector('#deskripsi_gallery_modal');
+        const materi_error_text = document.querySelector('#materi_error_text');
+        const materi_card_container = document.querySelector('#materi_card_container');
+        const materi_error_loading = document.querySelector('#materi_error_loading');
 
-        card_gallery.forEach(card => {
-            card.querySelector('#maximize-gallery-card').addEventListener('click', () => {
-              const title = card.dataset.title;
-              const image = card.dataset.src;
-              const deskripsi = card.dataset.deskripsi;
+        // Inisialisasi
+        let opsiMateri = {
+            jenjang: 1,
+            kelas: 1,
+            mapel: 'semua'
+        }
 
-              title_gallery_modal.textContent = title;
-              image_gallery_modal.src = image;
-              deskripsi_gallery_modal.textContent = deskripsi;
+        let mapel = @json($mapel);
+        mapel = mapel['data'];
+        mapel.forEach((item) => {
+            document.querySelector('#opsi-mapel').innerHTML += `<li class="option px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors" data-type="mapel" data-value="${item.id}">${item.name}</li>`;
+        })
 
-              detail_gallery_modal.classList.remove('scale-0');
-              bgblur.classList.add('active');
+        let jenjang = [
+            { id: 1, jenjang: 'Sekolah Dasar (SD)' },
+            { id: 2, jenjang: 'Madrasah Ibtidaiyah (MI)' },
+            { id: 3, jenjang: 'Sekolah Menengah Pertama (SMP)' },
+            { id: 4, jenjang: 'Madrasah Tsanawiyah (MTS)' },
+            { id: 5, jenjang: 'Sekolah Menengah Atas (SMA)' },
+            { id: 6, jenjang: 'Madrasah Aliyah (MA)' },
+            { id: 7, jenjang: 'Sekolah Menengah Kejuruan (SMK)' },
+        ];
+        jenjang.forEach((item) => {
+            document.querySelector('#opsi-jenjang').innerHTML += `<li class="option px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors" data-type="jenjang" data-value="${item.id}">${item.jenjang}</li>`;
+        })
+
+        let kelas = [
+            { id: 1, kelas: '1' },
+            { id: 2, kelas: '2' },
+            { id: 3, kelas: '3' },
+            { id: 4, kelas: '4' },
+            { id: 5, kelas: '5' },
+            { id: 6, kelas: '6' },
+            { id: 7, kelas: '7' },
+            { id: 8, kelas: '8' },
+            { id: 9, kelas: '9' },
+            { id: 10, kelas: '10' },
+            { id: 11, kelas: '11' },
+            { id: 12, kelas: '12' },
+        ];
+        kelas.forEach((item) => {
+            document.querySelector('#opsi-kelas').innerHTML += `<li class="option px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer transition-colors" data-type="kelas" data-value="${item.id}">${item.kelas}</li>`;
+        })
+
+
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        const hamburger = document.querySelector('.hamburger-navbar');
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            document.querySelector('#mobile-menu').classList.toggle('active');
+        })
+
+        // Fungsi untuk menginisialisasi Searchable Select kustom
+        function initSearchableSelect(wrapperId) {
+            const wrapper = document.getElementById(wrapperId);
+            const trigger = wrapper.querySelector('.select-trigger');
+            const dropdown = wrapper.querySelector('.dropdown-menu');
+            const searchInput = wrapper.querySelector('.search-input');
+            const options = wrapper.querySelectorAll('.option');
+            const selectedText = wrapper.querySelector('.selected-text');
+            const arrowIcon = wrapper.querySelector('.arrow-icon');
+
+            // 1. Toggle Dropdown
+            trigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // Tutup dropdown lain yang mungkin sedang terbuka
+                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                    if (menu !== dropdown) menu.classList.remove('active');
+                });
+                document.querySelectorAll('.arrow-icon').forEach(icon => {
+                    if (icon !== arrowIcon) icon.style.transform = 'rotate(0deg)';
+                });
+
+                // Toggle menu ini
+                const isActive = dropdown.classList.toggle('active');
+                arrowIcon.style.transform = isActive ? 'rotate(180deg)' : 'rotate(0deg)';
+                
+                if (isActive) {
+                    searchInput.value = '';
+                    filterOptions('');
+                    setTimeout(() => searchInput.focus(), 100);
+                }
+            });
+
+            // 2. Fungsi Pencarian (Filtering)
+            function filterOptions(term) {
+                const lowerTerm = term.toLowerCase();
+                let hasResults = false;
+
+                options.forEach(option => {
+                    const text = option.textContent.toLowerCase();
+                    if (text.includes(lowerTerm)) {
+                        option.style.display = 'block';
+                        hasResults = true;
+                    } else {
+                        option.style.display = 'none';
+                    }
+                });
+
+                // Opsional: tampilkan pesan "tidak ditemukan"
+                const noResultMsg = wrapper.querySelector('.no-result');
+                if (!hasResults) {
+                    if (!noResultMsg) {
+                        const li = document.createElement('li');
+                        li.className = 'no-result px-4 py-2 text-sm text-slate-400 italic';
+                        li.textContent = 'Tidak ditemukan';
+                        wrapper.querySelector('.option-list').appendChild(li);
+                    }
+                } else if (noResultMsg) {
+                    noResultMsg.remove();
+                }
+            }
+
+            searchInput.addEventListener('input', (e) => {
+                filterOptions(e.target.value);
+            });
+
+            // 3. Memilih Opsi
+            wrapper.querySelector('.option-list').addEventListener('click', (e) => {
+                const option = e.target.closest('.option');
+                if (!option) return;
+
+                selectedText.textContent = option.textContent;
+                const value = option.dataset.value;
+
+                console.log(`Selected in ${wrapperId}:`, value);
+
+                if (wrapperId === "select-jenjang") {
+                    opsiMateri.jenjang = value;
+
+                    const opsiKelas = document.querySelector('#opsi-kelas');
+                    const btn_opsi = document.querySelector('#button-kelas-opsi span');
+                    opsiKelas.innerHTML = '';
+
+                    let kelas = [];
+
+                    if (value == 1 || value == 2) {
+                        btn_opsi.innerHTML = 1;
+                        opsiMateri.kelas = 1;
+                        kelas = [
+                            { id: 1, kelas: '1' },
+                            { id: 2, kelas: '2' },
+                            { id: 3, kelas: '3' },
+                            { id: 4, kelas: '4' },
+                            { id: 5, kelas: '5' },
+                            { id: 6, kelas: '6' },
+                        ];
+                    } else if (value == 3 || value == 4) {
+                        btn_opsi.innerHTML = 7;
+                        opsiMateri.kelas = 7;
+                        kelas = [
+                            { id: 7, kelas: '7' },
+                            { id: 8, kelas: '8' },
+                            { id: 9, kelas: '9' },
+                        ];
+                    } else {
+                        btn_opsi.innerHTML = 10;
+                        opsiMateri.kelas = 10;
+                        kelas = [
+                            { id: 10, kelas: '10' },
+                            { id: 11, kelas: '11' },
+                            { id: 12, kelas: '12' },
+                        ];
+                    }
+
+                    kelas.forEach(item => {
+                        opsiKelas.insertAdjacentHTML(
+                            'beforeend',
+                            `<li class="option px-4 py-2 text-sm cursor-pointer" data-value="${item.id}">
+                                ${item.kelas}
+                            </li>`
+                        );
+                    });
+
+                } else if (wrapperId === "select-kelas") {
+                    opsiMateri.kelas = value;
+                } else if (wrapperId === "select-mapel") {
+                    opsiMateri.mapel = value;
+                }
+
+                getMateri(opsiMateri.jenjang, opsiMateri.kelas, opsiMateri.mapel);
+
+                dropdown.classList.remove('active');
+                arrowIcon.style.transform = 'rotate(0deg)';
+            });
+
+
+            // Mencegah klik di dalam search input menutup dropdown
+            searchInput.addEventListener('click', (e) => e.stopPropagation());
+        }
+
+        // Jalankan inisialisasi saat DOM siap
+        document.addEventListener('DOMContentLoaded', () => {
+            initSearchableSelect('select-jenjang');
+            initSearchableSelect('select-kelas');
+            initSearchableSelect('select-mapel');
+
+            // Tutup semua dropdown jika klik di luar area
+            document.addEventListener('click', () => {
+                document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.remove('active'));
+                document.querySelectorAll('.arrow-icon').forEach(icon => icon.style.transform = 'rotate(0deg)');
             });
         });
 
-        close_detail_gallery_modal.addEventListener('click', () => {
-            detail_gallery_modal.classList.add('scale-0');
-            bgblur.classList.remove('active');
-        });
+        const materiRoute = "{{ route('get_materi', ['jenjang' => '__JENJANG__', 'kelas' => '__KELAS__', 'mapel' => '__MAPEL__']) }}";
+        const downloadRoute = "{{ route('materi_download', ['id' => '__ID__']) }}"
+        
+        function getMateri(jenjang, kelas, mapel) {
+            materi_card_container.innerHTML = ``;
+            materi_error_loading.classList.remove('hidden');
+            materi_error_text.classList.add('hidden');
 
-        document.querySelector('#download-image').addEventListener('click', async () => {
-          alert(1)
-            const imageUrl = document.querySelector('#image_gallery_modal').src;
+            const url = materiRoute
+                .replace('__JENJANG__', jenjang)
+                .replace('__KELAS__', kelas)
+                .replace('__MAPEL__', encodeURIComponent(mapel));
+            
 
-            const response = await fetch(imageUrl);
-            const blob = await response.blob();
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    const items = data.data.data;
+                    console.log(Array.isArray(items) && items.length > 0);
+                    if (Array.isArray(items) && items.length > 0) {
+                        items.forEach(item => {
+                            const urlDownload = downloadRoute.replace('__ID__', item.id);
+                            
+                            const extension = item.file_path.split('.').pop().toLowerCase();
+                            console.log(item);
+                            let icon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="30" height="30" fill="gray"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M192 64C156.7 64 128 92.7 128 128L128 512C128 547.3 156.7 576 192 576L448 576C483.3 576 512 547.3 512 512L512 234.5C512 217.5 505.3 201.2 493.3 189.2L386.7 82.7C374.7 70.7 358.5 64 341.5 64L192 64zM453.5 240L360 240C346.7 240 336 229.3 336 216L336 122.5L453.5 240z"/></svg>';
 
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
+                            if(extension == 'pdf') {
+                                icon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="30" height="30" fill="red"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M128 64C92.7 64 64 92.7 64 128L64 512C64 547.3 92.7 576 128 576L208 576L208 464C208 428.7 236.7 400 272 400L448 400L448 234.5C448 217.5 441.3 201.2 429.3 189.2L322.7 82.7C310.7 70.7 294.5 64 277.5 64L128 64zM389.5 240L296 240C282.7 240 272 229.3 272 216L272 122.5L389.5 240zM272 444C261 444 252 453 252 464L252 592C252 603 261 612 272 612C283 612 292 603 292 592L292 564L304 564C337.1 564 364 537.1 364 504C364 470.9 337.1 444 304 444L272 444zM304 524L292 524L292 484L304 484C315 484 324 493 324 504C324 515 315 524 304 524zM400 444C389 444 380 453 380 464L380 592C380 603 389 612 400 612L432 612C460.7 612 484 588.7 484 560L484 496C484 467.3 460.7 444 432 444L400 444zM420 572L420 484L432 484C438.6 484 444 489.4 444 496L444 560C444 566.6 438.6 572 432 572L420 572zM508 464L508 592C508 603 517 612 528 612C539 612 548 603 548 592L548 548L576 548C587 548 596 539 596 528C596 517 587 508 576 508L548 508L548 484L576 484C587 484 596 475 596 464C596 453 587 444 576 444L528 444C517 444 508 453 508 464z"/></svg>'
+                            } else if(extension == 'word') {
+                                icon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="30" height="30" fill="blue"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M128 128C128 92.7 156.7 64 192 64L341.5 64C358.5 64 374.8 70.7 386.8 82.7L493.3 189.3C505.3 201.3 512 217.6 512 234.6L512 512C512 547.3 483.3 576 448 576L192 576C156.7 576 128 547.3 128 512L128 128zM336 122.5L336 216C336 229.3 346.7 240 360 240L453.5 240L336 122.5zM263.4 338.8C260.5 325.9 247.7 317.7 234.8 320.6C221.9 323.5 213.7 336.3 216.6 349.2L248.6 493.2C250.9 503.7 260 511.4 270.8 512C281.6 512.6 291.4 505.9 294.8 495.6L320 419.9L345.2 495.6C348.6 505.8 358.4 512.5 369.2 512C380 511.5 389.1 503.8 391.4 493.2L423.4 349.2C426.3 336.3 418.1 323.4 405.2 320.6C392.3 317.8 379.4 325.9 376.6 338.8L363.4 398.2L342.8 336.4C339.5 326.6 330.4 320 320 320C309.6 320 300.5 326.6 297.2 336.4L276.6 398.2L263.4 338.8z"/></svg>'
+                            } else if(extension == 'docx') {
+                                icon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="30" height="30" fill="blue"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M128 128C128 92.7 156.7 64 192 64L341.5 64C358.5 64 374.8 70.7 386.8 82.7L493.3 189.3C505.3 201.3 512 217.6 512 234.6L512 512C512 547.3 483.3 576 448 576L192 576C156.7 576 128 547.3 128 512L128 128zM336 122.5L336 216C336 229.3 346.7 240 360 240L453.5 240L336 122.5zM263.4 338.8C260.5 325.9 247.7 317.7 234.8 320.6C221.9 323.5 213.7 336.3 216.6 349.2L248.6 493.2C250.9 503.7 260 511.4 270.8 512C281.6 512.6 291.4 505.9 294.8 495.6L320 419.9L345.2 495.6C348.6 505.8 358.4 512.5 369.2 512C380 511.5 389.1 503.8 391.4 493.2L423.4 349.2C426.3 336.3 418.1 323.4 405.2 320.6C392.3 317.8 379.4 325.9 376.6 338.8L363.4 398.2L342.8 336.4C339.5 326.6 330.4 320 320 320C309.6 320 300.5 326.6 297.2 336.4L276.6 398.2L263.4 338.8z"/></svg>'
+                            } else if(extension == 'jpg' || extension == 'png' || extension == 'jpeg' || extension == 'gif') {
+                                icon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="30" height="30" fill="orange"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M128 128C128 92.7 156.7 64 192 64L341.5 64C358.5 64 374.8 70.7 386.8 82.7L493.3 189.3C505.3 201.3 512 217.6 512 234.6L512 512C512 547.3 483.3 576 448 576L192 576C156.7 576 128 547.3 128 512L128 128zM336 122.5L336 216C336 229.3 346.7 240 360 240L453.5 240L336 122.5zM256 320C256 302.3 241.7 288 224 288C206.3 288 192 302.3 192 320C192 337.7 206.3 352 224 352C241.7 352 256 337.7 256 320zM220.6 512L419.4 512C435.2 512 448 499.2 448 483.4C448 476.1 445.2 469 440.1 463.7L343.3 361.9C337.3 355.6 328.9 352 320.1 352L319.8 352C311 352 302.7 355.6 296.6 361.9L199.9 463.7C194.8 469 192 476.1 192 483.4C192 499.2 204.8 512 220.6 512z"/></svg>'
+                            } else {
+                                icon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="30" height="30" fill="gray"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M192 64C156.7 64 128 92.7 128 128L128 512C128 547.3 156.7 576 192 576L448 576C483.3 576 512 547.3 512 512L512 234.5C512 217.5 505.3 201.2 493.3 189.2L386.7 82.7C374.7 70.7 358.5 64 341.5 64L192 64zM453.5 240L360 240C346.7 240 336 229.3 336 216L336 122.5L453.5 240z"/></svg>'
+                            }
 
-            a.href = url;
-            a.download = 'gambar-gallery.jpg';
+                            const grade = item.grade;
+                            let jenjangText = 'SD';
 
-            document.body.appendChild(a);
-            a.click();
+                            if(grade == 1) {
+                                jenjangText = 'SD'
+                            } else if(grade == 2) {
+                                jenjangText = 'MI'
+                            } else if(grade == 3) {
+                                jenjangText = 'SMP'
+                            } else if(grade == 4) {
+                                jenjangText = 'MTS'
+                            } else if(grade == 5) {
+                                jenjangText = 'SMA'
+                            } else if(grade == 6) {
+                                jenjangText = 'MA'
+                            } else if(grade == 7) {
+                                jenjangText = 'SMK'
+                            }
 
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        });
+                            materi_card_container.innerHTML += `<div class="flex flex-col bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group">
+                                <div class="p-5 flex flex-col flex-grow">
+                                    <!-- Header Kartu: Ikon & Badge -->
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="w-12 h-12 flex items-center justify-center bg-red-50 dark:bg-red-900/20 rounded-xl text-red-500 text-2xl group-hover:scale-110 transition-transform duration-300">
+                                            ${icon}
+                                        </div>
+                                        <div class="flex flex-col items-end gap-1">
+                                            <span class="text-[10px] font-bold px-2 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded-full uppercase tracking-wider">${jenjangText}</span>
+                                            <span class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">${item.total_download} Unduhan</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Judul & Sekolah -->
+                                    <div class="mb-3">
+                                        <h3 class="font-bold text-slate-900 dark:text-slate-100 leading-tight mb-1 line-clamp-2 min-h-[2.5rem]">
+                                            ${item.name}
+                                        </h3>
+                                        <p class="text-xs text-indigo-600 dark:text-indigo-400 font-semibold flex items-center gap-1">
+                                            <i class="fa-solid fa-school text-[10px]"></i>
+                                            ${item.school_name}
+                                        </p>
+                                    </div>
 
+                                    <!-- Deskripsi -->
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 mb-4 leading-relaxed">
+                                        ${item.summary}
+                                    </p>
+                                    
+                                    <div class="mt-auto pt-4 border-t border-slate-100 dark:border-slate-700/50 flex items-center justify-between">
+                                        <span class="text-xs text-slate-400 dark:text-slate-500 font-medium">Kelas ${item.classroom}</span>
+                                        <span class="text-[10px] font-bold text-slate-300 dark:text-slate-600 uppercase tracking-widest">${extension}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Tombol Action -->
+                                <div class="p-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700/50">
+                                    <a href="${urlDownload}" class="w-full flex items-center justify-center gap-2 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-all font-semibold text-sm shadow-sm active:scale-95">
+                                        <i class="fa-solid fa-download"></i>
+                                        <span>Download Materi</span>
+                                    </a>
+                                </div>
+                            </div>`;
+                        })
+                    } else {
+                        materi_error_text.classList.remove('hidden');
+                        materi_error_text.innerHTML = 'Data Materi Tidak Ditemukan';
+                    }
+                    materi_error_loading.classList.add('hidden');
+                })
+                .catch(err => {
+                    materi_error_text.classList.remove('hidden');
+                    materi_error_text.innerHTML = 'Terjadi Kesalahan Saat Mengambil Data';
+                    materi_error_loading.classList.add('hidden');
+                    console.error(err)
+                });
+        }
+        getMateri(1,1,'semua');
     </script>
-@endsection
+</body>
+</html>

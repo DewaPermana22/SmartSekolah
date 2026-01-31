@@ -7,7 +7,7 @@
     <x-page-title
         title="Pembuat Kuis"
         description="Buat soal quiz pilihan ganda dengan AI untuk siswa Anda" />
-        <div>
+    <div>
         <a navigate href="{{ route('teacher.ai.quiz_generator.index') }}"
             class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700">
             <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -46,31 +46,19 @@
                 </div>
             </div>
 
-                <div class="grid sm:grid-cols-2 gap-6 mb-6">
-                    <!-- Judul Kuis -->
-                    <div>
-                        <label for="quiz_name"
-                            class="block text-sm font-medium mb-2 text-gray-800 dark:text-neutral-200">
-                            Nama Kuis
-                        </label>
-                        <input type="text" id="quiz_name" name="question_count"
-                            class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
-                            placeholder="Masukkan jumlah soal" required>
-                    </div>
-
-                    <!-- Jumlah Soal -->
-                    <div>
-                        <label for="question_count"
-                            class="block text-sm font-medium mb-2 text-gray-800 dark:text-neutral-200">
-                            Jumlah Soal
-                        </label>
-                        <input type="number" id="question_count" name="question_count" min="1" max="50" value="10"
-                            class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
-                            placeholder="Masukkan jumlah soal" required>
-                        <p class="mt-2 text-xs text-gray-500 dark:text-neutral-400">
-                            Maksimal 50 soal per quiz
-                        </p>
-                    </div>
+            <div class="grid sm:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label for="question_count"
+                        class="block text-sm font-medium mb-2 text-gray-800 dark:text-neutral-200">
+                        Jumlah Soal
+                    </label>
+                    <input type="number" id="total_questions" name="question_count" min="1" max="50" value="10"
+                        class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+                        placeholder="Masukkan jumlah soal" required>
+                    <p class="mt-2 text-xs text-gray-500 dark:text-neutral-400">
+                        Maksimal 50 soal per quiz
+                    </p>
+                </div>
 
                 <div>
                     <label for="options_count" class="block text-sm font-medium mb-2 text-gray-800 dark:text-neutral-200">
@@ -196,17 +184,48 @@
             $.get(url, function(res) {
                 if (res.data.status === 'completed') {
                     clearInterval(pollingInterval);
-                    rawMarkdownContent = res.data.content;
+                    
+                    // Parse JSON content to make it readable
+                    try {
+                        const questions = JSON.parse(res.data.content);
+                        let markdownOutput = `# ${$('#quiz_name').val()}\n\n`;
+                        markdownOutput += `**Jenjang:** ${$('#education_level').val()} Kelas ${$('#class_select').val()}\n\n`;
+                        markdownOutput += `**Jumlah Soal:** ${questions.length}\n\n`;
+                        markdownOutput += `---\n\n`;
+                        
+                        questions.forEach((q, idx) => {
+                            markdownOutput += `## Soal ${idx + 1}\n\n`;
+                            markdownOutput += `**${q.question}**\n\n`;
+                            q.options.forEach((opt, optIdx) => {
+                                const letter = String.fromCharCode(65 + optIdx);
+                                const isCorrect = opt === q.correct_answer ? ' ✅' : '';
+                                markdownOutput += `${letter}. ${opt}${isCorrect}\n\n`;
+                            });
+                            markdownOutput += `**Jawaban:** ${q.correct_answer}\n\n`;
+                            markdownOutput += `---\n\n`;
+                        });
+                        
+                        rawMarkdownContent = markdownOutput;
+                    } catch (e) {
+                        rawMarkdownContent = res.data.content;
+                    }
+                    
                     $('#resultContent').html(renderMarkdown(rawMarkdownContent));
                     $('#loadingState').addClass('hidden');
                     $('#resultArea').removeClass('hidden');
                     $('#generateBtn').prop('disabled', false);
                 } else if (res.data.status === 'failed') {
                     clearInterval(pollingInterval);
-                    alert('Gagal membuat kuis.');
+                    const errorMsg = res.data.error || 'Gagal membuat kuis.';
+                    alert('Error: ' + errorMsg);
                     $('#loadingState').addClass('hidden');
                     $('#generateBtn').prop('disabled', false);
                 }
+            }).fail(function() {
+                clearInterval(pollingInterval);
+                alert('Terjadi kesalahan saat mengecek status.');
+                $('#loadingState').addClass('hidden');
+                $('#generateBtn').prop('disabled', false);
             });
         }
 
@@ -231,7 +250,7 @@
             $('#generateBtn').prop('disabled', true);
 
             $.ajax({
-                url: '{{ route('teacher.ai.quiz_generator.do_create') }}',
+                url: '{{ route('teacher.ai.quiz_generator.do_create') }}', 
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(requestBody),

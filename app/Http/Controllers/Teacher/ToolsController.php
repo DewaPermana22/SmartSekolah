@@ -10,7 +10,7 @@ use App\Jobs\RunImageGeneration;
 use App\Jobs\RunQuizGeneration;
 use App\Usecase\Teacher\ImageGenerationUsecase;
 use Exception;
-use App\Usecase\superAdmin\TextGenerationtUsecase;
+use App\Usecase\superAdmin\TextGenerationUsecase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -322,7 +322,7 @@ class ToolsController extends Controller
 
             $data = json_decode(Storage::disk('local')->get($completedPath), true);
 
-            $usecase = app(TextGenerationtUsecase::class);
+            $usecase = app(TextGenerationUsecase::class);
             $usecase->addHistory($data, $completedPath);
 
             return response()->json(
