@@ -165,6 +165,10 @@ Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->grou
         Route::get('/add', [QuizController::class, 'create'])->name('add');
         Route::post('/store', [QuizController::class, 'store'])->name('store');
         Route::get('/detail/{id}', [QuizController::class, 'detail'])->name('detail');
+        Route::get('/{id}/questions/add', [QuizController::class, 'addQuestions'])->name('questions.add');
+        Route::post('/{id}/questions/store', [QuizController::class, 'storeQuestions'])->name('questions.store');
+        Route::get('/edit/{id}', [QuizController::class, 'edit'])->name('edit');
+        Route::post('/update/{id}', [QuizController::class, 'update'])->name('update');
         Route::get('/scores/{id}', [QuizController::class, 'scores'])->name('scores');
         Route::delete('/delete/{id}', [QuizController::class, 'delete'])->name('delete');
     });

@@ -4,14 +4,10 @@
 
 @section('content')
     <div class="grid gap-3 md:flex md:justify-between md:items-center py-4">
-        <div>
-            <h1 class="text-2xl font-extrabold text-gray-800 dark:text-neutral-200 mb-1">
-                Generator Quiz
-            </h1>
-            <p class="text-md text-gray-400 dark:text-neutral-400">
-                Buat soal quiz pilihan ganda dengan AI untuk siswa Anda
-            </p>
-        </div>
+       <x-page-title
+            title="Pembuat Kuis"
+            description="Buat soal quiz pilihan ganda dengan AI untuk siswa Anda"
+        />
     </div>
 
     <div class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-neutral-800 dark:border-neutral-700">
@@ -20,6 +16,17 @@
                 @csrf
 
                 <div class="grid sm:grid-cols-2 gap-6 mb-6">
+                    <!-- Judul Kuis -->
+                    <div>
+                        <label for="quiz_name"
+                            class="block text-sm font-medium mb-2 text-gray-800 dark:text-neutral-200">
+                            Nama Kuis
+                        </label>
+                        <input type="text" id="quiz_name" name="question_count"
+                            class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+                            placeholder="Masukkan jumlah soal" required>
+                    </div>
+
                     <!-- Jumlah Soal -->
                     <div>
                         <label for="question_count"
@@ -188,9 +195,9 @@
             $('#grade').on('change', function() {
                 const selectedGrade = $(this).val();
                 const classSelect = $('#class');
-                
+
                 classSelect.empty().append('<option value="">Pilih Kelas</option>');
-                
+
                 if (selectedGrade && classOptions[selectedGrade]) {
                     classSelect.prop('disabled', false);
                     classOptions[selectedGrade].forEach(function(classNum) {
@@ -214,86 +221,86 @@
             function formatMarkdownToHTML(markdownContent) {
                 try {
                     let html = marked.parse(markdownContent);
-                    
+
                     // Apply consistent styling from materi template
-                    html = html.replace(/<table>/g, 
+                    html = html.replace(/<table>/g,
                         '<div class="overflow-x-auto my-6 rounded-lg border border-gray-200 dark:border-neutral-700 shadow-sm">' +
                         '<table class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">');
                     html = html.replace(/<\/table>/g, '</table></div>');
-                    
-                    html = html.replace(/<thead>/g, 
+
+                    html = html.replace(/<thead>/g,
                         '<thead class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-neutral-800 dark:to-neutral-900">');
-                    html = html.replace(/<th>/g, 
+                    html = html.replace(/<th>/g,
                         '<th class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-neutral-300 uppercase tracking-wider border-b-2 border-gray-300 dark:border-neutral-600">');
-                    
-                    html = html.replace(/<tbody>/g, 
+
+                    html = html.replace(/<tbody>/g,
                         '<tbody class="bg-white dark:bg-neutral-900 divide-y divide-gray-100 dark:divide-neutral-800">');
-                    html = html.replace(/<td>/g, 
+                    html = html.replace(/<td>/g,
                         '<td class="px-6 py-4 text-sm text-gray-700 dark:text-neutral-300 border-b border-gray-100 dark:border-neutral-800">');
-                    
-                    html = html.replace(/<h1>/g, 
+
+                    html = html.replace(/<h1>/g,
                         '<h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 mb-6 mt-8 pb-2 border-b-4 border-blue-500 dark:border-blue-600">');
-                    
-                    html = html.replace(/<h2>/g, 
+
+                    html = html.replace(/<h2>/g,
                         '<h2 class="text-3xl font-bold text-gray-800 dark:text-neutral-100 mb-5 mt-8 pb-3 border-b-2 border-gray-300 dark:border-neutral-700 flex items-center">' +
                         '<span class="inline-block w-1.5 h-8 bg-gradient-to-b from-blue-500 to-indigo-500 rounded-full mr-3"></span>');
                     html = html.replace(/<\/h2>/g, '</h2>');
-                    
-                    html = html.replace(/<h3>/g, 
+
+                    html = html.replace(/<h3>/g,
                         '<h3 class="text-2xl font-semibold text-gray-700 dark:text-neutral-200 mb-4 mt-6 flex items-center">' +
                         '<svg class="w-6 h-6 mr-2 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg><span>');
                     html = html.replace(/<\/h3>/g, '</span></h3>');
-                    
-                    html = html.replace(/<h4>/g, 
+
+                    html = html.replace(/<h4>/g,
                         '<h4 class="text-xl font-semibold text-gray-600 dark:text-neutral-300 mb-3 mt-4">');
-                    
-                    html = html.replace(/<ul>/g, 
+
+                    html = html.replace(/<ul>/g,
                         '<ul class="space-y-2 my-4 ml-1">');
-                    
+
                     html = html.replace(/(<ul[^>]*>)([\s\S]*?)(<\/ul>)/g, function(match, ulOpen, content, ulClose) {
-                        let styledContent = content.replace(/<li>/g, 
+                        let styledContent = content.replace(/<li>/g,
                             '<li class="flex items-start pl-0">' +
                             '<svg class="w-5 h-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="3"/></svg>' +
                             '<span class="text-gray-700 dark:text-neutral-300">');
                         styledContent = styledContent.replace(/<\/li>/g, '</span></li>');
                         return ulOpen + styledContent + ulClose;
                     });
-                    
-                    html = html.replace(/<ol>/g, 
+
+                    html = html.replace(/<ol>/g,
                         '<ol class="space-y-2 my-4 ml-6 list-decimal list-outside pl-2">');
                     html = html.replace(/(<ol[^>]*>)([\s\S]*?)(<\/ol>)/g, function(match, olOpen, content, olClose) {
-                        let styledContent = content.replace(/<li>/g, 
+                        let styledContent = content.replace(/<li>/g,
                             '<li class="text-gray-700 dark:text-neutral-300 pl-2 ml-0">');
                         return olOpen + styledContent + olClose;
                     });
-                    
-                    html = html.replace(/<pre><code([^>]*)>/g, 
+
+                    html = html.replace(/<pre><code([^>]*)>/g,
                         '<pre class="bg-gradient-to-br from-gray-900 to-gray-800 dark:from-neutral-950 dark:to-neutral-900 p-5 rounded-xl overflow-x-auto my-5 shadow-lg border border-gray-700">' +
                         '<code$1 class="text-sm font-mono text-green-400 dark:text-green-300 leading-relaxed">');
-                    
-                    html = html.replace(/<code>/g, 
+
+                    html = html.replace(/<code>/g,
                         '<code class="px-2 py-1 bg-gray-100 dark:bg-neutral-800 text-red-600 dark:text-red-400 rounded font-mono text-sm border border-gray-200 dark:border-neutral-700">');
-                    
-                    html = html.replace(/<p>/g, 
+
+                    html = html.replace(/<p>/g,
                         '<p class="text-gray-700 dark:text-neutral-300 leading-relaxed my-4 text-base">');
-                    
-                    html = html.replace(/<blockquote>/g, 
+
+                    html = html.replace(/<blockquote>/g,
                         '<blockquote class="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 pl-5 py-3 my-5 italic text-gray-700 dark:text-neutral-300 rounded-r">');
-                    
-                    html = html.replace(/<strong>/g, 
+
+                    html = html.replace(/<strong>/g,
                         '<strong class="font-bold text-gray-900 dark:text-neutral-100">');
-                    
-                    html = html.replace(/<em>/g, 
+
+                    html = html.replace(/<em>/g,
                         '<em class="italic text-gray-600 dark:text-neutral-400">');
-                    
-                    html = html.replace(/<hr>/g, 
+
+                    html = html.replace(/<hr>/g,
                         '<hr class="my-8 border-t-2 border-gray-300 dark:border-neutral-700">');
-                    
-                    html = html.replace(/<a href="/g, 
+
+                    html = html.replace(/<a href="/g,
                         '<a target="_blank" rel="noopener noreferrer" href="');
-                    html = html.replace(/<a /g, 
+                    html = html.replace(/<a /g,
                         '<a class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline font-medium transition-colors" ');
-                    
+
                     return html;
                 } catch (e) {
                     console.error('Error parsing markdown:', e);
@@ -312,7 +319,7 @@
                     'Hampir selesai'
                 ];
                 const loadingText = loadingTexts[Math.floor(pollingAttempts / 10) % loadingTexts.length];
-                
+
                 $('#loadingState span').html(
                     `${loadingText}${dots} <span class="text-xs text-gray-500">(${pollingAttempts}s)</span>`
                 );
