@@ -1,32 +1,23 @@
 @extends('_admin._layout.app')
 
-@section('title', 'Manajemen Siswa')
+@section('title', 'Quiz Generator')
 
 @section('content')
-    <div class="grid gap-3 md:flex md:justify-between md:items-center py-4">
-        <x-page-title title="Data {{ $page['title'] }}" description="Kelola akun siswa sekolah anda"/>
-        <x-add-button :href="route('admin.students.add')" label="Tambah Siswa"/>
+    <div class="grid gap-3 md:flex md:justify-between md:items-center py-4 mb-0">
+        <x-page-title title="{{ $page['title'] ?? 'Quiz Generator' }}" description="Buat soal quiz dengan bantuan AI" />
+        <div>
+            <div class="inline-flex gap-x-2">
+                <x-add-button :href="route('teacher.ai.quiz_generator.add')" label="Buat Quiz"></x-add-button>
+            </div>
+        </div>
     </div>
-<!--
-    @if (session('success'))
-        <div class="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg dark:bg-green-900/20 dark:border-green-700">
-            <p class="text-sm text-green-800 dark:text-green-200">{{ session('success') }}</p>
-        </div>
-    @endif
-
-    @if (session('error'))
-        <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/20 dark:border-red-700">
-            <p class="text-sm text-red-800 dark:text-red-200">{{ session('error') }}</p>
-        </div>
-    @endif -->
-
     <div class="flex flex-col">
         <div class="overflow-x-auto">
             <div class="min-w-full inline-block align-middle">
                 <div class="overflow-hidden">
 
-                    <div class="px-2 pt-0">
-                        <form action="{{ route('admin.students.index') }}" method="GET" navigate-form
+                    <div class="px-2 pt-4">
+                        <form action="{{ route('teacher.ai.quiz_generator.index') }}" method="GET" navigate-form
                             class="flex flex-col sm:flex-row gap-3">
                             <div class="sm:w-64">
                                 <label for="keywords" class="sr-only">Search</label>
@@ -34,30 +25,19 @@
                                     <input type="text" name="keywords" id="keywords" value="{{ $keywords ?? '' }}"
                                         class="py-1 px-3 block w-full border-gray-200 rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900
                                         placeholder-neutral-300 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
-                                        placeholder="Cari Nama Siswa">
+                                        placeholder="Cari Histori">
                                 </div>
                             </div>
-                            <div class="sm:w-48">
-                                <select name="classroom_id"
-                                    class="py-1 px-3 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600">
-                                    <option value="">Semua Kelas</option>
-                                    @foreach ($classrooms as $class)
-                                        <option value="{{ $class->id }}"
-                                            {{ ($classroom_id ?? '') == $class->id ? 'selected' : '' }}>
-                                            {{ $class->display_name ?? $class->class_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+
                             <div>
                                 <button type="submit"
                                     class="py-1 px-3 inline-flex items-center gap-x-1 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 cursor-pointer">
                                     @include('_admin._layout.icons.search')
                                     Cari
                                 </button>
-                                @if (!empty($keywords) || !empty($classroom_id))
+                                @if (!empty($keywords))
                                     <a class="py-1 px-3 inline-flex items-center gap-x-1 text-sm font-semibold rounded-lg border border-blue-600 text-blue-600 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 disabled:opacity-50 disabled:pointer-events-none dark:border-blue-500 dark:text-blue-500 dark:hover:bg-blue-500/10 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 cursor-pointer"
-                                        href="{{ route('admin.students.index') }}">
+                                        href="{{ route('teacher.ai.quiz_generator.index') }}">
                                         @include('_admin._layout.icons.reset')
                                         Reset
                                     </a>
@@ -71,75 +51,90 @@
                             <thead class="bg-gray-50 dark:bg-neutral-700">
                                 <tr>
                                     <th scope="col" class="px-6 py-3 text-start">
-                                        <span class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
-                                            No
-                                        </span>
+                                        <div class="flex items-center gap-x-2">
+                                            <span
+                                                class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
+                                                Topik
+                                            </span>
+                                        </div>
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-start">
-                                        <span class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
-                                            Nama
-                                        </span>
+                                        <div class="flex items-center gap-x-2">
+                                            <span
+                                                class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
+                                                Jenjang & Kelas
+                                            </span>
+                                        </div>
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-start">
-                                        <span class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
-                                            Email
-                                        </span>
+                                        <div class="flex items-center gap-x-2">
+                                            <span
+                                                class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
+                                                Jumlah Soal
+                                            </span>
+                                        </div>
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-start">
-                                        <span class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
-                                            Kelas
-                                        </span>
+                                        <div class="flex items-center gap-x-2">
+                                            <span
+                                                class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
+                                                Tanggal & Waktu
+                                            </span>
+                                        </div>
                                     </th>
-                                    <th scope="col" class="px-6 py-3 text-end"></th>
+                                    <th scope="col" class="px-2 py-3 text-end">
+                                        <div class="text-center">
+                                            <span
+                                                class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
+                                                Aksi
+                                            </span>
+                                        </div>
+                                    </th>
                                 </tr>
                             </thead>
 
                             <tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
-                                @forelse($data as $d)
+                                @forelse($data ?? [] as $d)
                                     <tr class="hover:bg-gray-100 dark:hover:bg-neutral-700">
                                         <td class="size-px whitespace-nowrap">
                                             <div class="px-6 py-3">
                                                 <span
-                                                    class="block text-sm text-gray-800 dark:text-neutral-200">{{ $loop->iteration + ($data->firstItem() - 1) }}</span>
+                                                    class="block text-sm font-semibold text-gray-800 dark:text-neutral-200">{{ $d->topic }}</span>
                                             </div>
                                         </td>
                                         <td class="size-px whitespace-nowrap">
                                             <div class="px-6 py-3">
                                                 <span
-                                                    class="block text-sm font-semibold text-gray-800 dark:text-neutral-200">{{ $d->name }}</span>
+                                                    class="block text-sm text-gray-800 dark:text-neutral-200">{{ $d->grade }} - {{ $d->class }}</span>
                                             </div>
                                         </td>
                                         <td class="size-px whitespace-nowrap">
                                             <div class="px-6 py-3">
                                                 <span
-                                                    class="block text-sm text-gray-800 dark:text-neutral-200">{{ $d->email }}</span>
+                                                    class="block text-sm text-gray-800 dark:text-neutral-200">{{ $d->question_count }} Soal</span>
                                             </div>
                                         </td>
                                         <td class="size-px whitespace-nowrap">
                                             <div class="px-6 py-3">
                                                 <span
-                                                    class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-800/30 dark:text-blue-500">
-                                                    {{ $d->display_class }}
-                                                </span>
+                                                    class="block text-sm text-gray-800 dark:text-neutral-200">{{ \Carbon\Carbon::parse($d->created_at)->format('d M Y H:i:s') }}</span>
                                             </div>
                                         </td>
+                                        
                                         <td class="size-px whitespace-nowrap">
                                             <div class="px-6 py-1.5 flex items-center gap-x-2 justify-end">
-                                                <button type="button"
-                                                    class="p-2 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-yellow-100 text-yellow-800 hover:bg-yellow-200 focus:outline-none focus:bg-yellow-200 disabled:opacity-50 disabled:pointer-events-none dark:text-yellow-400 dark:bg-yellow-800/30 dark:hover:bg-yellow-800/20 dark:focus:bg-yellow-800/20 cursor-pointer"
-                                                    title="Reset Password" data-hs-overlay="#reset-password-modal"
-                                                    onclick="setResetPasswordData('{{ $d->id }}', '{{ $d->name }}')">
-                                                    @include('_admin._layout.icons.reset')
-                                                </button>
-                                                <a navigate
-                                                    class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:bg-blue-800/30 dark:hover:bg-blue-800/20 dark:focus:bg-blue-800/20"
-                                                    href="{{ route('admin.students.update', $d->id) }}">
-                                                    @include('_admin._layout.icons.pencil')
+                                                <a href="{{ route('teacher.ai.quiz_generator.detail', $d->id) }}"
+                                                    class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:bg-blue-800/30 dark:hover:bg-blue-800/20 dark:focus:bg-blue-800/20 cursor-pointer"
+                                                    title="Lihat Detail">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                    </svg>
                                                 </a>
                                                 <button type="button"
                                                     class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-red-100 text-red-800 hover:bg-red-200 focus:outline-none focus:bg-red-200 disabled:opacity-50 disabled:pointer-events-none dark:text-red-500 dark:bg-red-800/30 dark:hover:bg-red-800/20 dark:focus:bg-red-800/20 cursor-pointer"
                                                     title="Delete" data-hs-overlay="#delete-modal"
-                                                    onclick="setDeleteData('{{ $d->id }}', '{{ $d->name }}')">
+                                                    onclick="setDeleteData('{{ $d->id }}', '{{ $d->topic }}')">
                                                     @include('_admin._layout.icons.trash')
                                                 </button>
                                             </div>
@@ -157,7 +152,7 @@
                         </table>
                     </div>
 
-                    @if (count($data) > 0 && $data->hasPages())
+                    @if (isset($data) && count($data) > 0 && $data->hasPages())
                         <div class="px-6 py-4 border-t border-gray-200 dark:border-neutral-700">
                             <div class="flex justify-end">
                                 {{ $data->links() }}
@@ -168,7 +163,9 @@
             </div>
         </div>
     </div>
- <div id="delete-modal" class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto"
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto"
         role="dialog" tabindex="-1" aria-labelledby="delete-modal-label">
         <div
             class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
@@ -189,10 +186,10 @@
                         class="mb-4 inline-flex justify-center items-center size-14 rounded-full border-4 border-red-50 bg-red-100 text-red-500 dark:bg-red-700 dark:border-red-600 dark:text-red-100">
                         @include('_admin._layout.icons.warning_modal')
                     </span>
-                    <!-- End Icon -->
+                    
 
                     <h3 id="delete-modal-label" class="mb-2 text-xl font-bold text-gray-800 dark:text-neutral-200">
-                        Hapus data siswa
+                        Hapus Quiz
                     </h3>
                     <p class="text-gray-500 dark:text-neutral-500">
                         Apakah Anda yakin ingin menghapus <span id="delete-item-name"
@@ -219,66 +216,12 @@
             </div>
         </div>
     </div>
-    <!-- Reset Password Confirmation Modal -->
-    <div id="reset-password-modal"
-        class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto" role="dialog"
-        tabindex="-1" aria-labelledby="reset-password-modal-label">
-        <div
-            class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto">
-            <div
-                class="relative flex flex-col bg-white border shadow-sm rounded-xl dark:bg-neutral-800 dark:border-neutral-700">
-                <div class="absolute top-2 end-2">
-                    <button type="button"
-                        class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-none focus:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-700 dark:hover:bg-neutral-600 dark:text-neutral-400 dark:focus:bg-neutral-600"
-                        aria-label="Close" data-hs-overlay="#reset-password-modal">
-                        <span class="sr-only">Close</span>
-                        @include('_admin._layout.icons.close_modal')
-                    </button>
-                </div>
-
-                <div class="p-4 sm:p-10 text-center overflow-y-auto">
-                    <span
-                        class="mb-4 inline-flex justify-center items-center size-14 rounded-full border-4 border-yellow-50 bg-yellow-100 text-yellow-500 dark:bg-yellow-700 dark:border-yellow-600 dark:text-yellow-100">
-                        @include('_admin._layout.icons.reset')
-                    </span>
-
-                    <h3 id="reset-password-modal-label" class="mb-2 text-xl font-bold text-gray-800 dark:text-neutral-200">
-                        Reset Password
-                    </h3>
-                    <p class="text-gray-500 dark:text-neutral-500">
-                        Apakah Anda yakin ingin mereset password <span id="reset-item-name"
-                            class="font-semibold text-gray-800 dark:text-neutral-200"></span>?
-                        <br>Password akan direset menjadi default: <span class="font-bold text-blue-600">asdasd</span>
-                    </p>
-
-                    <div class="mt-6 flex justify-center gap-x-4">
-                        <button type="button"
-                            class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-50 dark:bg-transparent dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
-                            data-hs-overlay="#reset-password-modal">
-                            Batal
-                        </button>
-                        <form id="reset-form" method="POST" class="inline" navigate-form>
-                            @csrf
-                            <button type="submit"
-                                class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-yellow-600 text-white hover:bg-yellow-700 focus:outline-none focus:bg-yellow-700 disabled:opacity-50 disabled:pointer-events-none">
-                                Ya, Reset
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script>
         function setDeleteData(id, name) {
             document.getElementById('delete-item-name').textContent = name;
-            document.getElementById('delete-form').action = '{{ url('admin/students/delete') }}/' + id;
-        }
-
-        function setResetPasswordData(id, name) {
-            document.getElementById('reset-item-name').textContent = name;
-            document.getElementById('reset-form').action = '{{ url('admin/students/reset-password') }}/' + id;
+            const deleteUrl = '{{ route('teacher.ai.quiz_generator.delete', ':id') }}';
+            document.getElementById('delete-form').action = deleteUrl.replace(':id', id);
         }
     </script>
 @endsection
