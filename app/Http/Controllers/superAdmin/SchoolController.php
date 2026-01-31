@@ -22,7 +22,7 @@ class SchoolController extends Controller
     public function __construct(
         protected SchoolUsecase $usecase
     ) {
-        $this->baseRedirect = 'superadmin/' . $this->page['route'];
+        $this->baseRedirect = 'superadmin/'.$this->page['route'];
     }
 
     public function index(Request $request): View|Response
@@ -84,7 +84,7 @@ class SchoolController extends Controller
         if ($process['success']) {
             return redirect()
                 ->route('superadmin.schools.index')
-                ->with('success', ResponseConst::SUCCESS_MESSAGE_DELETED);
+                ->with('success', ResponseConst::SUCCESS_MESSAGE_DELETED_SCHOOLS);
         }
 
         return redirect()

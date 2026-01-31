@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\superAdmin;
+namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
-use App\Usecase\superAdmin\DashboardUsecase;
+use App\Usecase\Teacher\DashboardUsecase;
 use Illuminate\Contracts\View\View;
 
 class DashboardController extends Controller
@@ -15,7 +15,8 @@ class DashboardController extends Controller
 
     public function __construct(
         protected DashboardUsecase $usecase
-    ) {}
+    ) {
+    }
 
     public function index(): View
     {
@@ -23,9 +24,8 @@ class DashboardController extends Controller
         $stats = $data['data'] ?? [];
 
         $stats = array_merge([
-            'total_schools' => 0,
-            'total_students' => 0,
-            'total_teachers' => 0,
+            'total_learning_modules' => 0,
+            'total_downloads' => 0,
         ], $stats);
 
         $chartData = $stats['chart_data'] ?? [
@@ -33,7 +33,7 @@ class DashboardController extends Controller
             'series' => [],
         ];
 
-        return view('_super_admin.dashboard', [
+        return view('_teacher.dashboard', [
             'stats' => $stats,
             'chartData' => $chartData,
             'page' => $this->page,

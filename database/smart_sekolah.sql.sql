@@ -227,8 +227,7 @@ INSERT INTO `prompt_image_generation` (`id`, `name`, `preview_path`, `prompt`, `
 (6, 'Infografis', '/assets/image/ai/infografis.png', 'Buat Ilustrasi infografis dari {{description}}, gunakan teks berbahasa Indonesia, tata letak rapi, ikon sederhana, warna terbatas, resolusi standar, ukuran file minimal, teks harus jelas dan mudah dibaca.', '2026-01-04 03:14:43', 1, '2026-01-11 13:37:54', 2, NULL, NULL),
 (7, 'Sketsa Pensil', '/assets/image/ai/sketsa-pensil.png', 'Buat sketsa pensil sederhana yang menggambarkan {{description}} untuk materi pembelajaran sekolah. Utamakan kejelasan tulisan dan bentuk utama, gunakan resolusi rendah dan ukuran file minimal.', '2026-01-04 05:57:55', 1, '2026-01-11 13:37:22', 2, NULL, NULL),
 (8, 'Vektor Datar', '/assets/image/ai/vektor-datar.png', 'Buat Ilustrasi vektor sederhana dari {{description}}, garis bersih, warna solid, tanpa gradasi dan bayangan, detail minimal, resolusi standar, ukuran file minimal, fokus pada kejelasan bentuk.', '2026-01-04 06:01:37', 1, '2026-01-11 13:37:06', 2, NULL, NULL),
-(9, '3D Kartun', '/assets/image/ai/3d-kartun.png', 'Buat Ilustrasi 3D kartun dari {{description}}, bentuk sederhana, proporsi ramah, warna lembut, detail secukupnya, resolusi standar, ukuran file minimal, fokus pada kejelasan visual.', '2026-01-06 15:21:06', 1, '2026-01-11 13:36:56', 2, NULL, NULL),
-
+(9, '3D Kartun', '/assets/image/ai/3d-kartun.png', 'Buat Ilustrasi 3D kartun dari {{description}}, bentuk sederhana, proporsi ramah, warna lembut, detail secukupnya, resolusi standar, ukuran file minimal, fokus pada kejelasan visual.', '2026-01-06 15:21:06', 1, '2026-01-11 13:36:56', 2, NULL, NULL);
 -- --------------------------------------------------------
 
 --
