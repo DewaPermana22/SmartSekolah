@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'check.school' => CheckSchoolRegistration::class,
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -33,14 +33,20 @@
         </div>
 
       <div id="container_card_kategori" class="grid grid-cols-1 min-[768px]:grid-cols-2 min-[1000px]:grid-cols-3 min-[1300px]:grid-cols-4 min-[1500px]:grid-cols-5 min-[1700px]:grid-cols-6 mt-10 justify-items-center gap-10">
-        <x-home.materi-card image="home/images/penginapan/1.jpg" text="Matematika" materi_count="10" kelas_count="6" link="detail_materi" suffix="Modul" />
-        <x-home.materi-card image="home/images/penginapan/1.jpg" text="Ilmu Pengetahuan Alam" materi_count="10" kelas_count="6" link="detail_materi" suffix="Modul" />
-        <x-home.materi-card image="home/images/penginapan/1.jpg" text="Ilmu Pengetahuan Sosial" materi_count="10" kelas_count="6" link="detail_materi" suffix="Modul" />
-        <x-home.materi-card image="home/images/penginapan/1.jpg" text="Bahasa Indonesia" materi_count="10" kelas_count="6" link="detail_materi" suffix="Modul" />
-        <x-home.materi-card image="home/images/penginapan/1.jpg" text="Bahasa Inggris" materi_count="10" kelas_count="6" link="detail_materi" suffix="Modul" />
-        <x-home.materi-card image="home/images/penginapan/1.jpg" text="Pendidikan Pancasila & Kewarganegaraan" materi_count="10" kelas_count="6" link="detail_materi" suffix="Modul" />
-        <x-home.materi-card image="home/images/penginapan/1.jpg" text="Pendidikan Agama" materi_count="10" kelas_count="6" link="detail_materi" suffix="Modul" />
-        <x-home.materi-card image="home/images/penginapan/1.jpg" text="Seni Budaya & Prakarya" materi_count="10" kelas_count="6" link="detail_materi" suffix="Modul" />
+        @forelse($subjects as $subject)
+          <x-home.materi-card 
+            image="home/images/penginapan/1.jpg" 
+            text="{{ $subject->name }}" 
+            materi_count="10" 
+            kelas_count="6" 
+            link="detail_materi" 
+            suffix="Modul" 
+          />
+        @empty
+          <div class="col-span-full text-center py-10">
+            <p class="text-gray-500">Belum ada mata pelajaran untuk jenjang ini.</p>
+          </div>
+        @endforelse
       </div>
     </section>
 @endsection
