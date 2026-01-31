@@ -1,10 +1,11 @@
 @extends('_admin._layout.app');
 
-@section('title', 'Modul Belajar')
+@section('title', 'Kuis Interaktif')
 
 @section('content')
 <div class="grid gap-3 md:flex md:justify-between md:items-center py-4">
-    <x-page-title title="{{ $page['title'] }}" description="Modul belajar yang disediakan oleh guru" />
+    <x-page-title title="Daftar {{$page['title'] }}" description="Daftar kuis yang telah Anda kerjakan." />
+    <x-add-button :href="route('admin.students.add')" label="Gabung Kuis" />
 </div>
 
 <div class="flex flex-col">
@@ -13,7 +14,7 @@
             <div class="overflow-hidden">
 
                 <div class="px-2 py-2 pb-4">
-                    <form action="{{ route('student.learning_modules.index') }}" method="GET" navigate
+                    <form action="{{ route('student.quiz.index') }}" method="GET" navigate
                         class="flex flex-col sm:flex-row gap-3">
                         <div class="sm:w-64">
                             <label for="keywords" class="sr-only">Search</label>
@@ -225,109 +226,28 @@
                         const summaryContainer = document.getElementById('summary-container');
 
                         if (summary && summary.trim() !== '') {
-                            const formattedSummary = parseSummary(summary);
-                            
                             summaryContainer.innerHTML = `
-                                <div class="space-y-2 p-4 bg-blue-50 dark:bg-blue-900/10 rounded-lg border border-blue-100 dark:border-blue-900/30">
-                                    <div class="flex items-center gap-2">
-                                        <svg class="size-5 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                        </svg>
-                                        <h4 class="font-semibold text-gray-800 dark:text-white text-sm">Ringkasan Materi</h4>
+                                    <div class="space-y-2 p-4 bg-blue-50 dark:bg-blue-900/10 rounded-lg border border-blue-100 dark:border-blue-900/30">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="size-5 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                            </svg>
+                                            <h4 class="font-semibold text-gray-800 dark:text-white text-sm">Ringkasan Materi</h4>
+                                        </div>
+                                        <p class="text-sm text-gray-700 dark:text-neutral-300 leading-relaxed pl-7">
+                                            ${summary}
+                                        </p>
                                     </div>
-                                    <div class="text-sm text-gray-700 dark:text-neutral-300 leading-relaxed pl-7">
-                                        ${formattedSummary}
-                                    </div>
-                                </div>
-                            `;
+                                `;
                         } else {
                             summaryContainer.innerHTML = `
-                                <div class="p-4 bg-gray-50 dark:bg-neutral-900 rounded-lg border border-gray-200 dark:border-neutral-700 text-center">
-                                    <p class="text-sm text-gray-500 dark:text-neutral-500 italic">
-                                        Tidak ada ringkasan untuk modul ini
-                                    </p>
-                                </div>
-                            `;
+                                    <div class="p-4 bg-gray-50 dark:bg-neutral-900 rounded-lg border border-gray-200 dark:border-neutral-700 text-center">
+                                        <p class="text-sm text-gray-500 dark:text-neutral-500 italic">
+                                            Tidak ada ringkasan untuk modul ini
+                                        </p>
+                                    </div>
+                                `;
                         }
-                    }
-
-                    function parseSummary(text) {
-                        if (!text) return '';
-                        
-                        // Fungsi untuk memparse inline formatting (bold, italic) - HARUS SEBELUM ESCAPE HTML
-                        function parseInlineFormatting(str) {
-                            // Parse **bold** dulu (sebelum single asterisk)
-                            str = str.replace(/\*\*([^\*]+?)\*\*/g, '<strong class="font-semibold text-gray-900 dark:text-white">$1</strong>');
-                            // Parse *italic* (tapi skip yang sudah jadi <strong>)
-                            str = str.replace(/(?<!<strong[^>]*>)\*([^\*]+?)\*(?!<\/strong>)/g, '<em class="italic">$1</em>');
-                            return str;
-                        }
-                        
-                        // Escape HTML untuk keamanan SETELAH parse markdown
-                        text = text.replace(/&/g, '&amp;')
-                                  .replace(/</g, '&lt;')
-                                  .replace(/>/g, '&gt;');
-                        
-                        // Split menjadi baris-baris
-                        let lines = text.split('\n');
-                        let html = '';
-                        let inList = false;
-                        
-                        lines.forEach((line, index) => {
-                            line = line.trim();
-                            if (!line) {
-                                if (inList) {
-                                    html += inList === 'numbered' ? '</ol>' : '</ul>';
-                                    inList = false;
-                                }
-                                return;
-                            }
-                            
-                            // Deteksi bullet points: *, -, •, atau numbered list 1. 2. 3.
-                            const bulletMatch = line.match(/^[*\-•]\s+(.+)$/);
-                            const numberedMatch = line.match(/^\d+\.\s+(.+)$/);
-                            
-                            if (bulletMatch) {
-                                if (!inList) {
-                                    html += '<ul class="list-disc list-inside space-y-1">';
-                                    inList = 'bullet';
-                                } else if (inList === 'numbered') {
-                                    html += '</ol><ul class="list-disc list-inside space-y-1">';
-                                    inList = 'bullet';
-                                }
-                                html += `<li class="ml-2">${parseInlineFormatting(bulletMatch[1])}</li>`;
-                            } else if (numberedMatch) {
-                                if (!inList) {
-                                    html += '<ol class="list-decimal list-inside space-y-1">';
-                                    inList = 'numbered';
-                                } else if (inList === 'bullet') {
-                                    html += '</ul><ol class="list-decimal list-inside space-y-1">';
-                                    inList = 'numbered';
-                                }
-                                html += `<li class="ml-2">${parseInlineFormatting(numberedMatch[1])}</li>`;
-                            } else {
-                                if (inList) {
-                                    html += inList === 'numbered' ? '</ol>' : '</ul>';
-                                    inList = false;
-                                }
-                                
-                                // Deteksi heading dengan ## 
-                                const headingMatch = line.match(/^#{1,3}\s+(.+)$/);
-                                
-                                if (headingMatch) {
-                                    html += `<p class="font-bold text-gray-900 dark:text-white mt-3 mb-1">${parseInlineFormatting(headingMatch[1])}</p>`;
-                                } else {
-                                    // Parse inline formatting di paragraf biasa
-                                    html += `<p class="mb-2">${parseInlineFormatting(line)}</p>`;
-                                }
-                            }
-                        });
-                        
-                        if (inList) {
-                            html += inList === 'numbered' ? '</ol>' : '</ul>';
-                        }
-                        
-                        return html;
                     }
                 </script>
 

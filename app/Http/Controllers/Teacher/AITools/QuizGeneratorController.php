@@ -3,24 +3,22 @@
 namespace App\Http\Controllers\Teacher\AITools;
 
 use App\Http\Controllers\Controller;
-use App\Usecase\Teacher\AiMateriAjarUsecase;
+use App\Usecase\Teacher\TeacherQuizUsecase;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class QuizGeneratorController extends Controller
 {
     protected array $page = [
         'route' => 'ai-tools/quiz-generator',
-        'title' => 'AI Tools - Quiz Generator'
+        'title' => 'Alat AI - Pembuat Kuis'
     ];
 
     protected string $baseRedirect;
 
     public function __construct(
-        protected AiMateriAjarUsecase $usecase
-    )
-    {
+        protected TeacherQuizUsecase $usecase
+    ) {
         $this->baseRedirect = 'teacher/' . $this->page['route'];
     }
 
@@ -29,8 +27,8 @@ class QuizGeneratorController extends Controller
         $data = $this->usecase->getAll([
             'keywords' => $request->get('keywords'),
             'type' => $request->get('type'),
-        ]); 
-        
+        ]);
+
         $data = $data['data']['list'] ?? [];
         return view('_teacher.ai_tools.quiz.index', [
             'page' => $this->page,
@@ -48,21 +46,23 @@ class QuizGeneratorController extends Controller
     }
 
     public function detail(int $id)
-    {
-        $result = $this->usecase->getById($id);
+{
+    $result = $this->usecase->getById($id);
 
-        if (!$result['success']) {
-            return redirect($this->baseRedirect)
-                ->with('error', $result['message'] ?? 'Data tidak ditemukan');
-        }
-
-        // return $result['data'] ?? [];
-
-        return view('_teacher.ai_tools.quiz.detail', [
-            'page' => $this->page,
-            'data' => $result['data']['data'] ?? [],
-        ]);
+    if (!$result['success']) {
+        return redirect($this->baseRedirect)
+            ->with('error', $result['message'] ?? 'Data tidak ditemukan');
     }
+
+    // Ambil data utama dari response usecase
+    $rawDetail = $result['data']['data'] ?? [];
+
+    return view('_teacher.ai_tools.quiz.detail', [
+        'page'      => $this->page,
+        'quiz'      => $rawDetail['quiz'] ?? null,      // Objek Kuis
+        'questions' => $rawDetail['questions'] ?? [],  // Koleksi Pertanyaan
+    ]);
+}
 
     public function delete(int $id)
     {
