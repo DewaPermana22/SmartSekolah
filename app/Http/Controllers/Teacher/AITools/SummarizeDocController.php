@@ -17,7 +17,7 @@ class SummarizeDocController extends Controller
     public function summarize(Request $request, SummarizeDocUsecase $summarizeUsecase)
     {
         $request->validate([
-            'document' => 'required|file|mimes:pdf,doc,docx|max:10240',
+            'document' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,webp,png,jpg,jpeg|max:20480',
         ]);
 
         try {

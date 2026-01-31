@@ -39,7 +39,7 @@ class CheckSchoolStatus
                 ->first();
 
             // If school not found or has been soft deleted (deactivated)
-            if (! $school || $school->deleted_at !== null) {
+            if (!$school || $school->deleted_at !== null) {
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();

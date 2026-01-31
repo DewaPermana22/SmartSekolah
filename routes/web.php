@@ -222,5 +222,6 @@ Route::middleware(['auth', 'role:4', 'check.school.status'])->prefix('student')-
     })->name('dashboard');
     Route::prefix('learning-modules')->name('learning_modules.')->group(function () {
         Route::get('/', [StudentLearningModulesController::class, 'index'])->name('index');
+        Route::get('/download/{id}', [studentLearningModulesController::class, 'download'])->middleware(['throttle:1,1'])->name('download');
     });
 });
