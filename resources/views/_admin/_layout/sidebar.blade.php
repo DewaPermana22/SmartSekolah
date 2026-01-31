@@ -24,7 +24,8 @@ use App\Constants\UserConst;
         </div>
 
         <!-- Content -->
-        <div class="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500 mt-4">
+        <div
+            class="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500 mt-4">
             <nav class="hs-accordion-group p-3 w-full flex flex-col flex-wrap" data-hs-accordion-always-open>
                 <ul class="flex flex-col space-y-1">
 
@@ -96,8 +97,8 @@ use App\Constants\UserConst;
                         <a navigate
                             class="flex items-center gap-x-3.5 py-2.5 px-3 {{ request()->routeIs('teacher.quiz*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-white' }} text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 font-semibold"
                             href="{{ route('teacher.quiz.index') }}">
-                            @include('_admin._layout.icons.sidebar.swatch_book')
-                            Kuis
+                            @include('_admin._layout.icons.sidebar.bolt')
+                            Kuis Interaktif
                         </a>
                     </li>
                     @endif
@@ -157,7 +158,7 @@ use App\Constants\UserConst;
                                     <a navigate
                                         class="flex items-center gap-x-3.5  py-2.5 px-3 text-sm rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 {{ request()->routeIs('teacher.ai.quiz_generator.*') ? 'bg-blue-100 text-blue-600 dark:bg-neutral-700 dark:text-blue-400' : 'text-gray-800 dark:text-neutral-200' }}"
                                         href="{{ route('teacher.ai.quiz_generator.index') }}">
-                                        Quiz
+                                        Pembuat Kuis
                                     </a>
                                 </li>
                             </ul>
@@ -166,7 +167,7 @@ use App\Constants\UserConst;
                     @endif
 
                     {{-- MENU DATA MASTER (SUPER ADMIN & ADMIN SEKOLAH) --}}
-                    @if(Auth::user()->access_type == UserConst::SUPER_ADMIN || Auth::user()->access_type == UserConst::ADMIN_SEKOLAH)
+                    @if(Auth::user()->access_type == UserConst::SUPER_ADMIN || (Auth::user()->access_type == UserConst::ADMIN_SEKOLAH && Auth::user()->school_id))
                     <li class="hs-accordion {{ request()->routeIs('admin.users.*') || request()->routeIs('superadmin.users.*') || request()->routeIs('admin.classrooms.*') || request()->routeIs('superadmin.image-prompts.*') || request()->routeIs('superadmin.subjects.*') ? 'active' : '' }}"
                         id="data-master-accordion">
                         <button type="button"
@@ -251,7 +252,8 @@ use App\Constants\UserConst;
             </nav>
         </div>
 
-        <div class="p-4 border-t border-gray-200 dark:border-neutral-700 sticky bottom-0 z-10 bg-gray-50 dark:bg-neutral-800">
+        <div
+            class="p-4 border-t border-gray-200 dark:border-neutral-700 sticky bottom-0 z-10 bg-gray-50 dark:bg-neutral-800">
             <div class="hs-dropdown relative inline-flex w-full [--placement:top-left]">
                 <button id="sidebar-bottom-dropdown" type="button"
                     class="hs-dropdown-toggle w-full group flex items-center gap-x-3.5  py-2.5 px-3 text-start text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300"
@@ -260,7 +262,8 @@ use App\Constants\UserConst;
                         src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=random&length=2"
                         alt="Avatar">
                     <div class="grow">
-                        <p class="text-sm font-semibold text-gray-800 dark:text-neutral-200">{{ Auth::user()->name }}</p>
+                        <p class="text-sm font-semibold text-gray-800 dark:text-neutral-200">{{ Auth::user()->name }}
+                        </p>
                         <p class="text-xs text-gray-500 dark:text-neutral-500">
                             {{ UserConst::getAccessTypes()[Auth::user()->access_type] }}
                         </p>
@@ -272,7 +275,8 @@ use App\Constants\UserConst;
                     role="menu" aria-orientation="vertical" aria-labelledby="sidebar-bottom-dropdown">
                     <div class="p-1.5 space-y-0.5">
                         <!-- Switch/Toggle -->
-                        <div class="px-3 py-2 flex items-center justify-between border-b border-gray-200 dark:border-neutral-700 mb-1">
+                        <div
+                            class="px-3 py-2 flex items-center justify-between border-b border-gray-200 dark:border-neutral-700 mb-1">
                             <span class="text-sm text-gray-800 dark:text-neutral-200">Theme</span>
                             <div class="flex items-center gap-x-0.5">
                                 <button type="button"

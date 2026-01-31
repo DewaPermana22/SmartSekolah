@@ -32,9 +32,13 @@ class DatabaseConst
 
     const IMAGE_GENERATION_HISTORIES = 'image_generation_histories';
 
-    const QUIZZES = 'quizzes';
-    const QUIZ_OPTIONS = 'quiz_options';
-    const QUIZ_QUETIONS = 'quiz_questions';
-    const QUIZ_ATTEMPTS = 'quiz_attempts';
-    const QUIZ_RESULTS = 'quiz_results';
+    const QUIZ = 'quizzes';
+
+    const QUIZ_ATTEMPT = 'quiz_attempts';
+
+    const QUIZ_QUESTION = 'quiz_questions';
+
+    const QUIZ_OPTION = 'quiz_options';
+
+    const QUIZ_RESULT = 'quiz_results';
 }

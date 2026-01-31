@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UseCase\Student;
+namespace App\Usecase\Student;
 
 use App\Constants\DatabaseConst;
 use App\Constants\ResponseConst;
@@ -24,7 +24,7 @@ class QuizUsecase extends Usecase
                 throw new Exception('User not authenticated');
             }
 
-            $query = DB::table(DatabaseConst::QUIZ_RESULTS . ' as qr')
+            $query = DB::table(DatabaseConst::QUIZ_RESULT . ' as qr')
                 ->join(DatabaseConst::SUBJECT . ' as s', 'lm.subject_id', '=', 's.id')
                 ->whereNull('lm.deleted_at')
                 ->select(

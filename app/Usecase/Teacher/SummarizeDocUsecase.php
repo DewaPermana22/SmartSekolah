@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UseCases\Teacher;
+namespace App\Usecase\Teacher;
 
 use App\Usecase\superAdmin\ToolsAiUsecase;
 use Illuminate\Http\UploadedFile;
@@ -40,7 +40,7 @@ class SummarizeDocUsecase
         $this->waitForFileProcessing($uploadedFileData['name'], $apiKey);
 
         // Generate summary using the uploaded file
-        $summary = $this->generateSummary($uploadedFileData['uri'], $file->getMimeType(), $userPrompt, $apiKey);
+        $summary = $this->generateSummary($uploadedFileData['uri'], $file->getMimeType(), $apiKey);
 
         // Delete file from Gemini after processing
         $this->deleteFileFromGemini($uploadedFileData['name'], $apiKey);
@@ -59,15 +59,15 @@ class SummarizeDocUsecase
      */
     protected function validateFile(UploadedFile $file): void
     {
-        $allowedExtensions = ['pdf', 'doc', 'docx'];
+        $allowedExtensions = ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'webp', 'png', 'jpg', 'jpeg'];
         $extension = strtolower($file->getClientOriginalExtension());
 
         if (!in_array($extension, $allowedExtensions)) {
-            throw new \RuntimeException('File type not supported. Only PDF, DOC, and DOCX are allowed.');
+            throw new \RuntimeException('File type not supported. Only PDF, DOC, DOCX, PPT, PPTX, WEBP, PNG, JPG, and JPEG are allowed.');
         }
 
-        if ($file->getSize() > 10 * 1024 * 1024) {
-            throw new \RuntimeException('File size exceeds 10MB limit.');
+        if ($file->getSize() > 20 * 1024 * 1024) {
+            throw new \RuntimeException('File size exceeds 20MB limit.');
         }
     }
 
@@ -209,7 +209,12 @@ class SummarizeDocUsecase
                                 ]
                             ],
                             [
-                                'text' => 'Please provide a concise summary of the uploaded document, highlighting the key points and main ideas.'
+                                'text' => 'Berikan ringkasan dokumen ini dalam Bahasa Indonesia. Langsung berikan isi ringkasan tanpa kalimat pembuka atau pengantar apapun (seperti Berikut adalah...). Gunakan struktur Markdown berikut:
+(Isi ringkasan dalam 1-2 paragraf)
+Poin-Poin Kunci
+(Gunakan bullet points untuk ide utama/data penting)
+Insight/Kesimpulan (Isi kesimpulan akhir)
+Pastikan bahasa profesional dan langsung fokus pada konten.'
                             ]
                         ]
                     ]

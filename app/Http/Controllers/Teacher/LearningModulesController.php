@@ -8,6 +8,7 @@ use App\Usecase\superAdmin\SubjectUsecase;
 use App\Usecase\Teacher\LearningModulesUsecase;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class LearningModulesController extends Controller
@@ -53,9 +54,26 @@ class LearningModulesController extends Controller
         $subjects = $this->subjectUsecase->getAll(['no_pagination' => true]);
         $subjects = $subjects['data']['list'] ?? [];
 
+        // Get school grade from authenticated user
+        $user = Auth::user();
+        $schoolGrade = null;
+        
+        if ($user && $user->school_id) {
+            $school = \Illuminate\Support\Facades\DB::table('schools')
+                ->where('id', $user->school_id)
+                ->first();
+            
+            if ($school && $school->grade) {
+                // Convert grade ID to grade name using GradeConst
+                $gradeMap = \App\Constants\GradeConst::getGrades();
+                $schoolGrade = $gradeMap[$school->grade] ?? null;
+            }
+        }
+
         return view('_teacher.learning_modules.add', [
             'page' => $this->page,
             'subjects' => $subjects,
+            'schoolGrade' => $schoolGrade,
         ]);
     }
 
@@ -68,7 +86,7 @@ class LearningModulesController extends Controller
         if ($process['success']) {
             return redirect()
                 ->route('teacher.learning_modules.index')
-                ->with('success', 'Modul belajar berhasil ditambahkan.');
+                ->with('success', 'Modul belajar berhasil ditambahkan. Ringkasan sedang diproses secara otomatis.');
         }
 
         return redirect()
@@ -86,10 +104,27 @@ class LearningModulesController extends Controller
             return redirect()->intended($this->baseRedirect)->with('error', 'Modul belajar tidak ditemukan.');
         }
 
+        // Get school grade from authenticated user
+        $user = Auth::user();
+        $schoolGrade = null;
+        
+        if ($user && $user->school_id) {
+            $school = \Illuminate\Support\Facades\DB::table('schools')
+                ->where('id', $user->school_id)
+                ->first();
+            
+            if ($school && $school->grade) {
+                // Convert grade ID to grade name using GradeConst
+                $gradeMap = \App\Constants\GradeConst::getGrades();
+                $schoolGrade = $gradeMap[$school->grade] ?? null;
+            }
+        }
+
         return view('_teacher.learning_modules.update', [
             'data' => $data['data']['data'] ?? [],
             'subjects' => $subjects,
             'page' => $this->page,
+            'schoolGrade' => $schoolGrade,
         ]);
     }
 

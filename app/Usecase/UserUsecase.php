@@ -342,7 +342,6 @@ class UserUsecase extends Usecase
 
     public function resetPassword(int $id): array
     {
-        $defaultPassword = self::DEFAULT_PASSWORD;
 
         DB::beginTransaction();
 
@@ -350,7 +349,7 @@ class UserUsecase extends Usecase
             DB::table(DatabaseConst::USER)
                 ->where('id', $id)
                 ->update([
-                    'password' => Hash::make($defaultPassword),
+                    'password' => Hash::make('asdasd'),
                     'updated_by' => Auth::user()?->id,
                     'updated_at' => now(),
                 ]);

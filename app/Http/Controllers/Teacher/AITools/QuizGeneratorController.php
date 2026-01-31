@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Teacher\AITools;
 
 use App\Http\Controllers\Controller;
-use App\Usecase\Teacher\AiMateriAjarUsecase;
+use App\Usecase\Teacher\TeacherQuizUsecase;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -12,15 +12,14 @@ class QuizGeneratorController extends Controller
 {
     protected array $page = [
         'route' => 'ai-tools/quiz-generator',
-        'title' => 'AI Tools - Quiz Generator'
+        'title' => 'Alat AI - Pembuat Kuis'
     ];
 
     protected string $baseRedirect;
 
     public function __construct(
-        protected AiMateriAjarUsecase $usecase
-    )
-    {
+        protected TeacherQuizUsecase $usecase
+    ) {
         $this->baseRedirect = 'teacher/' . $this->page['route'];
     }
 
@@ -29,8 +28,8 @@ class QuizGeneratorController extends Controller
         $data = $this->usecase->getAll([
             'keywords' => $request->get('keywords'),
             'type' => $request->get('type'),
-        ]); 
-        
+        ]);
+
         $data = $data['data']['list'] ?? [];
         return view('_teacher.ai_tools.quiz.index', [
             'page' => $this->page,
@@ -47,23 +46,23 @@ class QuizGeneratorController extends Controller
         ]);
     }
 
-    public function detail(int $id)
+    public function detail(int $id): View|RedirectResponse
     {
-        $result = $this->usecase->getById($id);
+        $data = $this->usecase->getById($id);
 
-        if (!$result['success']) {
-            return redirect($this->baseRedirect)
-                ->with('error', $result['message'] ?? 'Data tidak ditemukan');
+        if (empty($data['data'])) {
+            return redirect()
+                ->intended($this->baseRedirect)
+                ->with('error', 'Kuis tidak ditemukan.');
         }
 
-        // return $result['data'] ?? [];
-
-        return view('_teacher.ai_tools.quiz.detail', [
+        return view('_teacher.quiz.detail', [
             'page' => $this->page,
-            'data' => $result['data']['data'] ?? [],
+            'data' => $data['data']['data'] ?? [],
         ]);
     }
 
+    
     public function delete(int $id)
     {
         $result = $this->usecase->delete($id);
@@ -75,5 +74,24 @@ class QuizGeneratorController extends Controller
 
         return redirect($this->baseRedirect)
             ->with('error', $result['message'] ?? 'Gagal menghapus data');
+    }
+
+    public function scores(int $id): View|RedirectResponse
+    {
+        $quiz = $this->usecase->getById($id);
+
+        if (empty($quiz['data'])) {
+            return redirect()
+                ->intended($this->baseRedirect)
+                ->with('error', 'Kuis tidak ditemukan.');
+        }
+
+        $scores = [];
+
+        return view('_teacher.ai_tools.quiz.scrores', [
+            'page' => $this->page,
+            'quiz' => $quiz['data']['data'] ?? [],
+            'scores' => $scores,
+        ]);
     }
 }

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Student;
 
+use App\Constants\DatabaseConst;
 use App\Http\Controllers\Controller;
 use App\Usecase\superAdmin\SubjectUsecase;
 use App\Usecase\Teacher\LearningModulesUsecase;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class LearningModulesController extends Controller
@@ -46,5 +48,22 @@ class LearningModulesController extends Controller
         ]);
     }
 
+    public function download(Request $request, int $id)
+    {
+        $file = $this->usecase->getById($id);
 
+        $data = $file['data']['data'] ?? null;
+
+        if (! $data || ! $data->file_path) {
+            abort(404);
+        }
+
+        DB::table(DatabaseConst::LEARNING_MODULE)
+                ->where('id', $id)
+                ->increment('total_download');
+
+        return response()->download(
+            storage_path('app/public/' . $data->file_path)
+        );
+    }
 }

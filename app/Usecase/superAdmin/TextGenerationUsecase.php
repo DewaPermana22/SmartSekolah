@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Usecase;
+namespace App\Usecase\SuperAdmin;
 
 use App\Constants\AIConst;
 use App\Constants\DatabaseConst;
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class TextGenerationtUsecase
+class TextGenerationUsecase
 {
     private ToolsAiUsecase $aiToolsUsecase;
 
@@ -65,8 +65,6 @@ class TextGenerationtUsecase
             ]
         );
 
-        Log::info('Generated Prompt: ' . $prompt, ['method' => __METHOD__]);
-
         $apiKey = $this->aiToolsUsecase->getApikeys('gemini');
         $url = AIConst::getUrlTextGeneration(
             AIConst::GEMINI_TEXT_MODEL,
@@ -83,8 +81,9 @@ class TextGenerationtUsecase
                 ]
             ],
             "generationConfig" => [
-                "temperature" => 1.2,
-                "maxOutputTokens" => 2048
+                "temperature" => 0.7,
+                "responseMimeType" => "application/json",
+                "maxOutputTokens" => 4096,
             ]
         ];
 
@@ -102,6 +101,84 @@ class TextGenerationtUsecase
 
         return Response::buildSuccess([
             'input' => $description,
+            'categories' => $categories,
+            'content'    => $text,
+            'usage'      => [
+                'prompt_tokens'     => $usage['promptTokenCount'] ?? 0,
+                'completion_tokens' => $usage['candidatesTokenCount'] ?? 0,
+                'total_tokens'      => $usage['totalTokenCount'] ?? 0,
+            ]
+        ], 200, 'Text generated successfully');
+    }
+
+    //Model Gemini geneerate quiz
+    public function generateQuizGemini(
+        string $topic,
+        int $total_question,
+        string $education_level,
+        string $grade,
+        int $option_count,
+        string $categories
+    ): array {
+        $templatePrompt = DB::table(DatabaseConst::PROMPT_TEXT_GENERATION)
+            ->where('categories', $categories)
+            ->whereNull('deleted_at')
+            ->whereNull('deleted_by')
+            ->first();
+
+        if (!$templatePrompt) {
+            return Response::buildErrorNotFound(
+                'Invalid text generation categories provided.'
+            );
+        }
+
+        $prompt = $this->aiToolsUsecase->resolver(
+            $templatePrompt->text_prompt,
+            [
+                'topic' => $topic,
+                'total_questions' => $total_question,
+                'education_level' => $education_level,
+                'class'  => $grade,
+                'options_count'  => $option_count
+            ]
+        );
+
+
+        $apiKey = $this->aiToolsUsecase->getApikeys('gemini');
+        $url = AIConst::getUrlTextGeneration(
+            AIConst::GEMINI_TEXT_MODEL,
+            $apiKey
+        );
+
+        $payload = [
+            "contents" => [
+                [
+                    "role" => "user",
+                    "parts" => [
+                        ["text" => $prompt]
+                    ]
+                ]
+            ],
+            "generationConfig" => [
+                "temperature" => 0.7,
+                "responseMimeType" => "application/json",
+            ]
+        ];
+
+        $data = $this->aiToolsUsecase->makeRequest($url, $payload);
+
+        $text = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
+
+        if (!$text) {
+            return Response::buildErrorService(
+                'Failed to generate text from AI.'
+            );
+        }
+
+        $usage = $data['usageMetadata'] ?? [];
+
+        return Response::buildSuccess([
+            'input' => $prompt,
             'categories' => $categories,
             'content'    => $text,
             'usage'      => [
