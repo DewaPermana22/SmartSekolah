@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Usecase\Teacher;
+
 use App\Constants\DatabaseConst;
 use App\Constants\ResponseConst;
 use App\Http\Presenter\Response;
@@ -22,8 +23,8 @@ class TeacherQuizUsecase extends Usecase
                 throw new Exception('User not authenticated');
             }
 
-            $query = DB::table(DatabaseConst::QUIZ.' as q')
-                ->join(DatabaseConst::USER.' as u', 'q.created_by', '=', 'u.id')
+            $query = DB::table(DatabaseConst::QUIZ . ' as q')
+                ->join(DatabaseConst::USER . ' as u', 'q.created_by', '=', 'u.id')
                 ->whereNull('q.deleted_at')
                 ->select(
                     'q.id',
@@ -35,7 +36,7 @@ class TeacherQuizUsecase extends Usecase
                     'u.name as created_by_name'
                 )
                 ->selectSub(
-                    DB::table(DatabaseConst::QUIZ_ATTEMPT.' as qa')
+                    DB::table(DatabaseConst::QUIZ_ATTEMPT . ' as qa')
                         ->selectRaw('COUNT(DISTINCT qa.student_id)')
                         ->whereColumn('qa.quiz_id', 'q.id')
                         ->whereNull('qa.deleted_at'),
@@ -52,7 +53,7 @@ class TeacherQuizUsecase extends Usecase
 
             // Search filter
             if (! empty($filterData['keywords'])) {
-                $query->where('q.quiz_name', 'like', '%'.$filterData['keywords'].'%');
+                $query->where('q.quiz_name', 'like', '%' . $filterData['keywords'] . '%');
             }
 
             // Count questions for each quiz
@@ -172,7 +173,7 @@ class TeacherQuizUsecase extends Usecase
                 // Insert options (A-E)
                 $options = ['A', 'B', 'C', 'D', 'E'];
                 foreach ($options as $option) {
-                    $optionKey = 'option_'.strtolower($option);
+                    $optionKey = 'option_' . strtolower($option);
 
                     // Only insert if option text is provided
                     if (! empty($questionData[$optionKey])) {
@@ -208,8 +209,8 @@ class TeacherQuizUsecase extends Usecase
             }
 
             // Get quiz
-            $quiz = DB::table(DatabaseConst::QUIZ.' as q')
-                ->join(DatabaseConst::USER.' as u', 'q.created_by', '=', 'u.id')
+            $quiz = DB::table(DatabaseConst::QUIZ . ' as q')
+                ->join(DatabaseConst::USER . ' as u', 'q.created_by', '=', 'u.id')
                 ->where('q.id', $id)
                 ->whereNull('q.deleted_at')
                 ->select(
@@ -223,7 +224,7 @@ class TeacherQuizUsecase extends Usecase
             }
 
             // Get questions with options
-            $questions = DB::table(DatabaseConst::QUIZ_QUESTION.' as qq')
+            $questions = DB::table(DatabaseConst::QUIZ_QUESTION . ' as qq')
                 ->where('qq.quiz_id', $id)
                 ->whereNull('qq.deleted_at')
                 ->select('qq.*')
@@ -329,7 +330,7 @@ class TeacherQuizUsecase extends Usecase
                 // Insert options
                 $options = ['A', 'B', 'C', 'D', 'E'];
                 foreach ($options as $option) {
-                    $optionKey = 'option_'.strtolower($option);
+                    $optionKey = 'option_' . strtolower($option);
 
                     if (! empty($questionData[$optionKey])) {
                         DB::table(DatabaseConst::QUIZ_OPTION)->insert([
@@ -415,6 +416,36 @@ class TeacherQuizUsecase extends Usecase
             DB::rollback();
             Log::error($e->getMessage(), ['method' => __METHOD__]);
 
+            return Response::buildErrorService($e->getMessage());
+        }
+    }
+
+    public function getScoresByQuizId(int $quizId)
+    {
+        try {
+            $data = DB::table('quiz_attempts as qa')
+                ->join('users as u', 'qa.student_id', '=', 'u.id')
+                ->select([
+                    'qa.id',
+                    'qa.student_id',
+                    'qa.started_at',
+                    'qa.finished_at',
+                    'qa.score',
+                    'u.name as student_name'
+                ])
+                ->where('qa.quiz_id', $quizId)
+                ->whereNull('qa.deleted_at')
+                ->whereIn('qa.id', function ($query) use ($quizId) {
+                    $query->select(DB::raw('MAX(id)'))
+                        ->from('quiz_attempts')
+                        ->where('quiz_id', $quizId)
+                        ->groupBy('student_id');
+                })
+                ->orderBy('qa.created_at', 'desc')
+                ->paginate(15);
+
+            return Response::buildSuccess(['list' => $data]);
+        } catch (Exception $e) {
             return Response::buildErrorService($e->getMessage());
         }
     }

@@ -3,8 +3,6 @@
 namespace App\Usecase\superAdmin;
 
 use App\Constants\AIConst;
-use App\Constants\ResponseConst;
-use App\Http\Presenter\Response;
 use Illuminate\Support\Facades\Http;
 
 class ToolsAiUsecase

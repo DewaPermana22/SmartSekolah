@@ -7,7 +7,7 @@
     <x-page-title title="{{ $page['title'] }}" description="Kelola kuis untuk siswa Anda" />
     <div>
         <div class="inline-flex gap-x-2">
-            <x-add-button :href="route('teacher.quiz.add')" label="Buat Kuis"></x-add-button>
+            <x-add-button :href="route('teacher.ai.quiz_generator.add')" label="Buat Kuis"></x-add-button>
         </div>
     </div>
 </div>
@@ -79,7 +79,7 @@
                                     <div class="flex items-center gap-x-2">
                                         <span
                                             class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
-                                            Yang Mengerjakan
+                                            Durasi Kuis
                                         </span>
                                     </div>
                                 </th>
@@ -87,7 +87,15 @@
                                     <div class="flex items-center gap-x-2">
                                         <span
                                             class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
-                                            Jenjang & Kelas
+                                            Jumlah Partisipan
+                                        </span>
+                                    </div>
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-start">
+                                    <div class="flex items-center gap-x-2">
+                                        <span
+                                            class="text-xs font-semibold uppercase text-gray-800 dark:text-neutral-200">
+                                            Kode
                                         </span>
                                     </div>
                                 </th>
@@ -108,13 +116,14 @@
                                 <td class="size-px whitespace-nowrap">
                                     <div class="px-6 py-3">
                                         <span
-                                            class="block text-sm font-semibold text-gray-800 dark:text-neutral-200">{{ $d->name }}</span>
+                                            class="block text-sm font-semibold text-gray-800 dark:text-neutral-200">{{ $d->quiz_name }}</span>
                                     </div>
                                 </td>
                                 <td class="size-px whitespace-nowrap">
                                     <div class="px-6 py-3">
-                                        <span
-                                            class="block text-sm text-gray-800 dark:text-neutral-200">{{ $d->topic }}</span>
+                                        <span class="block text-sm text-gray-800 dark:text-neutral-200">
+                                            {{ Str::limit($d->description, 20, '...') }}
+                                        </span>
                                     </div>
                                 </td>
                                 <td class="size-px whitespace-nowrap">
@@ -133,6 +142,17 @@
                                         <span
                                             class="inline-flex items-center gap-x-1.5 py-1 px-2 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-500">
                                             <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                                            </svg>
+                                            {{ $d->quiz_time }}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="size-px whitespace-nowrap">
+                                    <div class="px-6 py-3">
+                                        <span
+                                            class="inline-flex items-center gap-x-1.5 py-1 px-2 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-500">
+                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                                 <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                                             </svg>
                                             {{ $d->participants_count }} Siswa
@@ -142,13 +162,16 @@
                                 <td class="size-px whitespace-nowrap">
                                     <div class="px-6 py-3">
                                         <span
-                                            class="block text-sm text-gray-800 dark:text-neutral-200">{{ $d->grade }} - Kelas {{ $d->class }}</span>
+                                            class="inline-flex items-center gap-x-1.5 py-1 px-2 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-500">
+                                            {{ $d->quiz_code }}
+                                        </span>
                                     </div>
                                 </td>
 
+
                                 <td class="size-px whitespace-nowrap">
                                     <div class="px-6 py-1.5 flex items-center gap-x-2 justify-end">
-                                        <a href="{{ route('teacher.quiz.detail', $d->id) }}"
+                                        <a href="{{ route('teacher.ai.quiz_generator.detail', $d->id) }}"
                                             class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 focus:outline-none focus:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-400 dark:bg-blue-800/30 dark:hover:bg-blue-800/20 dark:focus:bg-blue-800/20 cursor-pointer"
                                             title="Lihat Detail">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -156,7 +179,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                             </svg>
                                         </a>
-                                        <a href="{{ route('teacher.quiz.scores', $d->id) }}"
+                                        <a href="{{ route('teacher.ai.quiz_generator.scores', $d->id) }}"
                                             class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-green-100 text-green-800 hover:bg-green-200 focus:outline-none focus:bg-green-200 disabled:opacity-50 disabled:pointer-events-none dark:text-green-400 dark:bg-green-800/30 dark:hover:bg-green-800/20 dark:focus:bg-green-800/20 cursor-pointer"
                                             title="Lihat Nilai">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,7 +189,7 @@
                                         <button type="button"
                                             class="py-2 px-3 inline-flex justify-center items-center gap-x-2 text-xs font-medium rounded-lg border border-transparent bg-red-100 text-red-800 hover:bg-red-200 focus:outline-none focus:bg-red-200 disabled:opacity-50 disabled:pointer-events-none dark:text-red-500 dark:bg-red-800/30 dark:hover:bg-red-800/20 dark:focus:bg-red-800/20 cursor-pointer"
                                             title="Delete" data-hs-overlay="#delete-modal"
-                                            onclick="setDeleteData('{{ $d->id }}', '{{ $d->name }}')">
+                                            onclick="setDeleteData('{{ $d->id }}', '{{ $d->quiz_name }}')">
                                             @include('_admin._layout.icons.trash')
                                         </button>
                                     </div>
@@ -250,8 +273,7 @@
 <script>
     function setDeleteData(id, name) {
         document.getElementById('delete-item-name').textContent = name;
-        const deleteUrl = '{{ route('
-        teacher.quiz.delete ', ': id ') }}';
+        const deleteUrl = '{{ route('teacher.quiz.delete', ': id') }}';
         document.getElementById('delete-form').action = deleteUrl.replace(':id', id);
     }
 </script>

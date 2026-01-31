@@ -121,8 +121,9 @@
                                 </td>
                                 <td class="size-px whitespace-nowrap">
                                     <div class="px-6 py-3">
-                                        <span
-                                            class="block text-sm text-gray-800 dark:text-neutral-200">{{ $d->description }}</span>
+                                        <span class="block text-sm text-gray-800 dark:text-neutral-200">
+                                            {{ Str::limit($d->description, 20, '...') }}
+                                        </span>
                                     </div>
                                 </td>
                                 <td class="size-px whitespace-nowrap">

@@ -9,14 +9,11 @@ use App\Http\Controllers\Admin\TaskCategoryController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Student\LearningModulesController as studentLearningModulesController;
 use App\Http\Controllers\superAdmin\DashboardController as SuperAdminDashboardController;
 use App\Http\Controllers\Student\IntractiveQuiz as StudentQuizController;
-use App\Http\Controllers\Student\LearningModulesController as StudentLearningModulesController;
 use App\Http\Controllers\superAdmin\UserController as SuperAdminUserController;
-use App\Http\Controllers\superAdmin\DashboardController;
+use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\superAdmin\PromptImageController;
 use App\Http\Controllers\superAdmin\SchoolController;
 use App\Http\Controllers\superAdmin\SubjectController;
@@ -139,6 +136,7 @@ Route::middleware(['auth', 'role:3', 'check.school.status'])->prefix('teacher')-
             Route::post('/create', [ToolsController::class, 'doCreateQuiz'])->name('do_create');
             Route::delete('/delete/{id}', [QuizGeneratorController::class, 'delete'])->name('delete');
             Route::get('/detail/{id}', [QuizGeneratorController::class, 'detail'])->name('detail');
+            Route::get('/scores/{id}', [QuizGeneratorController::class, 'scores'])->name('scores');
         });
     });
 
@@ -223,9 +221,7 @@ Route::middleware(['auth', 'role:1'])->prefix('superadmin')->name('superadmin.')
 });
 
 Route::middleware(['auth', 'role:4', 'check.school.status'])->prefix('student')->name('student.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('_student.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
 
     Route::prefix('learning-modules')->name('learning_modules.')->group(function () {
         Route::get('/', [StudentLearningModulesController::class, 'index'])->name('index');

@@ -8,8 +8,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Queue\Queueable;
 use App\Usecase\superAdmin\TextGenerationtUsecase;
+use App\Usecase\SuperAdmin\TextGenerationUsecase;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -43,7 +43,7 @@ class RunQuizGeneration implements ShouldQueue
         DB::beginTransaction();
 
         try {
-            $usecase = app(TextGenerationtUsecase::class);
+            $usecase = app(TextGenerationUsecase::class);
             $formattedTime = Carbon::createFromFormat('H:i', $this->timer)->format('H:i:s');
             $result = $usecase->generateQuizGemini(
                 topic: $this->topic,

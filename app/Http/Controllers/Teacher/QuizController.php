@@ -144,20 +144,27 @@ class QuizController extends Controller
 
     public function scores(int $id): View|RedirectResponse
     {
-        $quiz = $this->usecase->getById($id);
+        // Mengambil data dari usecase
+        $result = $this->usecase->getById($id);
 
-        if (empty($quiz['data'])) {
-            return redirect()
-                ->intended($this->baseRedirect)
-                ->with('error', 'Kuis tidak ditemukan.');
+        // 1. Perbaiki pengecekan: Result dari Usecase biasanya Array (Response Helper)
+        if (!$result['success'] || empty($result['data'])) {
+            return redirect()->intended($this->baseRedirect)->with('error', 'Kuis tidak ditemukan.');
         }
 
-        $scores = [];
+        // 2. Ambil data kuis (ini biasanya stdClass Object hasil dari DB::first())
+        $quizData = $result['data']['data']['quiz'] ?? null;
+
+        if (!$quizData) {
+            return redirect()->intended($this->baseRedirect)->with('error', 'Data kuis tidak valid.');
+        }
+
+        $scoresResult = $this->usecase->getScoresByQuizId($id);
 
         return view('_teacher.quiz.scores', [
-            'page' => $this->page,
-            'quiz' => $quiz['data']['data'] ?? [],
-            'scores' => $scores,
+            'page'   => $this->page,
+            'quiz'   => $quizData,
+            'scores' => $scoresResult['data']['list'] ?? [],
         ]);
     }
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\UseCase\Teacher\TeacherQuizUsecase;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class QuizGeneratorController extends Controller
 {
@@ -45,25 +46,23 @@ class QuizGeneratorController extends Controller
         ]);
     }
 
-    public function detail(int $id)
-{
-    $result = $this->usecase->getById($id);
+    public function detail(int $id): View|RedirectResponse
+    {
+        $data = $this->usecase->getById($id);
 
-    if (!$result['success']) {
-        return redirect($this->baseRedirect)
-            ->with('error', $result['message'] ?? 'Data tidak ditemukan');
+        if (empty($data['data'])) {
+            return redirect()
+                ->intended($this->baseRedirect)
+                ->with('error', 'Kuis tidak ditemukan.');
+        }
+
+        return view('_teacher.quiz.detail', [
+            'page' => $this->page,
+            'data' => $data['data']['data'] ?? [],
+        ]);
     }
 
-    // Ambil data utama dari response usecase
-    $rawDetail = $result['data']['data'] ?? [];
-
-    return view('_teacher.ai_tools.quiz.detail', [
-        'page'      => $this->page,
-        'quiz'      => $rawDetail['quiz'] ?? null,      // Objek Kuis
-        'questions' => $rawDetail['questions'] ?? [],  // Koleksi Pertanyaan
-    ]);
-}
-
+    
     public function delete(int $id)
     {
         $result = $this->usecase->delete($id);
@@ -75,5 +74,24 @@ class QuizGeneratorController extends Controller
 
         return redirect($this->baseRedirect)
             ->with('error', $result['message'] ?? 'Gagal menghapus data');
+    }
+
+    public function scores(int $id): View|RedirectResponse
+    {
+        $quiz = $this->usecase->getById($id);
+
+        if (empty($quiz['data'])) {
+            return redirect()
+                ->intended($this->baseRedirect)
+                ->with('error', 'Kuis tidak ditemukan.');
+        }
+
+        $scores = [];
+
+        return view('_teacher.ai_tools.quiz.scrores', [
+            'page' => $this->page,
+            'quiz' => $quiz['data']['data'] ?? [],
+            'scores' => $scores,
+        ]);
     }
 }

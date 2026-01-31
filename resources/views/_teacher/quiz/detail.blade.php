@@ -4,14 +4,7 @@
 
 @section('content')
 <div class="grid gap-3 md:flex md:justify-between md:items-center py-4">
-    <div>
-        <h1 class="text-2xl font-extrabold text-gray-800 dark:text-neutral-200 mb-1">
-            Detail Kuis
-        </h1>
-        <p class="text-md text-gray-400 dark:text-neutral-400">
-            Informasi lengkap tentang kuis
-        </p>
-    </div>
+    <x-page-title title="Detail Kuis" description=" Informasi lengkap tentang kuis"/>
     <div>
         <a navigate href="{{ route('teacher.quiz.index') }}"
             class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700">
