@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ClassroomController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\SchoolController as AdminSchoolController;
 use App\Http\Controllers\Admin\StudentController;
@@ -15,7 +16,6 @@ use App\Http\Controllers\superAdmin\PromptImageController;
 use App\Http\Controllers\superAdmin\SchoolController;
 use App\Http\Controllers\superAdmin\SubjectController;
 use App\Http\Controllers\superAdmin\TextPromptController;
-use App\Http\Controllers\superAdmin\UserController as SuperAdminUserController;
 use App\Http\Controllers\Teacher\AITools\IlustrationController;
 use App\Http\Controllers\Teacher\AITools\MateriAjarController;
 use App\Http\Controllers\Teacher\AITools\QuizGeneratorController;
@@ -26,8 +26,12 @@ use Illuminate\Support\Facades\Route;
 
 // Landing Page
 Route::get('/', [HomeController::class, 'index'])->name('landing');
-Route::get('/kumpulan-materi', [HomeController::class, 'kumpulan_materi'])->name('kumpulan_materi');
-Route::get('/detail-materi', [HomeController::class, 'detail_materi'])->name('detail_materi');
+Route::get('/get-materi/{jenjang}/{kelas}/{mapel}', [HomeController::class, 'get_materi'])->name('get_materi');
+Route::get('/download/{id}', [HomeController::class, 'materi_download'])->name('materi_download');
+
+
+Route::get('/quizsoal', [HomeController::class, 'quizsoal'])->name('quizsoal');
+Route::post('/hasilquiz', [HomeController::class, 'hasilquiz'])->name('hasilquiz');
 
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'doLogin'])->name('login.post');
@@ -105,7 +109,6 @@ Route::middleware(['auth', 'role:2', 'check.school'])->prefix('admin')->name('ad
         Route::get('/update/{id}', [TextPromptController::class, 'edit'])->name('update');
         Route::post('/update/{id}', [TextPromptController::class, 'doUpdate'])->name('do_update');
         Route::delete('/delete/{id}', [TextPromptController::class, 'delete'])->name('delete');
-    });
     });
 });
 
