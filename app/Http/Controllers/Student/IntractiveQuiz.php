@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
 use App\Http\Presenter\Response;
-use App\UseCase\Student\QuizUsecase;
+use App\Usecase\Student\QuizUsecase;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\RedirectResponse;

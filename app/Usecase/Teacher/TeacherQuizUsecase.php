@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class TeacherQuizUsecase extends Usecase
 {
@@ -101,11 +102,12 @@ class TeacherQuizUsecase extends Usecase
 
             // Generate unique 5-digit quiz code
             do {
-                $quizCode = str_pad(rand(0, 99999), 5, '0', STR_PAD_LEFT);
-                $exists = DB::table(DatabaseConst::QUIZ)
-                    ->where('quiz_code', $quizCode)
-                    ->exists();
-            } while ($exists);
+                $quizCode = Str::upper(Str::random(5)); 
+            } while (
+                DB::table(DatabaseConst::QUIZ)
+                ->where('quiz_code', $quizCode)
+                ->exists()
+            );
 
             // Insert quiz
             $quizId = DB::table(DatabaseConst::QUIZ)->insertGetId([

@@ -63,29 +63,6 @@
                         @enderror
                     </div>
 
-                    <!-- Jenjang -->
-                    <div>
-                        <label for="grade" class="block text-sm font-medium mb-2 dark:text-white">Jenjang <span
-                                class="text-red-500">*</span></label>
-                        <div class="relative">
-                            <select name="grade" id="grade"
-                                class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600 @error('grade') border-red-500 focus:border-red-500 focus:ring-red-500 @enderror"
-                                required>
-                                <option value="">Pilih Jenjang</option>
-                                <option value="SD" {{ old('grade', $data->grade ?? '') == 'SD' ? 'selected' : '' }}>SD</option>
-                                <option value="MI" {{ old('grade', $data->grade ?? '') == 'MI' ? 'selected' : '' }}>MI</option>
-                                <option value="SMP" {{ old('grade', $data->grade ?? '') == 'SMP' ? 'selected' : '' }}>SMP</option>
-                                <option value="MTS" {{ old('grade', $data->grade ?? '') == 'MTS' ? 'selected' : '' }}>MTS</option>
-                                <option value="SMA" {{ old('grade', $data->grade ?? '') == 'SMA' ? 'selected' : '' }}>SMA</option>
-                                <option value="SMK" {{ old('grade', $data->grade ?? '') == 'SMK' ? 'selected' : '' }}>SMK</option>
-                                <option value="MA" {{ old('grade', $data->grade ?? '') == 'MA' ? 'selected' : '' }}>MA</option>
-                            </select>
-                        </div>
-                        @error('grade')
-                            <p class="text-xs text-red-600 mt-2" id="grade-error">{{ $message }}</p>
-                        @enderror
-                    </div>
-
                     <!-- Kelas -->
                     <div>
                         <label for="classroom" class="block text-sm font-medium mb-2 dark:text-white">Kelas <span
@@ -93,7 +70,7 @@
                         <div class="relative">
                             <select name="classroom" id="classroom"
                                 class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600 @error('classroom') border-red-500 focus:border-red-500 focus:ring-red-500 @enderror"
-                                required disabled>
+                                required>
                                 <option value="">Pilih Kelas</option>
                             </select>
                         </div>
@@ -197,29 +174,28 @@
         };
 
         const savedClassroom = '{{ old("classroom", $data->classroom ?? "") }}';
+        const schoolGrade = '{{ $schoolGrade ?? "" }}';
 
-        $('#grade').on('change', function() {
-            const selectedGrade = $(this).val();
+        // Auto-populate classroom based on school grade
+        function populateClassroom() {
             const classSelect = $('#classroom');
             
             // Clear existing options
             classSelect.empty().append('<option value="">Pilih Kelas</option>');
             
-            if (selectedGrade && classOptions[selectedGrade]) {
+            if (schoolGrade && classOptions[schoolGrade]) {
                 classSelect.prop('disabled', false);
-                classOptions[selectedGrade].forEach(function(classNum) {
+                classOptions[schoolGrade].forEach(function(classNum) {
                     const selected = classNum === savedClassroom ? 'selected' : '';
                     classSelect.append(`<option value="${classNum}" ${selected}>${classNum}</option>`);
                 });
             } else {
                 classSelect.prop('disabled', true);
             }
-        });
-
-        // Trigger change on page load to populate class options
-        if ($('#grade').val()) {
-            $('#grade').trigger('change');
         }
+
+        // Populate on page load
+        populateClassroom();
     });
 </script>
 @endpush
