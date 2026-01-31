@@ -56,7 +56,7 @@ class RunLearningModuleSummarizer implements ShouldQueue
                 'user_id' => $this->userId
             ]);
 
-            $fullPath = Storage::path($this->filePath);
+            $fullPath = Storage::disk('public')->path($this->filePath);
 
             if (!file_exists($fullPath)) {
                 throw new \RuntimeException('File not found: ' . $fullPath);

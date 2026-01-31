@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class TeacherQuizUsecase extends Usecase
 {
@@ -23,8 +24,8 @@ class TeacherQuizUsecase extends Usecase
                 throw new Exception('User not authenticated');
             }
 
-            $query = DB::table(DatabaseConst::QUIZ.' as q')
-                ->join(DatabaseConst::USER.' as u', 'q.created_by', '=', 'u.id')
+            $query = DB::table(DatabaseConst::QUIZ . ' as q')
+                ->join(DatabaseConst::USER . ' as u', 'q.created_by', '=', 'u.id')
                 ->whereNull('q.deleted_at')
                 ->select(
                     'q.id',
@@ -36,7 +37,7 @@ class TeacherQuizUsecase extends Usecase
                     'u.name as created_by_name'
                 )
                 ->selectSub(
-                    DB::table(DatabaseConst::QUIZ_ATTEMPT.' as qa')
+                    DB::table(DatabaseConst::QUIZ_ATTEMPT . ' as qa')
                         ->selectRaw('COUNT(DISTINCT qa.student_id)')
                         ->whereColumn('qa.quiz_id', 'q.id')
                         ->whereNull('qa.deleted_at'),
@@ -53,7 +54,7 @@ class TeacherQuizUsecase extends Usecase
 
             // Search filter
             if (! empty($filterData['keywords'])) {
-                $query->where('q.quiz_name', 'like', '%'.$filterData['keywords'].'%');
+                $query->where('q.quiz_name', 'like', '%' . $filterData['keywords'] . '%');
             }
 
             // Count questions for each quiz
@@ -101,11 +102,12 @@ class TeacherQuizUsecase extends Usecase
 
             // Generate unique 5-digit quiz code
             do {
-                $quizCode = str_pad(rand(0, 99999), 5, '0', STR_PAD_LEFT);
-                $exists = DB::table(DatabaseConst::QUIZ)
-                    ->where('quiz_code', $quizCode)
-                    ->exists();
-            } while ($exists);
+                $quizCode = Str::upper(Str::random(5)); 
+            } while (
+                DB::table(DatabaseConst::QUIZ)
+                ->where('quiz_code', $quizCode)
+                ->exists()
+            );
 
             // Insert quiz
             $quizId = DB::table(DatabaseConst::QUIZ)->insertGetId([
@@ -173,7 +175,7 @@ class TeacherQuizUsecase extends Usecase
                 // Insert options (A-E)
                 $options = ['A', 'B', 'C', 'D', 'E'];
                 foreach ($options as $option) {
-                    $optionKey = 'option_'.strtolower($option);
+                    $optionKey = 'option_' . strtolower($option);
 
                     // Only insert if option text is provided
                     if (! empty($questionData[$optionKey])) {
@@ -209,8 +211,8 @@ class TeacherQuizUsecase extends Usecase
             }
 
             // Get quiz
-            $quiz = DB::table(DatabaseConst::QUIZ.' as q')
-                ->join(DatabaseConst::USER.' as u', 'q.created_by', '=', 'u.id')
+            $quiz = DB::table(DatabaseConst::QUIZ . ' as q')
+                ->join(DatabaseConst::USER . ' as u', 'q.created_by', '=', 'u.id')
                 ->where('q.id', $id)
                 ->whereNull('q.deleted_at')
                 ->select(
@@ -224,7 +226,7 @@ class TeacherQuizUsecase extends Usecase
             }
 
             // Get questions with options
-            $questions = DB::table(DatabaseConst::QUIZ_QUESTION.' as qq')
+            $questions = DB::table(DatabaseConst::QUIZ_QUESTION . ' as qq')
                 ->where('qq.quiz_id', $id)
                 ->whereNull('qq.deleted_at')
                 ->select('qq.*')
@@ -330,7 +332,7 @@ class TeacherQuizUsecase extends Usecase
                 // Insert options
                 $options = ['A', 'B', 'C', 'D', 'E'];
                 foreach ($options as $option) {
-                    $optionKey = 'option_'.strtolower($option);
+                    $optionKey = 'option_' . strtolower($option);
 
                     if (! empty($questionData[$optionKey])) {
                         DB::table(DatabaseConst::QUIZ_OPTION)->insert([
