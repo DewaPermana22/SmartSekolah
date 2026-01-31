@@ -7,9 +7,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Presenter\Response;
 use App\Jobs\RunTextGeneration;
 use App\Jobs\RunImageGeneration;
+use App\Jobs\RunQuizGeneration;
 use App\Usecase\Teacher\ImageGenerationUsecase;
-use App\Usecase\TextGenerationtUsecase;
 use Exception;
+use App\Usecase\superAdmin\TextGenerationtUsecase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -44,6 +45,42 @@ class ToolsController extends Controller
             202
         );
     }
+
+    public function doCreateQuiz(Request $request)
+    {
+        $request->validate([
+            'topic' => 'required|string|max:255',
+            'total_questions' => 'required|integer|min:1|max:50',
+            'education_level' => 'required|string|in:SD,SMP,SMA,SMK',
+            'class' => 'required|string|max:10',
+            'options_count' => 'required|integer|min:2|max:6',
+            'categories' => 'required|string|exists:prompt_text_generation,categories',
+        ]);
+
+        $referenceId = Str::uuid()->toString();
+
+        RunQuizGeneration::dispatch(
+            topic: $request->topic,
+            totalQuestions: (int) $request->total_questions,
+            educationLevel: $request->education_level,
+            class: $request->class,
+            optionsCount: (int) $request->options_count,
+            categories: $request->categories,
+            referenceId: $referenceId
+        );
+
+        return response()->json(
+            Response::buildSuccess(
+                data: [
+                    'reference_id' => $referenceId,
+                    'status_url'   => route('job_status_text', ['referenceId' => $referenceId]),
+                ],
+                message: 'Quiz generation job queued successfully'
+            ),
+            202
+        );
+    }
+
 
 
     public function doCreate(Request $request)

@@ -31,4 +31,10 @@ class DatabaseConst
     const PROMPT_IMAGE_GENERATION = 'prompt_image_generation';
 
     const IMAGE_GENERATION_HISTORIES = 'image_generation_histories';
+
+    const QUIZZES = 'quiz';
+    const QUIZ_OPTIONS = 'quiz_options';
+    const QUIZ_QUETIONS = 'quiz_questions';
+    const QUIZ_ATTEMPTS = 'quiz_attempts';
+    const QUIZ_RESULTS = 'quiz_results';
 }

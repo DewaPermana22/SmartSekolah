@@ -7,7 +7,7 @@ use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Student\IntractiveQuiz as StudentQuizController;
 use App\Http\Controllers\Admin\TaskCategoryController;
 use App\Http\Controllers\superAdmin\UserController as SuperAdminUserController;
 use App\Http\Controllers\superAdmin\DashboardController;
@@ -107,7 +107,7 @@ Route::middleware(['auth', 'role:2', 'check.school'])->prefix('admin')->name('ad
         Route::get('/update/{id}', [TextPromptController::class, 'edit'])->name('update');
         Route::post('/update/{id}', [TextPromptController::class, 'doUpdate'])->name('do_update');
         Route::delete('/delete/{id}', [TextPromptController::class, 'delete'])->name('delete');
-    }); 
+    });
 });
 
 Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->group(function () {
@@ -203,7 +203,12 @@ Route::middleware(['auth', 'role:4'])->prefix('student')->name('student.')->grou
     Route::get('/dashboard', function () {
         return view('_student.dashboard');
     })->name('dashboard');
+
     Route::prefix('learning-modules')->name('learning_modules.')->group(function () {
         Route::get('/', [StudentLearningModulesController::class, 'index'])->name('index');
+    });
+
+    Route::prefix('quiz')->name('quiz.')->group(function () {
+        Route::get('/', [StudentQuizController::class, 'index'])->name('index');
     });
 });
