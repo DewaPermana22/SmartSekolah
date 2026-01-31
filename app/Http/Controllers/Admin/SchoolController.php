@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Constants\ResponseConst;
 use App\Http\Controllers\Controller;
-use App\Usecase\SchoolUsecase;
+use App\Usecase\Admin\SchoolUsecase as AdminSchoolUsecase;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,7 +20,7 @@ class SchoolController extends Controller
     protected string $baseRedirect;
 
     public function __construct(
-        protected SchoolUsecase $usecase
+        protected AdminSchoolUsecase $usecase
     ) {
         $this->baseRedirect = 'admin/'.$this->page['route'];
     }

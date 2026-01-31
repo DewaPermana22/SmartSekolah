@@ -1,27 +1,27 @@
 <?php
 
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\ClassroomController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\SchoolController as AdminSchoolController;
 use App\Http\Controllers\Admin\StudentController;
+use App\Http\Controllers\Admin\TaskCategoryController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\TeacherController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\ProfileController;
-use App\Http\Controllers\Admin\TaskCategoryController;
-use App\Http\Controllers\superAdmin\UserController as SuperAdminUserController;
-use App\Http\Controllers\superAdmin\DashboardController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Student\LearningModulesController as StudentLearningModulesController;
+use App\Http\Controllers\superAdmin\DashboardController as SuperAdminDashboardController;
 use App\Http\Controllers\superAdmin\PromptImageController;
 use App\Http\Controllers\superAdmin\SchoolController;
 use App\Http\Controllers\superAdmin\SubjectController;
 use App\Http\Controllers\superAdmin\TextPromptController;
+use App\Http\Controllers\superAdmin\UserController as SuperAdminUserController;
+use App\Http\Controllers\Teacher\AITools\IlustrationController;
 use App\Http\Controllers\Teacher\AITools\MateriAjarController;
+use App\Http\Controllers\Teacher\DashboardController as TeacherDashboardController;
 use App\Http\Controllers\Teacher\LearningModulesController;
 use App\Http\Controllers\Teacher\ToolsController;
-use App\Http\Controllers\Student\LearningModulesController as studentLearningModulesController;
-use App\Http\Controllers\Teacher\AITools\IlustrationController;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 // Landing Page
@@ -41,9 +41,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth', 'role:2', 'check.school'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('_admin.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     Route::prefix('task-categories')->name('task_categories.')->group(function () {
         Route::get('/', [TaskCategoryController::class, 'index'])->name('index');
@@ -107,13 +105,11 @@ Route::middleware(['auth', 'role:2', 'check.school'])->prefix('admin')->name('ad
         Route::get('/update/{id}', [TextPromptController::class, 'edit'])->name('update');
         Route::post('/update/{id}', [TextPromptController::class, 'doUpdate'])->name('do_update');
         Route::delete('/delete/{id}', [TextPromptController::class, 'delete'])->name('delete');
-    }); 
+    });
 });
 
 Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('_teacher.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [TeacherDashboardController::class, 'index'])->name('dashboard');
     Route::prefix('ai-tools')->name('ai.')->group(function () {
         Route::prefix('materi-ajar')->name('materi_ajar.')->group(function () {
             Route::get('/', [MateriAjarController::class, 'index'])->name('index');
@@ -155,9 +151,8 @@ Route::middleware(['auth', 'role:3'])->prefix('teacher')->name('teacher.')->grou
     });
 });
 
-
 Route::middleware(['auth', 'role:1'])->prefix('superadmin')->name('superadmin.')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [SuperAdminDashboardController::class, 'index'])->name('dashboard');
 
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [SuperAdminUserController::class, 'index'])->name('index');

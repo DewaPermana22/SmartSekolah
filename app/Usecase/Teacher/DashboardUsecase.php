@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Usecase\superAdmin;
+namespace App\Usecase\Teacher;
 
 use App\Constants\DatabaseConst;
 use App\Constants\ResponseConst;
-use App\Constants\UserConst;
 use App\Http\Presenter\Response;
 use App\Usecase\Usecase;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -19,25 +19,28 @@ class DashboardUsecase extends Usecase
     public function getDashboardStats(): array
     {
         try {
-            $totalSchools = DB::table(DatabaseConst::SCHOOL)
+            $userId = Auth::user()->id;
+
+            if (! $userId) {
+                throw new Exception('User ID not found for the authenticated user');
+            }
+
+            $totalLearningModules = DB::table(DatabaseConst::LEARNING_MODULE)
+                ->where('created_by', $userId)
                 ->whereNull('deleted_at')
                 ->count();
 
-            $totalTeachers = DB::table(DatabaseConst::TEACHER)
+            $totalDownloads = DB::table(DatabaseConst::LEARNING_MODULE)
+                ->where('created_by', $userId)
                 ->whereNull('deleted_at')
-                ->count();
+                ->sum('total_download');
 
-            $totalStudents = DB::table(DatabaseConst::STUDENT)
-                ->whereNull('deleted_at')
-                ->count();
-
-            $chartData = $this->getMonthlyRegistrationStats();
+            $chartData = $this->getMonthlyDownloadStats($userId);
 
             return Response::buildSuccess(
                 [
-                    'total_schools' => $totalSchools,
-                    'total_teachers' => $totalTeachers,
-                    'total_students' => $totalStudents,
+                    'total_learning_modules' => $totalLearningModules,
+                    'total_downloads' => $totalDownloads,
                     'chart_data' => $chartData,
                 ],
                 ResponseConst::HTTP_SUCCESS
@@ -54,7 +57,7 @@ class DashboardUsecase extends Usecase
         }
     }
 
-    public function getMonthlyRegistrationStats(): array
+    public function getMonthlyDownloadStats(int $userId): array
     {
         try {
             // Get data from current month only (daily stats)
@@ -66,52 +69,44 @@ class DashboardUsecase extends Usecase
             $startOfMonth = Carbon::create($currentYear, $currentMonth, 1)->startOfDay();
             $endOfMonth = Carbon::create($currentYear, $currentMonth, $daysInMonth)->endOfDay();
 
-            $registrations = DB::table(DatabaseConst::USER)
+            // Get download data by day
+            // Note: This assumes downloads are tracked with timestamps
+            // If you have a separate downloads tracking table, adjust accordingly
+            $downloads = DB::table(DatabaseConst::LEARNING_MODULE)
                 ->select(
-                    DB::raw('DATE(created_at) as date'),
-                    'access_type',
-                    DB::raw('COUNT(*) as count')
+                    DB::raw('DATE(updated_at) as date'),
+                    DB::raw('SUM(total_download) as total')
                 )
-                ->whereIn('access_type', [UserConst::ADMIN_SEKOLAH, UserConst::GURU, UserConst::SISWA])
-                ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+                ->where('created_by', $userId)
+                ->whereBetween('updated_at', [$startOfMonth, $endOfMonth])
                 ->whereNull('deleted_at')
-                ->groupBy('date', 'access_type')
+                ->groupBy('date')
                 ->orderBy('date')
                 ->get();
 
+            // Create categories for all days in current month
             $categories = [];
             for ($day = 1; $day <= $daysInMonth; $day++) {
                 $date = Carbon::create($currentYear, $currentMonth, $day);
                 $categories[] = $date->format('Y-m-d');
             }
 
-            $seriesData = [
-                UserConst::ADMIN_SEKOLAH => array_fill(0, $daysInMonth, 0),
-                UserConst::GURU => array_fill(0, $daysInMonth, 0),
-                UserConst::SISWA => array_fill(0, $daysInMonth, 0),
-            ];
+            // Initialize data array with zeros
+            $downloadData = array_fill(0, $daysInMonth, 0);
 
             // Fill in the actual data
-            foreach ($registrations as $registration) {
-                $dateIndex = array_search($registration->date, $categories);
-                if ($dateIndex !== false && isset($seriesData[$registration->access_type])) {
-                    $seriesData[$registration->access_type][$dateIndex] = $registration->count;
+            foreach ($downloads as $download) {
+                $dateIndex = array_search($download->date, $categories);
+                if ($dateIndex !== false) {
+                    $downloadData[$dateIndex] = $download->total;
                 }
             }
 
             // Format for ApexCharts
             $series = [
                 [
-                    'name' => 'Admin Sekolah',
-                    'data' => array_values($seriesData[UserConst::ADMIN_SEKOLAH]),
-                ],
-                [
-                    'name' => 'Guru',
-                    'data' => array_values($seriesData[UserConst::GURU]),
-                ],
-                [
-                    'name' => 'Siswa',
-                    'data' => array_values($seriesData[UserConst::SISWA]),
+                    'name' => 'Total Download',
+                    'data' => array_values($downloadData),
                 ],
             ];
 
